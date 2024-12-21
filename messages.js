@@ -161,11 +161,6 @@ Your job is to determine the **single optimal next action** to progress toward c
    - **DO NOT signup or login.
    - **DO NOT combine actions** or suggest sequences of actions. Respond with a single action and its explanation.
 
-3. **Action Prioritization**:
-   - Clearly specify the target of the action with relevant details like its inner text, placeholder, or icon/image description.
-   - Avoid speculative actions that are not possible based on the current state of the webpage.
-   - Verify the action is feasible based on the visible elements in the \`current_screenshot\`.
-
 ### Output Format:
 Your response should be structured as follows:
 \`\`\`json

@@ -751,7 +751,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/allrecipes.csv')
+fs.createReadStream('./webvoyager/coursera.csv')
 .pipe(csv())
 .on('data', (row) => {
   data.push(row);
@@ -765,12 +765,12 @@ fs.createReadStream('./webvoyager/allrecipes.csv')
       let resObs = [];
       try {
         console.log("Row", row)
-        const { observations } = await browse({ task: row.ques, web: row.web, verbose: true, headless: false, taskUpdate: false });
+        const { observations } = await browse({ task: row.ques, web: row.web, verbose: true, headless: true, taskUpdate: false });
         resObs = observations;
       } catch (e) {
         console.error(`Error browsing ${row.id}`, e);
       }
-      const filePath = `./webvoyager/allrecipes/${row.id}.csv`;
+      const filePath = `./webvoyager/coursera/${row.id}.csv`;
       const stream = fs.createWriteStream(filePath);
   
       writeToStream(stream, resObs, { headers: true })

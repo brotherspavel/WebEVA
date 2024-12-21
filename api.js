@@ -31,7 +31,7 @@ async function getSummarizedTask(observations, screenshot1, screenshot2, screens
           type: "text",
           text: `
             **task_goal**: ${observation.task || ''}
-            **user_action**: ${observation.user_action || ''}
+            **user_action_and_explanation**: ${observation.user_action_and_explanation || ''}
             **observation**: ${observation.observation || ''}
           `,
         },
@@ -135,7 +135,7 @@ async function getIsTaskComplete(observations, current_screenshot) {
           type: "text",
           text: `
             **task_goal**: ${observation.task || ''}
-            **user_action**: ${observation.user_action || ''}
+            **user_action_and_explanation**: ${observation.user_action_and_explanation || ''}
             **observation**: ${observation.observation || ''}
           `,
         },
@@ -153,7 +153,7 @@ async function getIsTaskComplete(observations, current_screenshot) {
           type: "text",
           text: `
             **current_task_goal**: ${lastObservation.task || ''}
-            **current_user_action**: ${lastObservation.user_action || ''}
+            **current_user_action_and_explanation**: ${lastObservation.user_action_and_explanation || ''}
             **current_observation**: ${lastObservation.observation || ''}
           `,
         },
@@ -242,7 +242,7 @@ async function getUpdateTask(observations, current_url, current_screenshot) {
           type: "text",
           text: `
             **task_goal**: ${observation.task || ''}
-            **user_action**: ${observation.user_action || ''}
+            **user_action_and_explanation**: ${observation.user_action_and_explanation || ''}
             **observation**: ${observation.observation || ''}
           `,
         },
@@ -260,7 +260,7 @@ async function getUpdateTask(observations, current_url, current_screenshot) {
           type: "text",
           text: `
             **current_task_goal**: ${lastObservation.task || ''}
-            **current_user_action**: ${lastObservation.user_action || ''}
+            **current_user_action_and_explanation**: ${lastObservation.user_action_and_explanation || ''}
             **current_observation**: ${lastObservation.observation || ''}
           `,
         },
@@ -353,7 +353,7 @@ async function getNextAction(observations, current_screenshot = placeholderScree
           type: "text",
           text: `
             **task_goal**: ${observation.task || ''}
-            **user_action**: ${observation.user_action || ''}
+            **user_action_and_explanation**: ${observation.user_action_and_explanation || ''}
             **observation**: ${observation.observation || ''}
           `,
         },
@@ -383,11 +383,11 @@ async function getNextAction(observations, current_screenshot = placeholderScree
         schema: {
           type: "object",
           properties: {
-            user_action: {
+            user_action_and_explanation: {
               type: "string",
             },
           },
-          required: ["user_action"],
+          required: ["user_action_and_explanation"],
           additionalProperties: false,
         },
       },
@@ -421,7 +421,7 @@ async function getNextAction(observations, current_screenshot = placeholderScree
   }
 }
 
-async function getObservation(observations, current_task, current_user_action, prev_screenshot, current_screenshot) {
+async function getObservation(observations, current_task, current_user_action_and_explanation, prev_screenshot, current_screenshot) {
   const webMessages = [
     {
       role: "system",
@@ -439,7 +439,7 @@ async function getObservation(observations, current_task, current_user_action, p
           type: "text",
           text: `
             **task**: ${observation.task || ''}
-            **user_action**: ${observation.user_action || ''}
+            **user_action_and_explanation**: ${observation.user_action_and_explanation || ''}
             **observation**: ${observation.observation || ''}
           `,
         },
@@ -454,7 +454,7 @@ async function getObservation(observations, current_task, current_user_action, p
         type: "text",
         text: `
           **current_task**: ${current_task || ''}
-          **current_user_action**: ${current_user_action || ''}
+          **current_user_action_and_explanation**: ${current_user_action_and_explanation || ''}
         `,
       },
     ],
