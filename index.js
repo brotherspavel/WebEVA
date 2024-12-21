@@ -23,7 +23,7 @@ const state = {
   stateAction: null,
   web: "https://www.example123.com/",
   task: null,
-  user_action: null,
+  user_action_and_explanation: null,
   actionJson: {},
   observations: [],
   currentImage: null,
@@ -114,7 +114,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
           await page.waitForTimeout(firstUrlWait);
           localState.observations = [
             ...localState.observations,
-            { task: localState.task, user_action: `Going to ${localState.web}`, observation: `Went to ${localState.web}` },
+            { task: localState.task, user_action_and_explanation: `Going to ${localState.web}`, observation: `Went to ${localState.web}` },
           ]
 
           // Take a screenshot as a Base64-encoded string
@@ -182,8 +182,8 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
         const base64ImageUrl = `data:image/png;base64,${base64Image}`;
         localState.prevImage = localState.currentImage;
         localState.currentImage = base64ImageUrl;
-        //getObservation(observations, current_task, current_user_action, prev_screenshot, current_screenshot) 
-        await getObservation(localState.observations, localState.task, localState.user_action, localState.prevImage, localState.currentImage).then((res) => {
+        //getObservation(observations, current_task, current_user_action_and_explanation, prev_screenshot, current_screenshot) 
+        await getObservation(localState.observations, localState.task, localState.user_action_and_explanation, localState.prevImage, localState.currentImage).then((res) => {
           const content = JSON.parse(res.content);
 
 
@@ -191,7 +191,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
 
           localState.observations = [...localState.observations, {
             task: localState.task,
-            user_action: localState.user_action,
+            user_action_and_explanation: localState.user_action_and_explanation,
             observation: content.observation,
           }];
           localState.stateAction = "getUpdatedTask";
@@ -264,7 +264,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
                 }
                 localState.observations = [...localState.observations, {
                   task: localState.task,
-                  user_action: "Summarizing last observations",
+                  user_action_and_explanation: "Summarizing last observations",
                   observation: content.task_answer,
                 }];
               }).catch((e) => {
@@ -315,7 +315,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
           if (verbose) {
             console.log("getNextAction", content);
           }
-          localState.user_action = content.user_action;
+          localState.user_action_and_explanation = content.user_action_and_explanation;
           localState.stateAction = "getDescribeAction";
         }).catch((e) => {
           console.error("getNextAction error", e);
@@ -324,7 +324,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
         break;
       case "getDescribeAction":
         //getDescribeAction(task, current_action, current_screenshot = placeholderScreenshot)
-        await getDescribeAction(localState.task, localState.user_action, localState.currentImage).then(async (res) => {
+        await getDescribeAction(localState.task, localState.user_action_and_explanation, localState.currentImage).then(async (res) => {
           const content = JSON.parse(res.content);
           if (verbose) {
             console.log("getDescribeAction", content);
@@ -366,7 +366,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
         break;
       case "custom":
         // Unstable, works perfectly fine for things like wait, but situational for more complex actions
-        await getCustomAction(localState.task, localState.user_action, localState.currentImage).then(async (res) => {
+        await getCustomAction(localState.task, localState.user_action_and_explanation, localState.currentImage).then(async (res) => {
           const content = JSON.parse(res.content);
           if (verbose) {
             console.log("getCustomAction", content.javascript_code);
@@ -629,12 +629,14 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
               elementDetails.push(elementData);
             }
 
-            await getElement(localState.task, localState.user_action, elementDetails, localState.currentImage).then(async (res) => {
+            await getElement(localState.task, localState.user_action_and_explanation, elementDetails, localState.currentImage).then(async (res) => {
               const content = JSON.parse(res.content);
               if (verbose) {
                 console.log("getElement", content);
               }
-              specificElement = page.locator(`[element_id="${content.element_id}"]`);
+              if (Number(content.element_id) > 0 && Number(content.element_id) <= elementDetails.length) {
+                specificElement = page.locator(`[element_id="${content.element_id}"]`);
+              }
             }).catch((e) => {
               console.error("getElement error", e);
               localState.errors += 1;
@@ -656,7 +658,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
                 Array.from(select.options).map(option => option.outerHTML)
               );
             
-              await getOptions(localState.user_action, optionsOuterHTML).then(async (res) => {
+              await getOptions(localState.user_action_and_explanation, optionsOuterHTML).then(async (res) => {
                 try {
                   const content = JSON.parse(res.content);
                   if (verbose) {
@@ -749,7 +751,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/booking.csv')
+fs.createReadStream('./webvoyager/allrecipes.csv')
 .pipe(csv())
 .on('data', (row) => {
   data.push(row);
@@ -768,7 +770,7 @@ fs.createReadStream('./webvoyager/booking.csv')
       } catch (e) {
         console.error(`Error browsing ${row.id}`, e);
       }
-      const filePath = `./webvoyager/booking/${row.id}.csv`;
+      const filePath = `./webvoyager/allrecipes/${row.id}.csv`;
       const stream = fs.createWriteStream(filePath);
   
       writeToStream(stream, resObs, { headers: true })

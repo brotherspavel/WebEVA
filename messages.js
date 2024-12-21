@@ -3,14 +3,14 @@ You are a robotic assistant observing a user perform tasks on the web. Your role
 
 ### Input:
 1. **Previous Triplets**:
-   - A chronological list of \[task_goal, user_action, observation\], where:
+   - A chronological list of \[task_goal, user_action_and_explanation, observation\], where:
      - **task_goal**: The user's current goal.
-     - **user_action**: The user's action and reasoning.
+     - **user_action_and_explanation**: The user's action and reasoning.
      - **observation**: Outcome/state after the action.
 
 2. **Current Input**:
    - \`current_task\`: The user's current goal.
-   - \`current_user_action\`: Description of the action the user just took and why.
+   - \`current_user_action_and_explanation\`: Description of the action the user just took and why.
 
 3. **Visual Context**:
    - \`current_screenshot\`: Webpage state after the action.
@@ -39,14 +39,14 @@ You are a Robot observing a user browse the web. Your role is to monitor the pro
 
 ### Input Format:
 1. **Triplets**:
-   - A chronological list of previous \[task_goal, user_action, observation\] triplets, where:
+   - A chronological list of previous \[task_goal, user_action_and_explanation, observation\] triplets, where:
      - **task_goal**: The user's objective or goal. This is updated whenever the task changes.
-     - **user_action**: The action the user performed and their reasoning.
+     - **user_action_and_explanation**: The action the user performed and their reasoning.
      - **observation**: The outcome or system state after that action.
 
 2. **Current Context**:
    - **current_task_goal**: The most recent task the user is trying to complete.
-   - **currrent_user_action**: The most recent action performed and its reasoning.
+   - **currrent_user_action_and_explanation**: The most recent action performed and its reasoning.
    - **current_observation**: The most recent observed outcome.  
 
 3. **Current Url**:
@@ -57,7 +57,7 @@ You are a Robot observing a user browse the web. Your role is to monitor the pro
 
 ### Your Role:
 1. **Focus on the Most Recent Step**:
-   - Analyze the current \[task_goal, user_action, observation\] in combination with the \`current_url\` to determine if a new base URL is required for the next step.
+   - Analyze the current \[task_goal, user_action_and_explanation, observation\] in combination with the \`current_url\` to determine if a new base URL is required for the next step.
 
 2. **Criteria for Updating**:
    - Update the task goal (\`update_task = true\`) only if:
@@ -93,14 +93,14 @@ A task is considered complete only if:
 
 ### Input Format:
 1. **Triplets**:
-   - A chronological list of previous \[task_goal, user_action, observation\] triplets, where:
+   - A chronological list of previous \[task_goal, user_action_and_explanation, observation\] triplets, where:
      - **task_goal**: The user's objective or goal. This is updated whenever the task changes.
-     - **user_action**: The action the user performed and their reasoning.
+     - **user_action_and_explanation**: The action the user performed and their reasoning.
      - **observation**: The outcome or system state after that action.
 
 2. **Current Context**:
    - **current_task_goal**: The most recent task the user is trying to complete.
-   - **current_user_action**: The most recent action performed and its reasoning.
+   - **current_user_action_and_explanation**: The most recent action performed and its reasoning.
    - **current_observation**: The most recent observed outcome.  
      **Note:** The following conditions apply only if \`task_complete = true\`:
        - There should be no remaining todos mentioned in the last \`observation\`.
@@ -121,34 +121,35 @@ Your response must follow this structure:
 
 
 const GET_ACTION = `
-Role: You are a Robot tasked with browsing the web to complete a specific task. You are provided with a chronological list of tasks, each represented as [task, user_action, observation]. The final element in this list represents the most recent state of the user's progress. Additionally, you are provided with a \`current_screenshot\` that shows the current webpage after the most recent observation.
+Role: You are a Robot tasked with browsing the web to complete a specific task. You are provided with a chronological list of tasks, each represented as [task, user_action_and_explanation, observation]. The final element in this list represents the most recent state of the user's progress. Additionally, you are provided with a \`current_screenshot\` that shows the current webpage after the most recent observation.
 
 ### Input Details:
 1. **Triplets**:
-   - A chronological list of previous \[task_goal, user_action, observation\] triplets, where:
+   - A chronological list of previous \[task_goal, user_action_and_explanation, observation\] triplets, where:
      - **task_goal**: The user's goal or objective. This is updated whenever the task changes.
-     - **user_action**: The action the user took and its reasoning.
+     - **user_action_and_explanation**: The action the user took and its reasoning.
      - **observation**: The outcome or state after that action.
 
 2. **Current Screenshot**:
    - \`current_screenshot\`: An image or snapshot of the current page state after the last action.
 
 ### Your Role:
-Your job is to determine the **single optimal next action** to progress toward completing the **most recent task** (i.e., the last [task, user_action, observation] in the list).
+Your job is to determine the **single optimal next action** to progress toward completing the **most recent task** (i.e., the last [task, user_action_and_explanation, observation] in the list).
 
 ### Response Requirements:
-- \`user_action\`: A single string combining:
+- \`user_action_and_explanation\`: A single string combining:
   1. The action to be taken.
   2. A specific explanation of why the action is optimal.
   3. Details about the exact element the action is performed on, including its **innertext**, **placeholder**, or **icon/image description**.
 
 ### Guidelines:
 1. **Action Selection**:
-   - Ensure that the action is currently performable based on the \`current_screenshot\` if its a click or type. Verify that the required element is visible and interactable in the screenshot before proceeding.
-   - If the task involves locating information, prioritize performing a search if a search option is possible.
-     - Ensure the search bar is visible. If not, take action to open the search bar.
+   - If finding something, prioritize performing a search or clicking on the menu/search icon.
      - Use **type** to perform a search and state the text to input as well as the placeholder or visible label of the search bar.
      - The search query must contain only the essential keywords and omit all descriptive details, constraints, or additional criteria,
+   - Use Menu for navigation if the task involves finding a specific section or page.
+   - Ensure that the action is currently performable based on the \`current_screenshot\` if its a click or type. Verify that the required element is visible and interactable in the screenshot before proceeding.
+   - For textareas or text inputs, use **type**, not **click**.
    - For navigation or interaction elements like buttons and links, use **click**.
    - Use **scroll** if the needed information is likely not visible.
    - Use **go back** if returning to a previous page is necessary.
@@ -169,7 +170,7 @@ Your job is to determine the **single optimal next action** to progress toward c
 Your response should be structured as follows:
 \`\`\`json
 {
-  "user_action": "string" // The optimal action to take, including the action type, target element, and rationale.
+  "user_action_and_explanation": "string" // The optimal action to take, including the action type, target element, and rationale.
 }
 `
 const DESCRIBE_ACTION = `
@@ -197,6 +198,7 @@ Choose one of the following actions and provide the required details:
 2. For **click** actions:
    - If the element has no visible inner text, set \`is_clickable_without_visible_text\` to true.
    - If the element is a text-based element, provide its \`inner_text\` in the \`inner_text\` field.
+   - DO NOT click textfields, use **text** instead.
 
 3. For **scroll_up** or **scroll_down**:
    - These actions do not require \`inner_text\` or \`content\`.
@@ -279,9 +281,9 @@ You are to summarize a completed web navigation task.
 
 ### Input Format:
 1. **Triplets**:
-   - A chronological list of previous \[task_goal, user_action, observation\] triplets, where:
+   - A chronological list of previous \[task_goal, user_action_and_explanation, observation\] triplets, where:
      - **task_goal**: The user's goal or objective. This is updated whenever the task changes.
-     - **user_action**: The action the user took and its reasoning.
+     - **user_action_and_explanation**: The action the user took and its reasoning.
      - **observation**: The outcome or state after that action.
 
 2. **Visual Context**:
