@@ -1,0 +1,230 @@
+{
+    "title": "Info-12",
+    "timeout": 15000,
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 910,
+            "height": 754,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.google.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.google.com/",
+                    "title": "Google"
+                }
+            ]
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.babycenter.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.babycenter.com/",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Show main navigation menu"
+                ],
+                [
+                    "button.menuIcon"
+                ],
+                [
+                    "xpath///*[@id=\"appBarContent\"]/div[1]/button[1]"
+                ],
+                [
+                    "pierce/button.menuIcon"
+                ]
+            ],
+            "offsetY": 16,
+            "offsetX": 17
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/How can we help?"
+                ],
+                [
+                    "div.maxWidth input"
+                ],
+                [
+                    "xpath///*[@id=\"__next\"]/div[3]/section/div/div[1]/div/div/form/div/input"
+                ],
+                [
+                    "pierce/div.maxWidth input"
+                ]
+            ],
+            "offsetY": 24.5,
+            "offsetX": 97
+        },
+        {
+            "type": "change",
+            "value": "if aspirin is safe when pregnant",
+            "selectors": [
+                [
+                    "aria/How can we help?"
+                ],
+                [
+                    "div.maxWidth input"
+                ],
+                [
+                    "xpath///*[@id=\"__next\"]/div[3]/section/div/div[1]/div/div/form/div/input"
+                ],
+                [
+                    "pierce/div.maxWidth input"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.babycenter.com/search?q=if+aspirin+is+safe+when+pregnant&refctnt=expert",
+                    "title": "Search | BabyCenter"
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div:nth-of-type(3) > div:nth-of-type(3) div.resultTitle"
+                ],
+                [
+                    "xpath///*[@id=\"__next\"]/div[5]/div/div[1]/div/div/main/div[3]/div[3]/div/a/div[2]/div/div[1]"
+                ],
+                [
+                    "pierce/div:nth-of-type(3) > div:nth-of-type(3) div.resultTitle"
+                ],
+                [
+                    "text/Is it safe to take baby"
+                ]
+            ],
+            "offsetY": 14.5,
+            "offsetX": 267
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.drugs.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.drugs.com/",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search Drugs.com"
+                ],
+                [
+                    "#livesearch-main"
+                ],
+                [
+                    "xpath///*[@id=\"livesearch-main\"]"
+                ],
+                [
+                    "pierce/#livesearch-main"
+                ]
+            ],
+            "offsetY": 28.75,
+            "offsetX": 327.25
+        },
+        {
+            "type": "change",
+            "value": "aspirin pregnant",
+            "selectors": [
+                [
+                    "aria/Search Drugs.com"
+                ],
+                [
+                    "#livesearch-main"
+                ],
+                [
+                    "xpath///*[@id=\"livesearch-main\"]"
+                ],
+                [
+                    "pierce/#livesearch-main"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.drugs.com/search.php?searchterm=aspirin+pregnant",
+                    "title": "Aspirin pregnant - Search results. Page 1 of about 37500 results"
+                }
+            ]
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Pregnancy / Breastfeeding"
+                ],
+                [
+                    "div.ddc-search-result-featured li:nth-of-type(2) a"
+                ],
+                [
+                    "xpath///*[@id=\"content\"]/div[2]/div[2]/div/ul/li[2]/b/a"
+                ],
+                [
+                    "pierce/div.ddc-search-result-featured li:nth-of-type(2) a"
+                ],
+                [
+                    "text/Pregnancy / Breastfeeding"
+                ]
+            ],
+            "offsetY": 12.5390625,
+            "offsetX": 173,
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.drugs.com/pregnancy/aspirin.html",
+                    "title": "Aspirin Use During Pregnancy | Drugs.com"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,126 @@
+{
+    "title": "5",
+    "timeout": 15000,
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 1383,
+            "height": 911,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.google.com.hk/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.google.com.hk/",
+                    "title": "Google"
+                }
+            ]
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.freecodecamp.org/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.freecodecamp.org/",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Menu",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "span.menu-btn-text"
+                ],
+                [
+                    "xpath///*[@id=\"toggle-button-nav\"]/span[2]"
+                ],
+                [
+                    "pierce/span.menu-btn-text"
+                ]
+            ],
+            "offsetY": 17.854166507720947,
+            "offsetX": 27.8125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.gradient-container > div"
+                ],
+                [
+                    "xpath///*[@id=\"gatsby-focus-wrapper\"]/div/div/main/div[1]/div"
+                ],
+                [
+                    "pierce/div.gradient-container > div"
+                ]
+            ],
+            "offsetY": 587,
+            "offsetX": 1072.3333129882812
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Control"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "f"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Responsive Web Design Certification",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "ul:nth-of-type(1) > li:nth-of-type(1) > a > div"
+                ],
+                [
+                    "xpath///*[@id=\"gatsby-focus-wrapper\"]/div/div/main/div[4]/div[1]/ul[1]/li[1]/a/div"
+                ],
+                [
+                    "pierce/ul:nth-of-type(1) > li:nth-of-type(1) > a > div"
+                ],
+                [
+                    "text/Responsive Web Design Certification"
+                ]
+            ],
+            "offsetY": 8.6041259765625,
+            "offsetX": 344.25
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "#gatsby-focus-wrapper > div > div"
+                ],
+                [
+                    "xpath///*[@id=\"gatsby-focus-wrapper\"]/div/div"
+                ],
+                [
+                    "pierce/#gatsby-focus-wrapper > div > div"
+                ]
+            ],
+            "offsetY": 6117.33349609375,
+            "offsetX": 1526
+        }
+    ]
+}

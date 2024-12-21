@@ -1,0 +1,8 @@
+task,user_action,observation
+"Find the pronunciation, definition, and a sample sentence for the word \""resilience\"" in the Cambridge Dictionary.",Going to https://dictionary.cambridge.org/,Went to https://dictionary.cambridge.org/
+"Find the pronunciation, definition, and a sample sentence for the word \""resilience\"" in the Cambridge Dictionary.","type the word 'resilience' in the search bar with the placeholder 'Search English-Korean' at the top and press enter to find its pronunciation, definition, and sample sentence.","- **Pronunciation**: UK /rɪˈzɪl.jəns/, US /rɪˈzɪl.jəns/
+- **Definition**: 
+  1. The ability to be happy, successful, etc. again after something difficult or bad has happened.
+  2. The ability of a substance to return to its usual shape after being bent, stretched, or pressed.
+- **Sample Sentence**: ""Trauma researchers emphasize the resilience of the human psyche."""
+"Find the pronunciation, definition, and a sample sentence for the word \""resilience\"" in the Cambridge Dictionary.",Summarizing last observations,"The most recent observations reveal the details found in the Cambridge Dictionary for the word ""resilience."" The pronunciation is indicated as both UK: /rɪˈzɪl.jəns/ and US: /rɪˈzɪl.jəns/. The definitions provided are: the ability to be happy, successful, etc. again after something difficult or bad has happened, and the ability of a substance to return to its usual shape after being bent, stretched, or pressed. Sample sentences include: ""Trauma researchers emphasize the resilience of the human psyche."" This summary reflects only the latest observations; refer to the task history for full context and details."

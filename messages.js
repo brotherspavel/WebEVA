@@ -61,6 +61,7 @@ You are a Robot observing a user browse the web. Your role is to monitor the pro
 
 2. **Criteria for Updating**:
    - Update the task goal (\`update_task = true\`) only if:
+     - All the task objectives relating to current url are completed.
      - A new base URL is required to continue progress toward the task goal.
      - The base URL of the \`current_url\` does not correspond to the next actionable step.
 
@@ -145,8 +146,9 @@ Your job is to determine the **single optimal next action** to progress toward c
 1. **Action Selection**:
    - Ensure that the action is currently performable based on the \`current_screenshot\` if its a click or type. Verify that the required element is visible and interactable in the screenshot before proceeding.
    - If the task involves locating information, prioritize performing a search if a search option is possible.
-     - Ensure the search bar is visible first. If not, take action to make it visible with clicking.
-     - Use **type** to perform a search and state the text to input, using essential keywords only , as well as the placeholder or visible label of the search bar.
+     - Ensure the search bar is visible. If not, take action to open the search bar.
+     - Use **type** to perform a search and state the text to input as well as the placeholder or visible label of the search bar.
+     - The search query must contain only the essential keywords and omit all descriptive details, constraints, or additional criteria,
    - For navigation or interaction elements like buttons and links, use **click**.
    - Use **scroll** if the needed information is likely not visible.
    - Use **go back** if returning to a previous page is necessary.
@@ -154,13 +156,21 @@ Your job is to determine the **single optimal next action** to progress toward c
 2. **Action Constraints**:
    - Select only **one action** per observation.
    - Base the action solely on the provided tasks, the most recent observation, and the \`current_screenshot\`.
-   - **DO NOT reattempt the last user_action**. Ensure the next action is distinct.
+   - **DO NOT **click** textfields, use **type** instead.
+   - **DO NOT signup or login.
    - **DO NOT combine actions** or suggest sequences of actions. Respond with a single action and its explanation.
 
 3. **Action Prioritization**:
    - Clearly specify the target of the action with relevant details like its inner text, placeholder, or icon/image description.
    - Avoid speculative actions that are not possible based on the current state of the webpage.
    - Verify the action is feasible based on the visible elements in the \`current_screenshot\`.
+
+### Output Format:
+Your response should be structured as follows:
+\`\`\`json
+{
+  "user_action": "string" // The optimal action to take, including the action type, target element, and rationale.
+}
 `
 const DESCRIBE_ACTION = `
 You are a Robot tasked with browsing the web. You are given:
@@ -173,9 +183,9 @@ Based on the information provided, your task is to determine how to complete the
 ### Actions:
 Choose one of the following actions and provide the required details:
 {
-  "action": "One of: text, click, scroll_up, scroll_down, go_back",
+  "action": "One of: text, click, scroll_up, scroll_down, go_back, custom",
   "inner_text": "The innerText or placeholder of the element for text or click actions. Make sure it is visible in the screenshot.",
-  "is_clickable_without_visible_text": "true/false. Indicates whether the clickable element lacks visible inner text. This is true for clickable inputs, X buttons, image buttons, and icon buttons.
+  "is_clickable_without_visible_text": "true/false. Identifies if its an icon/image/checkbox type. Indicates whether the clickable element lacks visible inner text. This is true for icons, clickable inputs, X buttons, image buttons, and icon buttons.
   "input_value": "The exact text to input into the field for text actions, using essential keywords only. Leave blank for other actions"
 }
 
@@ -193,6 +203,9 @@ Choose one of the following actions and provide the required details:
 
 4. For **go_back**:
    - This action does not require \`inner_text\` or \`content\`.
+
+5. For **custom** actions:
+   - Use this action for tasks that are not click, text, scroll, or go_back. This is for wait, drag and drop, drag, keyboard commands, or executing JavaScript commands.
 
 Ensure that your action aligns with the task and makes progress toward completing it.
 `;
@@ -246,21 +259,21 @@ Your task is to identify the **most suitable element** that fulfills the action.
    2. **Action**:
       - The specific action being attempted.
    3. **List of Elements**:
-      - A list of elements available on the webpage, including their properties and attributes.
+      - A JSON object representing a list of elements available on the webpage, including their properties, attributes, and an "element_id" field.
 
-4. **Screenshot**:
-   - An image representing the current webpage's state.
+   4. **Screenshot**:
+      - An image representing the current webpage's state.
 
 ### Output Format:
 You must return a JSON object in the following structure:
 
 \`\`\`json
 {
-   "element_id": "string"
+   "element_id": "string" // The element_id MUST be part of the provided list of elements.
 }
 \`\`\`
-`
-
+`;
+          
 const SUMMARIZE_TASK = `
 You are to summarize a completed web navigation task.
 
@@ -287,7 +300,56 @@ Your response must follow this structure:
 }
 \`\`\`
 `;
-       
+
+const CUSTOM_ACTION = `
+You are a Robot assigned to browse the web and perform specific tasks. You are provided with the following information:
+- **Task**: The goal you need to accomplish.
+- **Current Action**: The specific action you are expected to take.
+- **Screenshot**: An image of the current webpage for reference.
+
+### Objective:
+Based on the information provided, you need to determine how to complete the current action effectively.
+
+### Expected Output:
+Your response must adhere to the following format:
+\`\`\`json
+{
+  "javascript_code": "string" // JavaScript code that will execute the required action directly on the page.
+}
+\`\`\`
+
+**Use Promise-Based Functions**:
+- Replace \`await\` with \`.then()\` and \`.catch()\` to handle asynchronous operations.
+
+Ensure the JavaScript code is precise, efficient, and solves the given task or action.
+`;
+
+const IDENTIFY_OPTIONS = `
+Your task is to identify the **most suitable options** that fulfill the given action.
+
+### Inputs Provided:
+1. **Action**:
+   - The specific action the user wants to perform.
+
+2. **List of Elements**:
+   - A list of elements available on the webpage, including their properties and attributes 
+
+### Output Format:
+You must return a JSON object in the following structure:
+
+\`\`\`json
+{
+   "initial_option_value": "string",   // The "value" attribute of the currently selected option 
+   "final_option_value": "string"      // The "value" attribute of the target option to be selected
+}
+\`\`\`
+
+### Notes:
+- **initial_option_value**: Represents the value attribute of the current selected option.
+- **final_option_value**: Represents the value attribute of the option that fulfills the action.
+- You must strictly use the "value" attribute of the options, not their visible text content.
+`;
+
 module.exports = {
   OBSERVATION_MESSAGES,
   UPDATE_TASK,
@@ -297,4 +359,6 @@ module.exports = {
   TASK_COMPLETE,
   GET_ELEMENT,
   SUMMARIZE_TASK,
+  CUSTOM_ACTION,
+  IDENTIFY_OPTIONS
 };

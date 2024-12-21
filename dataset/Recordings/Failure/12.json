@@ -1,0 +1,93 @@
+{
+    "title": "12",
+    "timeout": 15000,
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 1383,
+            "height": 911,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.google.com.hk/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.google.com.hk/",
+                    "title": "Google"
+                }
+            ]
+        },
+        {
+            "type": "navigate",
+            "url": "https://pubmed.ncbi.nlm.nih.gov/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://pubmed.ncbi.nlm.nih.gov/",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search:"
+                ],
+                [
+                    "#id_term"
+                ],
+                [
+                    "xpath///*[@id=\"id_term\"]"
+                ],
+                [
+                    "pierce/#id_term"
+                ]
+            ],
+            "offsetY": 32,
+            "offsetX": 437
+        },
+        {
+            "type": "change",
+            "value": "Cancer Research",
+            "selectors": [
+                [
+                    "aria/Search:"
+                ],
+                [
+                    "#id_term"
+                ],
+                [
+                    "xpath///*[@id=\"id_term\"]"
+                ],
+                [
+                    "pierce/#id_term"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://pubmed.ncbi.nlm.nih.gov/?term=Cancer+Research",
+                    "title": "Cancer Research - Search Results - PubMed"
+                }
+            ]
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        }
+    ]
+}

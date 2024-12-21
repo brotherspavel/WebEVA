@@ -1,0 +1,185 @@
+{
+    "title": "Info-4",
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 910,
+            "height": 754,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.google.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.google.com/",
+                    "title": "Google"
+                }
+            ]
+        },
+        {
+            "type": "navigate",
+            "url": "https://careers.walmart.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://careers.walmart.com/",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search input"
+                ],
+                [
+                    "#search"
+                ],
+                [
+                    "xpath///*[@id=\"search\"]"
+                ],
+                [
+                    "pierce/#search"
+                ]
+            ],
+            "offsetY": 10,
+            "offsetX": 112.6953125
+        },
+        {
+            "type": "change",
+            "value": "cashier",
+            "selectors": [
+                [
+                    "aria/Search input"
+                ],
+                [
+                    "#search"
+                ],
+                [
+                    "xpath///*[@id=\"search\"]"
+                ],
+                [
+                    "pierce/#search"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Location"
+                ],
+                [
+                    "#location"
+                ],
+                [
+                    "xpath///*[@id=\"location\"]"
+                ],
+                [
+                    "pierce/#location"
+                ]
+            ],
+            "offsetY": 16.2734375,
+            "offsetX": 50.890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Location"
+                ],
+                [
+                    "#location"
+                ],
+                [
+                    "xpath///*[@id=\"location\"]"
+                ],
+                [
+                    "pierce/#location"
+                ]
+            ],
+            "offsetY": 16.2734375,
+            "offsetX": 49.890625
+        },
+        {
+            "type": "change",
+            "value": "New York",
+            "selectors": [
+                [
+                    "aria/Location"
+                ],
+                [
+                    "#location"
+                ],
+                [
+                    "xpath///*[@id=\"location\"]"
+                ],
+                [
+                    "pierce/#location"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "form button"
+                ],
+                [
+                    "xpath//html/body/main/section[1]/div[2]/div/form/div[2]/button"
+                ],
+                [
+                    "pierce/form button"
+                ]
+            ],
+            "offsetY": 42.5,
+            "offsetX": 45.4921875,
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://careers.walmart.com/results?jobCareerArea=all&q=cashier&location=New+York&ref=manual&origin=search",
+                    "title": "Results"
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.search__results li:nth-of-type(1) a"
+                ],
+                [
+                    "xpath///*[@id=\"search-results\"]/li[1]/div[1]/h4/a"
+                ],
+                [
+                    "pierce/div.search__results li:nth-of-type(1) a"
+                ]
+            ],
+            "offsetY": 18.6015625,
+            "offsetX": 149.203125,
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://careers.walmart.com/us/jobs/0531180186FE-cashier-front-end",
+                    "title": ""
+                }
+            ]
+        }
+    ]
+}

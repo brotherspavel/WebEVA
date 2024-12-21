@@ -1,5 +1,5 @@
 const borderColor = 'black';
-const { getNextAction, getWeb, getDescribeAction, getObservation, locateBox, getSummarizedTask } = require('./api');
+const { getNextAction, getWeb, getDescribeAction, getObservation, locateBox, getSummarizedTask, getCustomAction } = require('./api');
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
@@ -184,64 +184,6 @@ async function BasicTest() {
 
 const { chromium } = require('playwright');
 
-(async () => {
-  const browser = await chromium.launch({ headless: false }); // Set to true for headless browsing
-  const context = await browser.newContext();
-  const page = await context.newPage();
-
-  await page.goto('https://www.ebay.com/'); // Replace with your target URL
-  console.log("here")
-  // Define the function to check if an element is clickable
-  const isClickable = async (elementHandle) => {
-    return await elementHandle.evaluate((el) => {
-      const tagName = el.tagName.toLowerCase();
-      const role = el.getAttribute('role');
-      const type = el.getAttribute('type');
-
-      // Check if the element is inherently or custom clickable
-      return (
-        // Inherently clickable elements
-        tagName === 'button' ||
-        tagName === 'a' ||
-        tagName === 'select' ||
-        tagName === 'option' ||
-        tagName === 'td' || 
-        (tagName === 'input' && ['button', 'submit', 'reset', 'checkbox', 'radio', 'image', 'file'].includes(type)) ||
-        // ARIA roles
-        role === 'button' ||
-        role === 'checkbox' ||
-        role === 'link' ||
-        role === 'menuitem' ||
-        role === 'tab' ||
-        role === 'radio'
-      );
-    });
-  };
-
-  // Get all elements on the page
-  const allElements = await page.locator('*').elementHandles();
-
-  // Filter to find clickable elements
-  const clickableElements = [];
-  const index = 0;
-  for (const element of allElements) {
-    if (await isClickable(element)) {
-      await element.evaluate((el, id) => {
-          el.setAttribute('element_id', id);
-      }, index + 1);
-      clickableElements.push(element);
-    }
-  }
-
-  // Log the clickable elements
-  for (const clickableElement of clickableElements) {
-    const outerHTML = await clickableElement.evaluate((el) => el.outerHTML);
-    console.log('Clickable Element:', outerHTML);
-  }
-
-  await browser.close();
-})();
-
 /*
       input: ["INPUT", "TEXTAREA"],
       select_item: ["LI", "TD", "OPTION"],
@@ -396,3 +338,75 @@ const validGroups = {
               elementsSet = filteredElements;
             }
               */
+
+
+            /*
+                      const visibleRange = { top: localState.scrollY, bottom: localState.scrollY + segmentHeight };
+
+          const filteredElements = [];
+          // Might need to change to account for modals
+          for (const element of elementsSet) {
+            const rect = await page.evaluate(el => {
+              const boundingRect = el.getBoundingClientRect();
+              return {
+                  top: boundingRect.top,
+                  bottom: boundingRect.bottom,
+                  height: boundingRect.height,
+                  y: boundingRect.y
+              };
+            }, element);
+        
+            if (!rect) {
+              if (verbose) {
+                // no rect for outerhtml e lement
+                console.log("no rect for element", await element.evaluate((el) => el.outerHTML));
+              }
+              filteredElements.push(element);
+              continue;
+            }
+        
+            // Apply filtering logic
+            if (
+              !((rect.y + rect.height) > visibleRange.top && rect.top < visibleRange.bottom) &&
+              !(rect.y < 1600)
+            ) {
+              continue; // Skip elements outside the viewport or range
+            }
+        
+            filteredElements.push(element);
+          }
+
+          if (verbose) {
+            console.log("elementsSet length", elementsSet.length);
+          }
+          if (verbose) {
+            console.log("filtering by visible range", filteredElements.length);
+          }
+          if (filteredElements.length > 0) {
+            elementsSet = filteredElements;
+          }
+            */
+
+                            /*
+                // Additional check for children's innerText and placeholder
+                if (!isMatch) {
+                  const children = await element.locator('*').all(); // Get all children
+                  for (const child of children) {
+
+                    const isHTMLElement = await child.evaluate((node) => node instanceof HTMLElement);
+                    if (!isHTMLElement) {
+                      continue; // Skip non-HTML elements
+                    }
+                
+                    const childInnerText = ((await child.innerText()) || '').trim().toLowerCase();
+                    const childPlaceholder = ((await child.getAttribute('placeholder')) || '').trim().toLowerCase();
+                    if (
+                      (childInnerText && (childInnerText.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(childInnerText))) ||
+                      (childPlaceholder && (childPlaceholder.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(childPlaceholder)))
+                    ) {
+                      isMatch = true;
+                      break; // Exit loop early if a match is found
+                    }
+                  }
+                }
+                */

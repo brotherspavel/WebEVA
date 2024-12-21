@@ -2,9 +2,9 @@ const axios = require('axios');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { OBSERVATION_MESSAGES, UPDATE_TASK, GET_ACTION, DESCRIBE_ACTION, TASK_COMPLETE, GET_URL, GET_ELEMENT, SUMMARIZE_TASK } = require('./messages');
+const { OBSERVATION_MESSAGES, UPDATE_TASK, GET_ACTION, DESCRIBE_ACTION, TASK_COMPLETE, GET_URL, GET_ELEMENT, SUMMARIZE_TASK, CUSTOM_ACTION, IDENTIFY_OPTIONS } = require('./messages');
 
-const MAX_OBSERVATIONS_GET_NEXT_ACTION = 7
+const MAX_OBSERVATIONS_GET_NEXT_ACTION = 6
 const MAX_OBSERVATIONS_NEW_OBSERVATION = 7
 const MAX_OBSERVATIONS_UPDATE_TASK = 13
 
@@ -387,7 +387,7 @@ async function getNextAction(observations, current_screenshot = placeholderScree
               type: "string",
             },
           },
-          required: ["action_and_exaplanation"],
+          required: ["user_action"],
           additionalProperties: false,
         },
       },
@@ -665,7 +665,7 @@ async function getDescribeAction(task, current_action, current_screenshot = plac
           properties: {
             action: {
               type: "string",
-              enum: ["text", "click", "scroll_up", "scroll_down", "go_back"],
+              enum: ["text", "click", "scroll_up", "scroll_down", "go_back", "custom"],
               description: "The type of action to be performed.",
             },
             inner_text: {
@@ -682,6 +682,80 @@ async function getDescribeAction(task, current_action, current_screenshot = plac
             },
           },
           required: ["action", "is_icon"],
+          additionalProperties: false,
+        },
+      },
+    },
+  };
+  
+  try {
+    // Make the API call using axios
+    const response = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      jsonPayload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
+        },
+      }
+    );
+
+    // Handle the response
+    if (response.status === 200) {
+      return response.data.choices[0].message;
+    } else {
+      console.error(`Error: ${response.status}, ${response.data}`);
+      return null;
+    }
+  } catch (error) {
+    console.error(`An error occurred: ${error}`);
+    return null;
+  }
+}
+
+async function getCustomAction(task, current_action, current_screenshot = placeholderScreenshot) {
+  const webMessages = [
+    {
+      role: "system",
+      content: CUSTOM_ACTION,
+    },
+    {
+      role: "user",
+      content: [
+        {
+          type: "text",
+          text: `
+            **Task**: ${task}
+            **Current Action**: ${current_action}
+          `,
+        },
+        {
+          type: "image_url",
+          image_url: {
+            url: current_screenshot,
+          },
+        }
+      ],
+    },
+  ];
+  
+  const jsonPayload = {
+    model: process.env.model, // Replace with your desired model name
+    messages: webMessages,
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "action_schema",
+        schema: {
+          type: "object",
+          properties: {
+            javascript_code: {
+              type: "string",
+              description: "JavaScript code that will execute the required action directly on the page.",
+            },
+          },
+          required: ["javascript_code"],
           additionalProperties: false,
         },
       },
@@ -796,6 +870,75 @@ async function getElement(task, current_action, elementsList = [], currentScreen
   }
 }
 
+async function getOptions(current_action, elementsList = []) {
+  const webMessages = [
+    {
+      role: "system",
+      content: IDENTIFY_OPTIONS,
+    },
+    {
+      role: "user",
+      content: [
+        {
+          type: "text",
+          text: `
+            **action**: ${current_action}
+            **elements**: ${JSON.stringify(elementsList, null, 2)}
+          `,
+        },
+      ],
+    },
+  ];
+
+  const jsonPayload = {
+    model: process.env.model, // Replace with your desired model name
+    messages: webMessages,
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "action_schema",
+        schema: {
+          type: "object",
+          properties: {
+            initial_option_value: {
+              type: "string",
+            },
+            final_option_value: {
+              type: "string",
+            },
+          },
+          required: ["initial_option_value", "final_option_value"],
+          additionalProperties: false,
+        },
+      },
+    },
+  };
+ 
+  try {
+    // Make the API call using axios
+    const response = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      jsonPayload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
+        },
+      }
+    );
+
+    // Handle the response
+    if (response.status === 200) {
+      return response.data.choices[0].message;
+    } else {
+      console.error(`Error: ${response.status}, ${response.data}`);
+      return null;
+    }
+  } catch (error) {
+    console.error(`An error occurred: ${error}`);
+    return null;
+  }
+}
 
 module.exports = {
   getNextAction,
@@ -806,4 +949,6 @@ module.exports = {
   getIsTaskComplete,
   getElement,
   getSummarizedTask,
+  getCustomAction,
+  getOptions,
 };

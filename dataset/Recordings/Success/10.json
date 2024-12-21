@@ -1,0 +1,73 @@
+{
+    "title": "10",
+    "timeout": 15000,
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 1383,
+            "height": 911,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.google.com.hk/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.google.com.hk/",
+                    "title": "Google"
+                }
+            ]
+        },
+        {
+            "type": "navigate",
+            "url": "https://scholar.google.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://scholar.google.com/",
+                    "title": "Google Scholar"
+                }
+            ]
+        },
+        {
+            "type": "change",
+            "value": "Artificial Intelligence",
+            "selectors": [
+                [
+                    "aria/Search[role=\"textbox\"]"
+                ],
+                [
+                    "#gs_hdr_tsi"
+                ],
+                [
+                    "xpath///*[@id=\"gs_hdr_tsi\"]"
+                ],
+                [
+                    "pierce/#gs_hdr_tsi"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q=Artificial+Intelligence&btnG=",
+                    "title": "Google Scholar"
+                }
+            ]
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        }
+    ]
+}

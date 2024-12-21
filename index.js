@@ -1,5 +1,5 @@
-const { getNextAction, getWeb, getDescribeAction, getObservation, getUpdateTask, getIsTaskComplete, getElement, getSummarizedTask } = require('./api');
-const { isClickable } = require('./utils');
+const { getNextAction, getWeb, getDescribeAction, getObservation, getUpdateTask, getIsTaskComplete, getElement, getSummarizedTask, getCustomAction, getOptions } = require('./api');
+const { isEnabled } = require('./utils');
 const { chromium } = require('playwright');
 const fs = require('fs');
 const csv = require('csv-parser');
@@ -17,6 +17,7 @@ const newUrlWait = 3000;  // when button click
 const sameUrlWait = 500; // scroll
 
 const MAX_STEPS = 25;
+const MAX_ERRORS = 3;
 
 const state = {
   stateAction: null,
@@ -30,20 +31,20 @@ const state = {
   prevImage: null,
   task_answer: "",
   currentStep: 0,
-  numTries: 0,
-  scrollIndex: 0,
+  scrollY: 0,
+  errors: 0,
 
   // Method to reset the state
   reset(prompt) {
     this.browsing = true;
     this.currentStep = 0;
-    this.numTries = this.numTries + 1;
+    this.errors = 0;
     this.newUrl = null;
     this.currentTask = prompt;
     this.messages = [...initialMessages]; // Reset to initial messages
     this.retrieveMessages = [...initialRetrieveMessages]; // Reset to initial retrieve messages
     this.nextActionText = "";
-    this.scrollIndex = 0;
+    this.scrollY = 0;
     this.screenshotIndex = 0;
   },
 };
@@ -68,6 +69,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
   const context = await browser.newContext();
   const page = await context.newPage();
   await page.setViewportSize({ width: segmentWidth, height: segmentHeight });
+  await page.setDefaultTimeout(150000); // Default timeout set to 60 seconds
 
   const localState = {...state, task: task};
 
@@ -78,7 +80,9 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
     localState.stateAction = "getWeb";
   }
 
-  while (localState.stateAction !== null && localState.currentStep < MAX_STEPS) {
+  while (localState.stateAction !== null && localState.currentStep < MAX_STEPS 
+    && localState.errors < MAX_ERRORS 
+  ) {
     switch (localState.stateAction) {
       case 'getWeb':
         //getWeb(previousTask, previousObservation, currentTask, currentUrl)
@@ -99,7 +103,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
             localState.stateAction = "getNextAction";
           }
         }).catch((e) => {
-          localState.currentStep++;
+          localState.errors += 1;
           console.error("web browsing error", e);
         });
         break;
@@ -119,13 +123,59 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
           const gotobase64ImageUrl = `data:image/png;base64,${gotobase64Image}`;
           localState.prevImage = localState.currentImage;
           localState.currentImage = gotobase64ImageUrl;
+          localState.scrollY = 0;
           localState.stateAction = "getNextAction";
         } catch (e) {
           console.error("goto error", e);
+          localState.errors += 1;
           localState.stateAction = "getNextAction";
         }
         break;
       case 'observe':
+        try {
+        const scrollY = await page.evaluate(() => window.scrollY);
+        localState.scrollY = scrollY;
+        await page.evaluate(() => {
+          // Define selectors for various modals and backdrops
+            const modalSelectors = [
+              '[role="dialog"]', // ARIA role for accessibility
+              '.modal', // Bootstrap or custom modals
+              '.overlay', // Generic overlays
+              '.popup', // Generic popups
+              '[role="presentation"]', // Material-UI modals
+            ];
+          
+            const backdropSelectors = [
+              '.modal-backdrop', // Bootstrap backdrops
+              '.overlay-backdrop', // Generic overlay backdrops
+              '.popup-backdrop', // Generic popup backdrops
+            ];
+        
+            // Query and close all modals
+            const modals = document.querySelectorAll(modalSelectors.join(','));
+            modals.forEach((modal) => {
+              // Try to find a close button within the modal
+              const closeButton = modal.querySelector('[aria-label="Close"], .close, .btn-close, [data-dismiss="modal"]');
+              if (closeButton) {
+                closeButton.click(); // Simulate a click on the close button
+              } else {
+                modal.remove(); // Fallback: Remove modal from DOM
+              }
+            });
+          
+            // Query and remove all backdrops
+            const backdrops = document.querySelectorAll(backdropSelectors.join(','));
+            backdrops.forEach((backdrop) => backdrop.remove());
+          
+            // Reset body scroll locking caused by modals
+            document.body.style.overflow = '';
+            document.body.classList.remove('modal-open');
+          });
+        } catch (e) {
+          localState.errors += 1;
+          console.error("closing popup error", e);
+        }
+        
         // Take a screenshot as a Base64-encoded string
         await page.screenshot({ path: 'screenshot.png' });
         const base64Image = fs.readFileSync('screenshot.png', 'base64');
@@ -136,9 +186,9 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
         await getObservation(localState.observations, localState.task, localState.user_action, localState.prevImage, localState.currentImage).then((res) => {
           const content = JSON.parse(res.content);
 
-          if (verbose) {
-            console.log("getObservation", content);
-          }
+
+          console.log(content.observation);
+
           localState.observations = [...localState.observations, {
             task: localState.task,
             user_action: localState.user_action,
@@ -146,6 +196,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
           }];
           localState.stateAction = "getUpdatedTask";
         }).catch((e) => {
+          localState.errors += 1;
           localState.stateAction = "getUpdatedTask";
           console.error("getObservation error", e);
         });
@@ -165,7 +216,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
               // Get dimensions of the screenshot
               const { height, width } = await sharp(screenshotBuffer).metadata();
               // Define the base yOffset and height for cropping
-              const baseYOffset = localState.scrollIndex * yOffset;
+              const baseYOffset = localState.scrollY;
               const cropHeight = segmentHeight;
   
               // Initialize sections
@@ -217,12 +268,14 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
                   observation: content.task_answer,
                 }];
               }).catch((e) => {
+                localState.errors += 1;
                 console.error("getSummarizedTask error", e);
               });
             }
           } 
         }).catch((e) => {
           localState.stateAction = "getNextAction";
+          localState.errors += 1;
           console.error("isTaskCompleteError error", e);
         });
 
@@ -234,10 +287,9 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
         if (taskUpdate) {
           await getUpdateTask(localState.observations, localState.web, localState.currentImage).then((res) => {
             const content = JSON.parse(res.content);
-            if  (verbose) {
-              console.log("getUpdateTask", content);
-            }
+
             if (content.update_task) {
+              console.log("Updating Task", content.updated_task_goal);
               localState.task = content.updated_task_goal;
               localState.stateAction = "getWeb";
             } else {
@@ -246,6 +298,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
           }).catch((e) => {
             localState.stateAction = "getNextAction";
             console.error("getUpdateTask error", e);
+            localState.errors += 1;
           });
         } else {
           localState.stateAction = "getNextAction";
@@ -266,6 +319,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
           localState.stateAction = "getDescribeAction";
         }).catch((e) => {
           console.error("getNextAction error", e);
+          localState.errors += 1;
         });
         break;
       case "getDescribeAction":
@@ -276,7 +330,6 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
             console.log("getDescribeAction", content);
           }
           localState.actionJson = content;
-          localState.stateAction = "scrollDown";
 
           switch (localState.actionJson?.action) {
             case "go_back":
@@ -294,13 +347,16 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
             case "text":
               localState.stateAction = "text";
               break;
+            case "custom":
+              localState.stateAction = "custom";
+              break;
             default:
               localState.stateAction = "scrollDown";
             }
-          
         }).catch((e) => {
           console.error("getDescribeAction error", e);
           localState.stateAction = "getNextAction";
+          localState.errors += 1;
         });
         break;
       case "goBack":
@@ -308,23 +364,48 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
         await page.waitForTimeout(newUrlWait);
         localState.stateAction = "observe";
         break;
+      case "custom":
+        // Unstable, works perfectly fine for things like wait, but situational for more complex actions
+        await getCustomAction(localState.task, localState.user_action, localState.currentImage).then(async (res) => {
+          const content = JSON.parse(res.content);
+          if (verbose) {
+            console.log("getCustomAction", content.javascript_code);
+          }
+          try {
+            await page.evaluate(async ({ code }) => {
+              // Execute the passed string as JavaScript code
+              const executeCode = new Function(code);
+              return executeCode();
+            }, { code: content.javascript_code });
+
+            await page.waitForTimeout(sameUrlWait);
+          } catch (e) {
+            console.error("custom action error", e);
+            localState.errors += 1;
+          }
+          localState.stateAction = "observe";
+        }).catch((e) => {
+          console.error("getCustomAction error", e);
+          localState.stateAction = "observe";
+          localState.errors += 1;
+        });
+        break;
       case "scrollUp":
         // cannot be less than 0
-        localState.scrollIndex = localState.scrollIndex - 1 < 0 ? 0 : localState.scrollIndex - 1;
+        const newScrollY = localState.scrollY - yOffset;
+        if (newScrollY < 0) {
+          newScrollY = 0;
+        }
         await page.evaluate((scrollTo) => {
           window.scrollTo(0, Number(scrollTo));
-        }, localState.scrollIndex * yOffset);
+        }, newScrollY);
         await page.waitForTimeout(sameUrlWait);
         localState.stateAction = "observe";
         break
       case "scrollDown":
-        localState.scrollIndex = localState.scrollIndex + 1;
-        if (verbose) {
-          console.log("scrollingTo", localState.scrollIndex * yOffset);
-        }
         await page.evaluate((scrollTo) => {
           window.scrollTo(0, Number(scrollTo));
-        }, localState.scrollIndex * yOffset);
+        }, localState.scrollY + yOffset);
         
         await page.waitForTimeout(sameUrlWait);
         localState.stateAction = "observe";
@@ -334,133 +415,175 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
         try {
           let elementsSet = null;
 
-          if (localState.actionJson.action === "click" && localState.actionJson.is_clickable_without_visible_text) {
-            const buttons = await page.locator('button').elementHandles();
-            const links = await page.locator('a').elementHandles();
-            // Get all visible inputs (excluding hidden) and ensure they are clickable
-            const visibleInputs = await page.locator(
-              'input:not([type="hidden"])'
-            ).elementHandles();
+          if (localState.actionJson.action === "click" && localState.actionJson.no_inner_text_click) {
+            const elements = page.locator('button, a, img, input:not([type="hidden"]):is([type="button"], [type="submit"], [type="reset"], [type="checkbox"], [type="radio"], [type="image"], [type="file"])');
 
-            // Filter only clickable inputs
-            const clickableInputs = visibleInputs.filter(async (input) => {
-              const type = await input.evaluate((el) => el.getAttribute('type') || '');
-              // Check if the type is a known clickable type
-              return ['button', 'submit', 'reset', 'checkbox', 'radio', 'image', 'file'].includes(type.toLowerCase());
-            });
-            // Combine buttons and links
-            const elements = [...buttons, ...links, ...clickableInputs];
-
-            // Filter elements without innerText
-            const elementsWithoutInnerText = [];
-            for (const element of elements) {
-                const innerText = await element.evaluate(el => el.innerText.trim());
-                const placeHolder = await element.evaluate(el => el.getAttribute('placeholder'));
-                if (!innerText && !placeHolder) { // If innerText is empty or consists of only whitespace
-                    elementsWithoutInnerText.push(element);
-                }
-            }
-
-            elementsSet = elementsWithoutInnerText;
-          } else if (localState.actionJson.action === "click") {
-            // Get all elements on the page
-            const allElements = await page.locator('*').elementHandles();
-
-            // Filter to find clickable elements
-            const clickableElements = [];
-            for (const element of allElements) {
-              if (await isClickable(element)) {
-                clickableElements.push(element);
-              }
-            }
-
-            elementsSet = clickableElements;
-            // Retrieve elements matching innerText and placeholder
-            const elementsInnerText = await page
-            .locator(`text=${localState.actionJson.inner_text}`)
-            .elementHandles();
-
-            const elementsPlaceholder = await page
-            .locator(`[placeholder="${localState.actionJson.inner_text}"]`)
-            .elementHandles();
-
-            // Combine elements matching innerText and placeholder
-            const matchingElements = [...elementsInnerText, ...elementsPlaceholder];
+            // Filter elements without innerText or placeholder
+            const elementsWithoutInnerText = await Promise.all(
+              (await elements.all()).map(async (element) => {
+                const innerText = (await element.innerText()) || ''; // Get innerText
+                const trimmedText = innerText.trim(); // Trim whitespace
+                const placeholder = (await element.getAttribute('placeholder')) || '';
+                const isEnabled = await element.isEnabled();
+                const isVisible = await element.isVisible();
             
-            if (matchingElements.length > 0) {
-              elementsSet = matchingElements;
+                // Exclude elements with any non-empty innerText or placeholder
+                if (!trimmedText && !placeholder && isEnabled && isVisible) {
+                  // Get the bounding box of the element
+                  const boundingBox = await element.boundingBox();
+                  if (boundingBox) {
+                    const { y, height } = boundingBox;
+                    const bottomY = y + height;
+            
+                    // Check if any part of the element overlaps the range [scrollY, scrollY + segmentHeight]
+                    const isWithinRange = bottomY >= localState.scrollY && y <= localState.scrollY + segmentHeight;
+                    return isWithinRange ? element : null;
+                  }
+                }
+                return null;
+              })
+            );
+
+            // Store the filtered elements
+            elementsSet = elementsWithoutInnerText.filter(Boolean);
+          } else if (localState.actionJson.action === "click") {
+
+            const stringToMatch = (localState.actionJson.inner_text || "").toLowerCase();
+
+            // Normalize the string to match
+            const normalizedStringToMatch = stringToMatch.trim() || 'probablynotneededbutjustincase';
+            // Create a locator that includes elements matching both specific tags and navigation-related classes
+            const elements = page.locator(`
+              button:not([disabled]), 
+              a[href], 
+              option, 
+              select, 
+              td, 
+              input:is([type="button"], [type="submit"], [type="reset"], [type="checkbox"], [type="radio"], [type="image"], [type="file"], [type="text"])
+            `);
+            console.log("Elements.length", (await elements.all()).length);
+            // Filter elements based on conditions
+            const interactableElements = await Promise.all(
+              (await elements.all()).map(async (element) => {
+                // Check if the element is an HTMLElement
+                const isInteractable =
+                  (await element.isEnabled()) &&
+                  (await element.isVisible() || !!(await element.getAttribute('href')));
+            
+                if (!isInteractable) {
+                  return null;
+                }
+                // Check element's innerText and placeholder
+                const innerText = ((await element.innerText()) || '').trim().toLowerCase();
+                const placeholder = ((await element.getAttribute('placeholder')) || '').trim().toLowerCase();
+
+                let isMatch =
+                  (innerText && (innerText.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(innerText))) ||
+                  (placeholder && (placeholder.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(placeholder)));
+            
+                return isMatch ? element : null;
+              })
+            );
+            
+            // Filter out null values and assign to elementsSet
+            elementsSet = interactableElements.filter(Boolean);
+            if (verbose) {
+              console.log("elementsSet1 length", elementsSet.length);
             }
 
-            const filteredElements = [];
-            for (const clickableElement of clickableElements) {
-              for (const matchingElement of matchingElements) {
-                const isSameElement = await clickableElement.evaluate(
-                  (el1, el2) => el1 === el2,
-                  matchingElement
-                );
-                if (isSameElement) {
-                  filteredElements.push(clickableElement);
-                  break; // If a match is found, move to the next clickableElement
-                }
+            if (!elementsSet.length) {
+              // not regular clickable elements, try div, span, and p
+              const elementsDivSpan = page.locator(`
+                div, 
+                span,
+                p
+              `);
+              
+              // Filter elements based on conditions
+              const interactableElementsDivSpan = await Promise.all(
+                (await elementsDivSpan.all()).map(async (element) => {
+                  const isInteractable =
+                    (await element.isEnabled()) &&
+                    (await element.isVisible() || !!(await element.getAttribute('href')));
+              
+                  if (!isInteractable) {
+                    return null;
+                  }
+
+                  //Check if the element has children
+                  const hasNoChildren = await element.evaluate((node) => node.childElementCount === 0);
+                  if (!hasNoChildren) {
+                    return null; // Skip elements with children
+                  }
+                  // Check element's innerText and placeholder
+                  const innerText = ((await element.innerText()) || '').trim().toLowerCase();
+                  const placeholder = ((await element.getAttribute('placeholder')) || '').trim().toLowerCase();
+              
+                  let isMatch =
+                    (innerText && (innerText.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(innerText))) ||
+                    (placeholder && (placeholder.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(placeholder)));
+              
+
+                  return isMatch ? element : null;
+                })
+              );
+            
+              elementsSet = interactableElementsDivSpan.filter(Boolean);
+
+              if (verbose) {
+                console.log("elementsSetDivSpan length", elementsSet.length);
               }
             }
- 
-            if (filteredElements.length > 0) {
-              elementsSet = filteredElements;
+
+            // sometimes it interprets text images as inner text, this is to catch those cases
+            if (!elementsSet.length) {
+              const elements2 = page.locator('button, a, img, input:not([type="hidden"]):is([type="button"], [type="submit"], [type="reset"], [type="checkbox"], [type="radio"], [type="image"], [type="file"])');
+
+              // Filter elements without innerText or placeholder
+              const elementsWithoutInnerText = await Promise.all(
+                (await elements2.all()).map(async (element) => {
+                  const innerText = (await element.innerText()) || ''; // Get innerText
+                  const trimmedText = innerText.trim(); // Trim whitespace
+                  const placeholder = (await element.getAttribute('placeholder')) || '';
+                  const isEnabled = await element.isEnabled();
+                  const isVisible = await element.isVisible();
+              
+                  // Exclude elements with any non-empty innerText or placeholder
+                  if (!trimmedText && !placeholder && isEnabled && isVisible) {
+                    // Get the bounding box of the element
+                    const boundingBox = await element.boundingBox();
+                    if (boundingBox) {
+                      const { y, height } = boundingBox;
+                      const bottomY = y + height;
+              
+                      // Check if any part of the element overlaps the range [scrollY, scrollY + segmentHeight]
+                      const isWithinRange = bottomY >= localState.scrollY && y <= localState.scrollY + segmentHeight;
+                      return isWithinRange ? element : null;
+                    }
+                  }
+                  return null;
+                })
+              );
+  
+              // Store the filtered elements
+              elementsSet = elementsWithoutInnerText.filter(Boolean);
             }
           } else if (localState.actionJson.action === "text") {
-            // Select all input elements that are not of type hidden, checkbox, range, or submit
-            const validInputs = await page.locator(
+            // Locate all valid inputs and textareas
+            const validInputs = page.locator(
               'input:not([type="hidden"]):not([type="checkbox"]):not([type="range"]):not([type="submit"]), textarea'
-            ).elementHandles();
+            );
 
-            // Combine with other filters if needed
-            elementsSet = [...new Set(validInputs)];
+            // Filter only visible elements
+            const visibleEnabledElements = await validInputs.filter(async (element) => {
+              return await element.isVisible() && await element.isEnabled();
+            }).all();
+
+            // Use the filtered elements directly
+            elementsSet = visibleEnabledElements; // Locators of visible elements
           }
-
-          const visibleRange = { top: localState.scrollIndex*yOffset, bottom: localState.scrollIndex*yOffset + segmentHeight };
-
-          const filteredElements = [];
-          // Might need to change to account for modals
-          for (const element of elementsSet) {
-            const rect = await page.evaluate(el => {
-              const boundingRect = el.getBoundingClientRect();
-              return {
-                  top: boundingRect.top,
-                  bottom: boundingRect.bottom,
-                  height: boundingRect.height,
-                  y: boundingRect.y
-              };
-            }, element);
-        
-            if (!rect) {
-              if (verbose) {
-                // no rect for outerhtml e lement
-                console.log("no rect for element", await element.evaluate((el) => el.outerHTML));
-              }
-              filteredElements.push(element);
-              continue;
-            }
-        
-            // Apply filtering logic
-            if (
-              !((rect.y + rect.height) > visibleRange.top && rect.top < visibleRange.bottom) &&
-              !(rect.y < 1600)
-            ) {
-              continue; // Skip elements outside the viewport or range
-            }
-        
-            filteredElements.push(element);
-          }
-
           if (verbose) {
             console.log("elementsSet length", elementsSet.length);
-          }
-          if (verbose) {
-            console.log("filtering by visible range", filteredElements.length);
-          }
-          if (filteredElements.length > 0) {
-            elementsSet = filteredElements;
           }
 
           let specificElement = null; 
@@ -469,13 +592,41 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
             specificElement = elementsSet[0];
           } else if (elementsSet.length > 1) {
             const elementDetails = [];
+
             for (const [index, element] of elementsSet.entries()) {
-              // Add unique_element_id as an attribute to the element
-              await element.evaluate((el, id) => {
-                  el.setAttribute('element_id', id);
+              // Stop the loop if elementDetails reaches 100
+              if (elementDetails.length >= 100) {
+                if (verbose) {
+                  console.log("Reached maximum allowed elements (199). Stopping loop.");
+                }
+                break;
+              }
+            
+              // Combine operations into a single evaluate call for efficiency
+              const elementData = await element.evaluate((el, id) => {
+                // Add a unique attribute
+                el.setAttribute('element_id', id);
+
+                // Extract the tag name and attributes
+                const tagName = el.tagName.toLowerCase();
+                const attributes = Array.from(el.attributes)
+                  .map(attr => `${attr.name}="${attr.value}"`)
+                  .join(' ');
+
+                // Construct the first-layer outerHTML
+                const outerHTML = `<${tagName} ${attributes}></${tagName}>`;
+
+                // Extract innerText
+                const innerText = el.innerText || ''; // Handle missing innerText
+
+                return {
+                  element_id: id, // Unique identifier
+                  outerHTML: outerHTML, // First-layer outerHTML
+                  innerText: innerText, // Text content
+                };
               }, index + 1);
-          
-              elementDetails.push(await element.evaluate((el) => el.outerHTML));
+
+              elementDetails.push(elementData);
             }
 
             await getElement(localState.task, localState.user_action, elementDetails, localState.currentImage).then(async (res) => {
@@ -483,40 +634,101 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
               if (verbose) {
                 console.log("getElement", content);
               }
-              specificElement = await page.$(`[element_id="${content.element_id}"]`);
+              specificElement = page.locator(`[element_id="${content.element_id}"]`);
             }).catch((e) => {
               console.error("getElement error", e);
+              localState.errors += 1;
             });
-
-            // remove element_id attribute
-            for (const element of elementsSet) {
-              await element.evaluate((el) => {
-                  el.removeAttribute('element_id');
-              });
-            }
-          }
-          if (verbose) {
-            //tag
-            console.log("specificElement's tag", await specificElement?.evaluate(el => el.tagName));
-            // inner text
-            console.log("specificElement's innerText", await specificElement?.evaluate(el => el.innerText));
           }
           if (specificElement) {
-            if (localState.actionJson.action === "click") {
-              try {
-                await specificElement.click();
-              } catch (e) {
-                console.error("click error", e);
-              }
+            const tagName = (await specificElement.evaluate(el => el.tagName) || '').toLowerCase();
+
+            if (tagName === 'option' || tagName === 'select') {
+              let selectElement1; 
+              // Find the parent <select> element as a locator
+              if (tagName === 'option') {
+                selectElement1 = specificElement.locator('xpath=ancestor::select');
+              } else {
+                selectElement1 = specificElement;
+              }            
+              // Retrieve all <option> elements within the parent <select>
+              const optionsOuterHTML = await selectElement.evaluate((select) =>
+                Array.from(select.options).map(option => option.outerHTML)
+              );
+            
+              await getOptions(localState.user_action, optionsOuterHTML).then(async (res) => {
+                try {
+                  const content = JSON.parse(res.content);
+                  if (verbose) {
+                    console.log("getOptions", content);
+                  }
+                  const newOptionValue = content.final_option_value;
+                  if (!newOptionValue) {
+                    throw new Error("Invalid option value returned by getOptions.");
+                  }
+                  // Change the value of the <select> element and dispatch a change event
+                  await selectElement1.evaluate((selectElement, value) => {
+                    selectElement.value = value; // Set the new value
+                    const event = new Event('change', { bubbles: true }); // Create a 'change' event
+                    selectElement.dispatchEvent(event); // Dispatch the event
+                  }, newOptionValue);
+                } catch (error) {
+                  console.error("Error processing getOptions result:", error);
+                  localState.errors += 1;
+                }
+              }).catch((e) => {
+                console.error("getOptions error", e);
+                localState.errors += 1;
+              });
             } else {
-              await specificElement.focus(); // Ensure the input field is focused
-              await specificElement.fill(localState.actionJson.input_value); // Clear and type the provided content
-              await page.keyboard.press("Enter"); // Simulate pressing Enter while the input is focused
+              if (localState.actionJson.action === "click") {
+                try {
+                  // Check for href since hrefs aren't always clickable
+                  const href = await specificElement.getAttribute('href');
+                
+                  if (href) {
+                    const absoluteHref = new URL(href, page.url()).href; // Resolves relative URLs based on the current page URL
+                    await page.goto(absoluteHref);
+                  } else {
+                    // Ensure the element is visible and enabled before clicking
+                    if (await specificElement.isVisible() && await specificElement.isEnabled()) {
+                      await specificElement.click();
+                    } else {
+                      throw new Error('Element is not interactable');
+                    }
+                  }
+                } catch (e) {
+                  console.error("Error interacting with the element:", e);
+                  localState.errors += 1;
+                }
+              } else {
+                try {
+                  const inputValue = localState.actionJson.input_value || '';
+                
+                  // Ensure the input is interactable
+                  if (await specificElement.isVisible() && await specificElement.isEnabled()) {
+                    await specificElement.focus(); // Explicitly focus on the input element
+                    await specificElement.fill(inputValue); // Clears and types the value
+                    await page.keyboard.press("Enter"); // Simulate pressing Enter
+                  } 
+                } catch (e) {
+                  console.error("Error interacting with the input element:", e);
+                  localState.errors += 1;
+                }
+              }
             }
           }
           await page.waitForTimeout(newUrlWait);
+          // remove element_id attribute
+
+          for (const element of elementsSet) {
+            await element.evaluate((el) => {
+                el.removeAttribute('element_id');
+            });
+          }
         } catch (e) {
-          console.error("click or text error", e);
+          console.log("error during clicking or text", e)
+          localState.errors += 1;
         }
         localState.stateAction = "observe";
         break;
@@ -532,11 +744,12 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
   }
 }
 
-/*
+
+
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./WV_WA.csv')
+fs.createReadStream('./webvoyager/booking.csv')
 .pipe(csv())
 .on('data', (row) => {
   data.push(row);
@@ -547,13 +760,18 @@ fs.createReadStream('./WV_WA.csv')
       continue;
     }
     try {
-      console.log("try", row.ques, row.web);
-      //{ task, web = "", verbose = false, headless = false, taskUpdate = true }
-      const { observations } = await browse({ task: row.ques, web: row.web, verbose: true, headless: false, taskUpdate: false });
-      const filePath = `./${row.id}.csv`;
+      let resObs = [];
+      try {
+        console.log("Row", row)
+        const { observations } = await browse({ task: row.ques, web: row.web, verbose: true, headless: false, taskUpdate: false });
+        resObs = observations;
+      } catch (e) {
+        console.error(`Error browsing ${row.id}`, e);
+      }
+      const filePath = `./webvoyager/booking/${row.id}.csv`;
       const stream = fs.createWriteStream(filePath);
   
-      writeToStream(stream, observations, { headers: true })
+      writeToStream(stream, resObs, { headers: true })
         .on('finish', () => {
           console.log(`CSV file written successfully! ${row.id}`);
         })
@@ -568,17 +786,17 @@ fs.createReadStream('./WV_WA.csv')
 .on('error', (err) => {
   console.error('Error reading the CSV file:', err);
 });
+
+
+/*
+Go on Wikipedia and search for Mozart, find his last composition, play this song on youtube.
+Go on google and find two high school math problems, solve these with WolframAlpha.
 */
 
-//Go on wikipedia and search for the singer Faye Wong, note what song she sang for Final Fantasy, then go on youtube and play the song there.
-//Find a stephen chow movie from 1995 on google, just 1, note its name, find its price on amazon, and compare it with ebay
-//Find two high school math problems, solve with wolfram alpha, report the answers
-
-// go to wikipedia and find the musician mozart, find his last composition, go to youtube and play it
+/*
 async function navigate() {
-  await browse({ task: "go to wikipedia and find the musician mozart, find his last composition, go to youtube and play it", web: "", verbose: true, headless: false, taskUpdate: true });
+  await browse({ task: "Go on Wikipedia and search for Mozart, find his last composition, play this song on youtube.", web: "", verbose: false, headless: false, taskUpdate: true });
 }
 
 navigate();
-
-// To DO, add price slider. Add javascript functionality (so it can drag, wait, etc.)
+*/

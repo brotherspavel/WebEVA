@@ -1,0 +1,93 @@
+{
+    "title": "Info-8",
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 910,
+            "height": 754,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.google.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.google.com/",
+                    "title": "Google"
+                }
+            ]
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.usa.gov/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.usa.gov/",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Get or renew a passport"
+                ],
+                [
+                    "#block-usagov-content li:nth-of-type(1) > a"
+                ],
+                [
+                    "xpath///*[@id=\"block-usagov-content\"]/div/div[4]/ul/li[1]/a"
+                ],
+                [
+                    "pierce/#block-usagov-content li:nth-of-type(1) > a"
+                ],
+                [
+                    "text/Get or renew"
+                ]
+            ],
+            "offsetY": 13.15625,
+            "offsetX": 59,
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.usa.gov/passport",
+                    "title": "U.S. passports | USAGov"
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Apply for a new adult passport"
+                ],
+                [
+                    "li:nth-of-type(1) h2"
+                ],
+                [
+                    "xpath///*[@id=\"main-content\"]/div/div[3]/div/ul/li[1]/a/div[1]/h2"
+                ],
+                [
+                    "pierce/li:nth-of-type(1) h2"
+                ]
+            ],
+            "offsetY": 25.21875,
+            "offsetX": 246,
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.usa.gov/apply-adult-passport",
+                    "title": "Apply for a new adult passport | USAGov"
+                }
+            ]
+        }
+    ]
+}

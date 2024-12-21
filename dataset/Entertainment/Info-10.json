@@ -1,0 +1,119 @@
+{
+    "title": "Info-10",
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 910,
+            "height": 754,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.google.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.google.com/",
+                    "title": "Google"
+                }
+            ]
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.drugs.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.drugs.com/",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search Drugs.com"
+                ],
+                [
+                    "#livesearch-main"
+                ],
+                [
+                    "xpath///*[@id=\"livesearch-main\"]"
+                ],
+                [
+                    "pierce/#livesearch-main"
+                ]
+            ],
+            "offsetY": 29.75,
+            "offsetX": 124.25
+        },
+        {
+            "type": "change",
+            "value": "ibuprofen",
+            "selectors": [
+                [
+                    "aria/Search Drugs.com Featured Searches Ozempic Rybelsus Botox Qulipta Advanced Search Phonetic Search"
+                ],
+                [
+                    "#livesearch-main"
+                ],
+                [
+                    "xpath///*[@id=\"livesearch-main\"]"
+                ],
+                [
+                    "pierce/#livesearch-main"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.drugs.com/search.php?searchterm=ibuprofen",
+                    "title": "Ibuprofen - Search results. Page 1 of about 18581 results"
+                }
+            ]
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Side Effects"
+                ],
+                [
+                    "div.ddc-search-result-featured li:nth-of-type(1) > a"
+                ],
+                [
+                    "xpath///*[@id=\"content\"]/div[2]/div[2]/div/ul/li[1]/a"
+                ],
+                [
+                    "pierce/div.ddc-search-result-featured li:nth-of-type(1) > a"
+                ]
+            ],
+            "offsetY": 9.6328125,
+            "offsetX": 70,
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.drugs.com/sfx/ibuprofen-side-effects.html",
+                    "title": ""
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,255 @@
+{
+    "title": "Info-3",
+    "timeout": 15000,
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 910,
+            "height": 754,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.google.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.google.com/",
+                    "title": "Google"
+                }
+            ]
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.epicurious.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.epicurious.com/",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/search"
+                ],
+                [
+                    "div.StackedNavigationBottom-dpcakX [data-testid='TextFieldInput__q']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"TextFieldInput__q\"]"
+                ],
+                [
+                    "pierce/div.StackedNavigationBottom-dpcakX [data-testid='TextFieldInput__q']"
+                ]
+            ],
+            "offsetY": 17,
+            "offsetX": 213
+        },
+        {
+            "type": "change",
+            "value": "pasta",
+            "selectors": [
+                [
+                    "aria/search"
+                ],
+                [
+                    "div.StackedNavigationBottom-dpcakX [data-testid='TextFieldInput__q']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"TextFieldInput__q\"]"
+                ],
+                [
+                    "pierce/div.StackedNavigationBottom-dpcakX [data-testid='TextFieldInput__q']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.epicurious.com/search?q=pasta",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "[data-testid='RowWrapper'] > div > div > div > div.BaseWrap-sc-gjQpdd div.dropdown__value-container"
+                ],
+                [
+                    "xpath///*[@data-testid=\"dropdown-wrapper\"]/div/div/div[1]"
+                ],
+                [
+                    "pierce/[data-testid='RowWrapper'] > div > div > div > div.BaseWrap-sc-gjQpdd div.dropdown__value-container"
+                ]
+            ],
+            "offsetY": 17.203125,
+            "offsetX": 96
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "#react-select-sort-option-2"
+                ],
+                [
+                    "xpath///*[@id=\"react-select-sort-option-2\"]"
+                ],
+                [
+                    "pierce/#react-select-sort-option-2"
+                ]
+            ],
+            "offsetY": 26.203125,
+            "offsetX": 67
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Cold Soy Milk Noodles With Chili Crisp[role=\"heading\"]"
+                ],
+                [
+                    "div.search_result_item-669032e02c97d17073539d6b h2"
+                ],
+                [
+                    "xpath///*[@data-testid=\"ClampWrapper\"]/div/a/h2"
+                ],
+                [
+                    "pierce/div.search_result_item-669032e02c97d17073539d6b h2"
+                ],
+                [
+                    "text/Cold Soy Milk"
+                ]
+            ],
+            "offsetY": 38.9609375,
+            "offsetX": 36,
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.epicurious.com/recipes/food/views/ba-syn-cold-soy-milk-noodles-chili-crisp",
+                    "title": "Cold Soy Milk Noodles With Chili Crisp Recipe | Epicurious"
+                }
+            ]
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "c"
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.allrecipes.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.allrecipes.com/",
+                    "title": "Allrecipes | Recipes, How-Tos, Videos and More"
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/[role=\"banner\"]",
+                    "aria/Search the site"
+                ],
+                [
+                    "#mntl-search-form--open__search-input"
+                ],
+                [
+                    "xpath///*[@id=\"mntl-search-form--open__search-input\"]"
+                ],
+                [
+                    "pierce/#mntl-search-form--open__search-input"
+                ]
+            ],
+            "offsetY": 24,
+            "offsetX": 136.7109375
+        },
+        {
+            "type": "change",
+            "value": "pasta",
+            "selectors": [
+                [
+                    "aria/[role=\"banner\"]",
+                    "aria/Search the site"
+                ],
+                [
+                    "#mntl-search-form--open__search-input"
+                ],
+                [
+                    "xpath///*[@id=\"mntl-search-form--open__search-input\"]"
+                ],
+                [
+                    "pierce/#mntl-search-form--open__search-input"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.allrecipes.com/search?q=pasta",
+                    "title": "[pasta] Results from Allrecipes"
+                }
+            ]
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "#mntl-card-list-card--extendable_1-0 span > span"
+                ],
+                [
+                    "xpath///*[@id=\"mntl-card-list-card--extendable_1-0\"]/div[2]/span/span"
+                ],
+                [
+                    "pierce/#mntl-card-list-card--extendable_1-0 span > span"
+                ]
+            ],
+            "offsetY": 15.109375,
+            "offsetX": 236,
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.allrecipes.com/recipe/13009/pasta-fagioli/",
+                    "title": "Pasta e Fagioli (Pasta and Beans) Recipe"
+                }
+            ]
+        }
+    ]
+}

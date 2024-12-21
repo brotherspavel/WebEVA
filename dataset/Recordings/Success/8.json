@@ -1,0 +1,93 @@
+{
+    "title": "8",
+    "timeout": 15000,
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 1383,
+            "height": 911,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.google.com.hk/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.google.com.hk/",
+                    "title": "Google"
+                }
+            ]
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.wikipedia.org/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.wikipedia.org/",
+                    "title": "Wikipedia"
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search Wikipedia"
+                ],
+                [
+                    "#searchInput"
+                ],
+                [
+                    "xpath///*[@id=\"searchInput\"]"
+                ],
+                [
+                    "pierce/#searchInput"
+                ]
+            ],
+            "offsetY": 19.15625,
+            "offsetX": 139.09375
+        },
+        {
+            "type": "change",
+            "value": "George Washington",
+            "selectors": [
+                [
+                    "aria/Search Wikipedia"
+                ],
+                [
+                    "#searchInput"
+                ],
+                [
+                    "xpath///*[@id=\"searchInput\"]"
+                ],
+                [
+                    "pierce/#searchInput"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://en.wikipedia.org/wiki/George_Washington",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        }
+    ]
+}

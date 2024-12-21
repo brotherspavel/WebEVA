@@ -1,0 +1,110 @@
+{
+    "title": "11",
+    "timeout": 15000,
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 1383,
+            "height": 911,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.google.com.hk/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.google.com.hk/",
+                    "title": "Google"
+                }
+            ]
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.britannica.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.britannica.com/",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "#global-nav-homepage-section > div.p-0"
+                ],
+                [
+                    "xpath///*[@id=\"global-nav-homepage-section\"]/div[2]"
+                ],
+                [
+                    "pierce/#global-nav-homepage-section > div.p-0"
+                ]
+            ],
+            "offsetY": 8,
+            "offsetX": 441
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search Britannica"
+                ],
+                [
+                    "#__c2cf7bef-3a07-44d0-8cd0-6524ceb061d4"
+                ],
+                [
+                    "xpath///*[@id=\"__c2cf7bef-3a07-44d0-8cd0-6524ceb061d4\"]"
+                ],
+                [
+                    "pierce/#__c2cf7bef-3a07-44d0-8cd0-6524ceb061d4"
+                ]
+            ],
+            "offsetY": 18,
+            "offsetX": 81.5
+        },
+        {
+            "type": "change",
+            "value": "Thomas Edison",
+            "selectors": [
+                [
+                    "aria/Search Britannica"
+                ],
+                [
+                    "#__c2cf7bef-3a07-44d0-8cd0-6524ceb061d4"
+                ],
+                [
+                    "xpath///*[@id=\"__c2cf7bef-3a07-44d0-8cd0-6524ceb061d4\"]"
+                ],
+                [
+                    "pierce/#__c2cf7bef-3a07-44d0-8cd0-6524ceb061d4"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.britannica.com/search?query=Thomas+Edison",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        }
+    ]
+}

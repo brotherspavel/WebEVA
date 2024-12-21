@@ -1,0 +1,134 @@
+{
+    "title": "e2",
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 459,
+            "height": 744,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "chrome://new-tab-page/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "chrome://new-tab-page/",
+                    "title": "New Tab"
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search Google or type a URL"
+                ],
+                [
+                    "ntp-app",
+                    "#searchbox",
+                    "#input"
+                ],
+                [
+                    "pierce/#searchbox",
+                    "pierce/#input"
+                ]
+            ],
+            "offsetY": 20,
+            "offsetX": 133.83333206176758
+        },
+        {
+            "type": "change",
+            "value": "https://www.wolframalpha.com/",
+            "selectors": [
+                [
+                    "aria/Search Google or type a URL"
+                ],
+                [
+                    "ntp-app",
+                    "#searchbox",
+                    "#input"
+                ],
+                [
+                    "pierce/#searchbox",
+                    "pierce/#input"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.wolframalpha.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.wolframalpha.com/",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/WolframAlpha input field"
+                ],
+                [
+                    "input"
+                ],
+                [
+                    "xpath///*[@id=\"__next\"]/div/main/div/div/div[1]/section/div/form/div[1]/div/input"
+                ],
+                [
+                    "pierce/input"
+                ]
+            ],
+            "offsetY": 16.90625,
+            "offsetX": 133.33333206176758
+        },
+        {
+            "type": "change",
+            "value": "William Shakespeare.",
+            "selectors": [
+                [
+                    "aria/WolframAlpha input field"
+                ],
+                [
+                    "input"
+                ],
+                [
+                    "xpath///*[@id=\"__next\"]/div/main/div/div/div[1]/section/div/form/div[1]/div/input"
+                ],
+                [
+                    "pierce/input"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        }
+    ]
+}

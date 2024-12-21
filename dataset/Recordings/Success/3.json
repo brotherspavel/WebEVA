@@ -1,0 +1,139 @@
+{
+    "title": "3",
+    "timeout": 15000,
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 1383,
+            "height": 911,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.google.com.hk/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.google.com.hk/",
+                    "title": "Google"
+                }
+            ]
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.w3schools.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.w3schools.com/",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search our tutorials"
+                ],
+                [
+                    "#search2"
+                ],
+                [
+                    "xpath///*[@id=\"search2\"]"
+                ],
+                [
+                    "pierce/#search2"
+                ]
+            ],
+            "offsetY": 20,
+            "offsetX": 275
+        },
+        {
+            "type": "change",
+            "value": "web development",
+            "selectors": [
+                [
+                    "aria/Search our tutorials"
+                ],
+                [
+                    "#search2"
+                ],
+                [
+                    "xpath///*[@id=\"search2\"]"
+                ],
+                [
+                    "pierce/#search2"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/"
+                ],
+                [
+                    "#learntocode_searchbtn"
+                ],
+                [
+                    "xpath///*[@id=\"learntocode_searchbtn\"]"
+                ],
+                [
+                    "pierce/#learntocode_searchbtn"
+                ]
+            ],
+            "offsetY": 11,
+            "offsetX": 41
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/"
+                ],
+                [
+                    "#learntocode_searchbtn"
+                ],
+                [
+                    "xpath///*[@id=\"learntocode_searchbtn\"]"
+                ],
+                [
+                    "pierce/#learntocode_searchbtn"
+                ]
+            ],
+            "offsetY": 33,
+            "offsetX": 44
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search W3Schools"
+                ],
+                [
+                    "#belowtopnav form a"
+                ],
+                [
+                    "xpath///*[@id=\"listofsearchresults\"]/a"
+                ],
+                [
+                    "pierce/#belowtopnav form a"
+                ],
+                [
+                    "text/Search W3Schools"
+                ]
+            ],
+            "offsetY": 26,
+            "offsetX": 256
+        }
+    ]
+}

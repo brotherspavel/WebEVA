@@ -4,6 +4,10 @@ const isClickable = async (elementHandle) => {
     const tagName = el.tagName.toLowerCase();
     const role = el.getAttribute('role');
     const type = el.getAttribute('type');
+    const classList = el.classList || el.className || '';
+
+    // Define navigation-related terms
+    const navRelatedTerms = ['nav', 'menu', 'link', 'navbar', 'navigation', 'select'];
 
     // Check if the element is inherently or custom clickable
     return (
@@ -20,7 +24,9 @@ const isClickable = async (elementHandle) => {
       role === 'link' ||
       role === 'menuitem' ||
       role === 'tab' ||
-      role === 'radio'
+      role === 'radio' ||
+      // Check if the class contains any of the navigation-related terms
+      (classList && navRelatedTerms.some(term => classList.toString().toLowerCase().includes(term)))
     );
   });
 };

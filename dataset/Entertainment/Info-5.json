@@ -1,0 +1,163 @@
+{
+    "title": "Info-5",
+    "timeout": 15000,
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 910,
+            "height": 754,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.google.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.google.com/",
+                    "title": "Google"
+                }
+            ]
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.accuweather.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.accuweather.com/",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search your Address, City or Zip Code"
+                ],
+                [
+                    "input"
+                ],
+                [
+                    "xpath//html/body/div/div[1]/div[3]/div/div[1]/div[1]/form/input"
+                ],
+                [
+                    "pierce/input"
+                ]
+            ],
+            "offsetY": 6.75,
+            "offsetX": 98.5
+        },
+        {
+            "type": "change",
+            "value": "seattle",
+            "selectors": [
+                [
+                    "aria/Search your Address, City or Zip Code"
+                ],
+                [
+                    "input"
+                ],
+                [
+                    "xpath//html/body/div/div[1]/div[3]/div/div[1]/div[1]/form/input"
+                ],
+                [
+                    "pierce/input"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.page-hero-content > div"
+                ],
+                [
+                    "xpath//html/body/div/div[1]/div[3]/div"
+                ],
+                [
+                    "pierce/div.page-hero-content > div"
+                ]
+            ],
+            "offsetY": 126,
+            "offsetX": 58.5,
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.accuweather.com/en/us/seattle/98104/weather-forecast/351409?city=seattle",
+                    "title": "Seattle, WA Weather Forecast | AccuWeather"
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Address, City or Zip Code"
+                ],
+                [
+                    "input"
+                ],
+                [
+                    "xpath//html/body/div/div[1]/div[2]/div/div/div/div[1]/form/input"
+                ],
+                [
+                    "pierce/input"
+                ]
+            ],
+            "offsetY": 6.75,
+            "offsetX": 21.65625
+        },
+        {
+            "type": "change",
+            "value": "bangkok",
+            "selectors": [
+                [
+                    "aria/Address, City or Zip Code"
+                ],
+                [
+                    "input"
+                ],
+                [
+                    "xpath//html/body/div/div[1]/div[2]/div/div/div/div[1]/form/input"
+                ],
+                [
+                    "pierce/input"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "body > div"
+                ],
+                [
+                    "xpath//html/body/div"
+                ],
+                [
+                    "pierce/body > div"
+                ]
+            ],
+            "offsetY": 161,
+            "offsetX": 553,
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.accuweather.com/en/th/bangkok/318849/weather-forecast/318849?city=bangkok",
+                    "title": "Bangkok, Bangkok, Thailand Weather Forecast | AccuWeather"
+                }
+            ]
+        }
+    ]
+}

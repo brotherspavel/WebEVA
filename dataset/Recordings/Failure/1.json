@@ -1,0 +1,186 @@
+{
+    "title": "1",
+    "timeout": 15000,
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 1383,
+            "height": 911,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.google.com.hk/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.google.com.hk/",
+                    "title": "Google"
+                }
+            ]
+        },
+        {
+            "type": "navigate",
+            "url": "chrome://new-tab-page/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "chrome://new-tab-page/",
+                    "title": "New Tab"
+                }
+            ]
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.youtube.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.youtube.com/",
+                    "title": "YouTube"
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "https://www.youtube.com/",
+            "selectors": [
+                [
+                    "thumbnail-hover-overlay-view-model > div"
+                ],
+                [
+                    "xpath///*[@id=\"content\"]/yt-lockup-view-model/div/div[1]/yt-collection-thumbnail-view-model/yt-collections-stack/div/div[3]/yt-thumbnail-view-model/thumbnail-hover-overlay-view-model/div"
+                ],
+                [
+                    "pierce/thumbnail-hover-overlay-view-model > div"
+                ]
+            ],
+            "offsetY": 109,
+            "offsetX": 123
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.khanacademy.org/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.khanacademy.org/",
+                    "title": "Khan Academy"
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search for courses, skills, and videos"
+                ],
+                [
+                    "[data-testid='navbar-search-button']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"navbar-search-button\"]"
+                ],
+                [
+                    "pierce/[data-testid='navbar-search-button']"
+                ]
+            ],
+            "offsetY": 18,
+            "offsetX": 124.90625
+        },
+        {
+            "type": "change",
+            "value": "Python programming",
+            "selectors": [
+                [
+                    "aria/Search for courses, skills, and videos"
+                ],
+                [
+                    "[data-testid='page-search-box']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"page-search-box\"]"
+                ],
+                [
+                    "pierce/[data-testid='page-search-box']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.khanacademy.org/search?referer=%2F&page_search_query=Python+programming",
+                    "title": "Khan Academy"
+                }
+            ]
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div._4tj2nhv fieldset:nth-of-type(1) > div:nth-of-type(5) > div"
+                ],
+                [
+                    "xpath///*[@id=\"search_results\"]/section/div[3]/div[1]/div[2]/aside/div/fieldset[1]/div[5]/div"
+                ],
+                [
+                    "pierce/div._4tj2nhv fieldset:nth-of-type(1) > div:nth-of-type(5) > div"
+                ]
+            ],
+            "offsetY": 11.40625,
+            "offsetX": 21
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Courses, Units, and Lessons[role=\"checkbox\"]"
+                ],
+                [
+                    "#desktop-search-filter-content-kind-Topic"
+                ],
+                [
+                    "xpath///*[@id=\"desktop-search-filter-content-kind-Topic\"]"
+                ],
+                [
+                    "pierce/#desktop-search-filter-content-kind-Topic"
+                ]
+            ],
+            "offsetY": 8.40625,
+            "offsetX": 5
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div._xu2jcg > div:nth-of-type(2) button"
+                ],
+                [
+                    "xpath///*[@id=\"next-page-button\"]"
+                ],
+                [
+                    "pierce/div._xu2jcg > div:nth-of-type(2) button"
+                ]
+            ],
+            "offsetY": 7.40625,
+            "offsetX": 39.46875
+        }
+    ]
+}

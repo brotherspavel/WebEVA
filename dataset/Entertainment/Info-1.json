@@ -1,0 +1,217 @@
+{
+  "title": "Info1",
+  "steps": [
+    {
+      "type": "setViewport",
+      "width": 968,
+      "height": 778,
+      "deviceScaleFactor": 1,
+      "isMobile": false,
+      "hasTouch": false,
+      "isLandscape": false
+    },
+    {
+      "type": "navigate",
+      "url": "https://www.google.com/",
+      "assertedEvents": [
+        {
+          "type": "navigation",
+          "url": "https://www.google.com/",
+          "title": "Google"
+        }
+      ]
+    },
+    {
+      "type": "navigate",
+      "url": "https://www.allrecipes.com/",
+      "assertedEvents": [
+        {
+          "type": "navigation",
+          "url": "https://www.allrecipes.com/",
+          "title": ""
+        }
+      ]
+    },
+    {
+      "type": "click",
+      "target": "main",
+      "selectors": [
+        [
+          "aria/[role=\"banner\"]",
+          "aria/Search the site"
+        ],
+        [
+          "#mntl-search-form--open__search-input"
+        ],
+        [
+          "xpath///*[@id=\"mntl-search-form--open__search-input\"]"
+        ],
+        [
+          "pierce/#mntl-search-form--open__search-input"
+        ]
+      ],
+      "offsetY": 18,
+      "offsetX": 112.7109375
+    },
+    {
+      "type": "change",
+      "value": "lasagna",
+      "selectors": [
+        [
+          "aria/[role=\"banner\"]",
+          "aria/Search the site"
+        ],
+        [
+          "#mntl-search-form--open__search-input"
+        ],
+        [
+          "xpath///*[@id=\"mntl-search-form--open__search-input\"]"
+        ],
+        [
+          "pierce/#mntl-search-form--open__search-input"
+        ]
+      ],
+      "target": "main"
+    },
+    {
+      "type": "click",
+      "target": "main",
+      "selectors": [
+        [
+          "div.mntl-header__menu-top form svg"
+        ],
+        [
+          "xpath///*[@id=\"mntl-search-form--open_1-0\"]/form/div/button/svg"
+        ],
+        [
+          "pierce/div.mntl-header__menu-top form svg"
+        ]
+      ],
+      "offsetY": 12,
+      "offsetX": 13.2109375,
+      "assertedEvents": [
+        {
+          "type": "navigation",
+          "url": "https://www.allrecipes.com/search?q=lasagna",
+          "title": "[lasagna] Results from Allrecipes"
+        }
+      ]
+    },
+    {
+      "type": "click",
+      "target": "main",
+      "selectors": [
+        [
+          "#mntl-card-list-card--extendable_1-0 span > span"
+        ],
+        [
+          "xpath///*[@id=\"mntl-card-list-card--extendable_1-0\"]/div[2]/span/span"
+        ],
+        [
+          "pierce/#mntl-card-list-card--extendable_1-0 span > span"
+        ],
+        [
+          "text/World's Best"
+        ]
+      ],
+      "offsetY": 16.296875,
+      "offsetX": 177
+    },
+    {
+      "type": "navigate",
+      "url": "https://www.simplyrecipes.com/",
+      "assertedEvents": [
+        {
+          "type": "navigation",
+          "url": "https://www.simplyrecipes.com/",
+          "title": ""
+        }
+      ]
+    },
+    {
+      "type": "click",
+      "target": "main",
+      "selectors": [
+        [
+          "aria/Open search form",
+          "aria/[role=\"image\"]"
+        ],
+        [
+          "button.js-open-search > svg"
+        ],
+        [
+          "xpath///*[@id=\"header__search_1-0\"]/button[1]/svg"
+        ],
+        [
+          "pierce/button.js-open-search > svg"
+        ]
+      ],
+      "offsetY": 13,
+      "offsetX": 13
+    },
+    {
+      "type": "change",
+      "value": "lasagna",
+      "selectors": [
+        [
+          "aria/Search the site..."
+        ],
+        [
+          "#header__search_1-0 > input"
+        ],
+        [
+          "xpath///*[@id=\"header__search_1-0\"]/input"
+        ],
+        [
+          "pierce/#header__search_1-0 > input"
+        ]
+      ],
+      "target": "main"
+    },
+    {
+      "type": "keyDown",
+      "target": "main",
+      "key": "Enter",
+      "assertedEvents": [
+        {
+          "type": "navigation",
+          "url": "https://www.simplyrecipes.com/search?q=lasagna",
+          "title": ""
+        }
+      ]
+    },
+    {
+      "type": "keyUp",
+      "key": "Enter",
+      "target": "main"
+    },
+    {
+      "type": "click",
+      "target": "main",
+      "selectors": [
+        [
+          "aria/A slice of vegetarian lasagna on a plate VEGETARIAN Vegetarian Spinach and Mushroom Lasagna 2 hrs"
+        ],
+        [
+          "#card_1-0"
+        ],
+        [
+          "xpath///*[@id=\"card_1-0\"]"
+        ],
+        [
+          "pierce/#card_1-0"
+        ]
+      ],
+      "offsetY": 318.2890625,
+      "offsetX": 195,
+      "assertedEvents": [
+        {
+          "type": "navigation",
+          "url": "https://www.simplyrecipes.com/recipes/vegetarian_spinach_and_mushroom_lasagna/",
+          "title": ""
+        }
+      ]
+    }
+  ],
+  "timeout": 30000
+}

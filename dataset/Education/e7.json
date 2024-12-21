@@ -1,0 +1,164 @@
+{
+    "title": "e7",
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 459,
+            "height": 744,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "chrome://new-tab-page/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "chrome://new-tab-page/",
+                    "title": "New Tab"
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search Google or type a URL"
+                ],
+                [
+                    "ntp-app",
+                    "#searchbox",
+                    "#input"
+                ],
+                [
+                    "pierce/#searchbox",
+                    "pierce/#input"
+                ]
+            ],
+            "offsetY": 19,
+            "offsetX": 197.83333206176758
+        },
+        {
+            "type": "change",
+            "value": "Wolfram Alpha",
+            "selectors": [
+                [
+                    "aria/Search Google or type a URL"
+                ],
+                [
+                    "ntp-app",
+                    "#searchbox",
+                    "#input"
+                ],
+                [
+                    "pierce/#searchbox",
+                    "pierce/#input"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.google.com/search?q=Wolfram+Alpha&oq=Wolfram+Alpha&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIJCAEQRRg7GI8CMgYIAhBFGDsyBggDEEUYPDIGCAQQRRg8MgYIBRBFGDzSAQg0NDBqMGoxNagCCLACAQ&sourceid=chrome&ie=UTF-8",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.google.com/search?q=Wolfram+Alpha&oq=Wolfram+Alpha&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIJCAEQRRg7GI8CMgYIAhBFGDsyBggDEEUYPDIGCAQQRRg8MgYIBRBFGDzSAQg0NDBqMGoxNagCCLACAQ&sourceid=chrome&ie=UTF-8",
+                    "title": "Wolfram Alpha - Google Search"
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Wolfram|Alpha: Computational Intelligence"
+                ],
+                [
+                    "#rso > div.hlcw0c > div > div > div > div h3"
+                ],
+                [
+                    "xpath///*[@id=\"rso\"]/div[1]/div/div/div/div/div/div/div/div[1]/div/span/a/h3"
+                ],
+                [
+                    "pierce/#rso > div.hlcw0c > div > div > div > div h3"
+                ],
+                [
+                    "text/Wolfram|Alpha:"
+                ]
+            ],
+            "offsetY": 18.46875,
+            "offsetX": 250,
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.wolframalpha.com/",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/WolframAlpha input field"
+                ],
+                [
+                    "input"
+                ],
+                [
+                    "xpath///*[@id=\"__next\"]/div/main/div/div/div[1]/section/div/form/div[1]/div/input"
+                ],
+                [
+                    "pierce/input"
+                ]
+            ],
+            "offsetY": 8.90625,
+            "offsetX": 164.33333206176758
+        },
+        {
+            "type": "change",
+            "value": "Pablo Picasso",
+            "selectors": [
+                [
+                    "aria/WolframAlpha input field"
+                ],
+                [
+                    "input"
+                ],
+                [
+                    "xpath///*[@id=\"__next\"]/div/main/div/div/div[1]/section/div/form/div[1]/div/input"
+                ],
+                [
+                    "pierce/input"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        }
+    ]
+}

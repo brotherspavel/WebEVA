@@ -1,0 +1,158 @@
+{
+    "title": "Info-9",
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 910,
+            "height": 754,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.google.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.google.com/",
+                    "title": "Google"
+                }
+            ]
+        },
+        {
+            "type": "navigate",
+            "url": "https://www.thumbtack.com/",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.thumbtack.com/",
+                    "title": ""
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search on Thumbtack[role=\"combobox\"]"
+                ],
+                [
+                    "div:nth-of-type(4) [data-test='search-input']"
+                ],
+                [
+                    "xpath///*[@data-test=\"search-input\"]"
+                ],
+                [
+                    "pierce/div:nth-of-type(4) [data-test='search-input']"
+                ]
+            ],
+            "offsetY": 29.703125,
+            "offsetX": 145
+        },
+        {
+            "type": "change",
+            "value": "plumber",
+            "selectors": [
+                [
+                    "aria/Search on Thumbtack[role=\"combobox\"]"
+                ],
+                [
+                    "div:nth-of-type(4) [data-test='search-input']"
+                ],
+                [
+                    "xpath///*[@data-test=\"search-input\"]"
+                ],
+                [
+                    "pierce/div:nth-of-type(4) [data-test='search-input']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Zip code"
+                ],
+                [
+                    "div.search-bar_zipCodeSectionVariant__UTA_0 > input"
+                ],
+                [
+                    "xpath///*[@id=\"uniqueId4\"]/div/div[2]/input"
+                ],
+                [
+                    "pierce/div.search-bar_zipCodeSectionVariant__UTA_0 > input"
+                ]
+            ],
+            "offsetY": 37.703125,
+            "offsetX": 79.0859375
+        },
+        {
+            "type": "change",
+            "value": "10001",
+            "selectors": [
+                [
+                    "aria/Zip code"
+                ],
+                [
+                    "div.search-bar_zipCodeSectionVariant__UTA_0 > input"
+                ],
+                [
+                    "xpath///*[@id=\"uniqueId4\"]/div/div[2]/input"
+                ],
+                [
+                    "pierce/div.search-bar_zipCodeSectionVariant__UTA_0 > input"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-test='search-button']"
+                ],
+                [
+                    "xpath///*[@data-test=\"search-button\"]"
+                ],
+                [
+                    "pierce/[data-test='search-button']"
+                ]
+            ],
+            "offsetY": 37.703125,
+            "offsetX": 27.0859375,
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://www.thumbtack.com/instant-results/?deprecate_spr=true&keyword_pk=388006923577835530&search_bar_query_pk=535100612695302154&zip_code=10001&ir_referrer=HOME_PAGE_SEARCH&user_query_pk=535100620679045120",
+                    "title": "Best Plumbers near 10001 - Thumbtack"
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.ml-auto > svg"
+                ],
+                [
+                    "xpath//html/body/div[7]/div/div/section[1]/div/div[1]/div/div[2]/svg"
+                ],
+                [
+                    "pierce/div.ml-auto > svg"
+                ]
+            ],
+            "offsetY": 21,
+            "offsetX": 16
+        }
+    ]
+}
