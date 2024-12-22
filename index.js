@@ -1,5 +1,4 @@
 const { getNextAction, getWeb, getDescribeAction, getObservation, getUpdateTask, getIsTaskComplete, getElement, getSummarizedTask, getCustomAction, getOptions } = require('./api');
-const { isEnabled } = require('./utils');
 const { chromium } = require('playwright');
 const fs = require('fs');
 const csv = require('csv-parser');
@@ -425,10 +424,11 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
                 const placeholder = (await element.getAttribute('placeholder')) || '';
                 const isEnabled = await element.isEnabled();
                 const isVisible = await element.isVisible();
-            
+                
                 // Exclude elements with any non-empty innerText or placeholder
                 if (!trimmedText && !placeholder && isEnabled && isVisible) {
                   // Get the bounding box of the element
+        
                   const boundingBox = await element.boundingBox();
                   if (boundingBox) {
                     const { y, height } = boundingBox;
@@ -559,6 +559,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
                       const isWithinRange = bottomY >= localState.scrollY && y <= localState.scrollY + segmentHeight;
                       return isWithinRange ? element : null;
                     }
+                    return element;
                   }
                   return null;
                 })
@@ -627,7 +628,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
 
               elementDetails.push(elementData);
             }
-
+            console.log("elementDetails", elementDetails)
             await getElement(localState.task, localState.user_action_and_explanation, elementDetails, localState.currentImage).then(async (res) => {
               const content = JSON.parse(res.content);
               if (verbose) {
@@ -750,7 +751,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/cambridge.csv')
+fs.createReadStream('./webvoyager/coursera.csv')
 .pipe(csv())
 .on('data', (row) => {
   data.push(row);
@@ -769,7 +770,7 @@ fs.createReadStream('./webvoyager/cambridge.csv')
       } catch (e) {
         console.error(`Error browsing ${row.id}`, e);
       }
-      const filePath = `./webvoyager/cambridge/${row.id}.csv`;
+      const filePath = `./webvoyager/coursera/${row.id}.csv`;
       const stream = fs.createWriteStream(filePath);
   
       writeToStream(stream, resObs, { headers: true })
@@ -788,16 +789,3 @@ fs.createReadStream('./webvoyager/cambridge.csv')
   console.error('Error reading the CSV file:', err);
 });
 
-
-/*
-Go on Wikipedia and search for Mozart, find his last composition, play this song on youtube.
-Go on google and find two high school math problems, solve these with WolframAlpha.
-*/
-
-/*
-async function navigate() {
-  await browse({ task: "Go on Wikipedia and search for Mozart, find his last composition, play this song on youtube.", web: "", verbose: false, headless: false, taskUpdate: true });
-}
-
-navigate();
-*/
