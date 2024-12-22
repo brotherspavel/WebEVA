@@ -17,7 +17,7 @@ const newUrlWait = 3000;  // when button click
 const sameUrlWait = 500; // scroll
 
 const MAX_STEPS = 25;
-const MAX_ERRORS = 3;
+const MAX_ERRORS = 8;
 
 const state = {
   stateAction: null,
@@ -142,7 +142,6 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
               '.modal', // Bootstrap or custom modals
               '.overlay', // Generic overlays
               '.popup', // Generic popups
-              '[role="presentation"]', // Material-UI modals
             ];
           
             const backdropSelectors = [
@@ -751,7 +750,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/coursera.csv')
+fs.createReadStream('./webvoyager/cambridge.csv')
 .pipe(csv())
 .on('data', (row) => {
   data.push(row);
@@ -770,7 +769,7 @@ fs.createReadStream('./webvoyager/coursera.csv')
       } catch (e) {
         console.error(`Error browsing ${row.id}`, e);
       }
-      const filePath = `./webvoyager/coursera/${row.id}.csv`;
+      const filePath = `./webvoyager/cambridge/${row.id}.csv`;
       const stream = fs.createWriteStream(filePath);
   
       writeToStream(stream, resObs, { headers: true })
