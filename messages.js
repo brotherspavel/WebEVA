@@ -181,7 +181,7 @@ Choose one of the following actions and provide the required details:
 {
   "action": "One of: text, click, scroll_up, scroll_down, go_back, custom",
   "inner_text": "The innerText or placeholder of the element for text or click actions. Make sure it is visible in the screenshot.",
-  "is_clickable_without_visible_text": "true/false. Identifies if its an icon/image/checkbox type. Indicates whether the clickable element lacks visible inner text. This is true for icons, clickable inputs, X buttons, image buttons, and icon buttons.
+  "is_clickable_without_visible_text": "true/false. Identifies if its an icon/image type. Indicates whether the clickable element lacks visible inner text. This is true for icons, X buttons, image buttons, and icon buttons.
   "input_value": "The exact text to input into the field for text actions, using essential keywords only. Leave blank for other actions"
 }
 

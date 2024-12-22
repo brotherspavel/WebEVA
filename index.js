@@ -472,10 +472,28 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
                 if (!isInteractable) {
                   return null;
                 }
-                // Check element's innerText and placeholder
-                const innerText = ((await element.innerText()) || '').trim().toLowerCase();
-                const placeholder = ((await element.getAttribute('placeholder')) || '').trim().toLowerCase();
+                // Check if the element is a checkbox
+                const isCheckbox = (await element.getAttribute('type')) === 'checkbox';
 
+                let innerText;
+                if (isCheckbox) {
+                  // Traverse up the DOM tree to find a parent with innerText
+                  let currentElement = element;
+                  while (currentElement) {
+                    const parent = await currentElement.locator('..');
+                    innerText = ((await parent.innerText()) || '').trim().toLowerCase();
+                    if (innerText) {
+                      break;
+                    }
+                    currentElement = parent;
+                  }
+                } else {
+                  // Use the element's own innerText otherwise
+                  innerText = ((await element.innerText()) || '').trim().toLowerCase();
+                }
+
+                const placeholder = ((await element.getAttribute('placeholder')) || '').trim().toLowerCase();
+                
                 let isMatch =
                   (innerText && (innerText.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(innerText))) ||
                   (placeholder && (placeholder.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(placeholder)));
