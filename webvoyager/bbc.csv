@@ -1,4 +1,6 @@
 web_name,id,ques,web
+BBC News,BBC News--0,Find a report on the BBC News website about recent developments in renewable energy technologies in the UK.,https://www.bbc.com/news/
+BBC News,BBC News--1,Read the latest health-related news article published on BBC News and summarize the key points discussed.,https://www.bbc.com/news/
 BBC News,BBC News--2,Read the latest article regarding the environmental impacts of deforestation published within the last two days.,https://www.bbc.com/news/
 BBC News,BBC News--3,"Check the leaderboard for Golf's DP World Tour in the SPORT section, what was the name of the most recent tournament, and how many teams have a Total of -10 strokes.",https://www.bbc.com/news/
 BBC News,BBC News--4,Find the latest article regarding the economic implications of climate change in Europe as reported by BBC News and summarize the central points.,https://www.bbc.com/news/
@@ -39,3 +41,4 @@ BBC News,BBC News--38,Find news related to the storm in Weather section and indi
 BBC News,BBC News--39,"Check the Horse Racing results in Sport section, browse all the games that took place yesterday and see which one had the highest number of runners.",https://www.bbc.com/news/
 BBC News,BBC News--40,Read and summarise a recent story on BBC News about people being injured or killed in wars.,https://www.bbc.com/news/
 BBC News,BBC News--41,"Find Golf in BBC News, check the Leaderboard at this point in Women's Majors and count which country has the most players in the top 20? Which player has the best score amongst the Australian players and in what place.",https://www.bbc.com/news/
+
