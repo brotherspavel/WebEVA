@@ -134,6 +134,8 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
         try {
         const scrollY = await page.evaluate(() => window.scrollY);
         localState.scrollY = scrollY;
+
+        // Close popups, these sometimes appear when scrapping the same site multiple times.
         await page.evaluate(() => {
           // Define selectors for various modals and backdrops
             const modalSelectors = [
@@ -141,6 +143,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
               '.modal', // Bootstrap or custom modals
               '.overlay', // Generic overlays
               '.popup', // Generic popups
+              '[role="presentation"]', // ARIA role for presentation
             ];
           
             const backdropSelectors = [
@@ -157,7 +160,11 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
               if (closeButton) {
                 closeButton.click(); // Simulate a click on the close button
               } else {
-                modal.remove(); // Fallback: Remove modal from DOM
+                // check if modal is dialog, modals are only popups if has remove button.
+                const isDialogOrPresentation = modal.getAttribute('role') === 'dialog' || modal.getAttribute('role') === 'presentation';
+                if (!isDialogOrPresentation) {
+                  modal.remove(); // Remove the modal if it's not a dialog
+                }
               }
             });
           
@@ -493,7 +500,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
                 }
 
                 const placeholder = ((await element.getAttribute('placeholder')) || '').trim().toLowerCase();
-                
+
                 let isMatch =
                   (innerText && (innerText.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(innerText))) ||
                   (placeholder && (placeholder.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(placeholder)));
@@ -724,11 +731,12 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
               } else {
                 try {
                   const inputValue = localState.actionJson.input_value || '';
-                
+
                   // Ensure the input is interactable
-                  if (await specificElement.isVisible() && await specificElement.isEnabled()) {
+                  if (await specificElement.isEnabled()) {
                     await specificElement.focus(); // Explicitly focus on the input element
-                    await specificElement.fill(inputValue); // Clears and types the value
+                    //await specificElement.fill(inputValue); // Clears and types the value
+                    await specificElement.pressSequentially(inputValue, { delay: 100 });
                     await page.keyboard.press("Enter"); // Simulate pressing Enter
                   } 
                 } catch (e) {
@@ -769,7 +777,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/coursera.csv')
+fs.createReadStream('./webvoyager/flights.csv')
 .pipe(csv())
 .on('data', (row) => {
   data.push(row);
@@ -783,12 +791,12 @@ fs.createReadStream('./webvoyager/coursera.csv')
       let resObs = [];
       try {
         console.log("Row", row)
-        const { observations } = await browse({ task: row.ques, web: row.web, verbose: true, headless: true, taskUpdate: false });
+        const { observations } = await browse({ task: row.ques, web: row.web, verbose: true, headless: false, taskUpdate: false });
         resObs = observations;
       } catch (e) {
         console.error(`Error browsing ${row.id}`, e);
       }
-      const filePath = `./webvoyager/coursera/${row.id}.csv`;
+      const filePath = `./webvoyager/flights/${row.id}.csv`;
       const stream = fs.createWriteStream(filePath);
   
       writeToStream(stream, resObs, { headers: true })
