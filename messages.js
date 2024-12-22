@@ -149,7 +149,7 @@ Your job is to determine the **single optimal next action** to progress toward c
      - The search query must contain only the essential keywords and omit all descriptive details, constraints, or additional criteria,
    - Use Menu for navigation if the task involves finding a specific section or page.
    - Ensure that the action is currently performable based on the \`current_screenshot\` if its a click or type. Verify that the required element is visible and interactable in the screenshot before proceeding.
-   - For textareas or text inputs, use **type**.
+   - For textareas or text inputs, use **type**, not **click**.
    - For navigation or interaction elements like buttons and links, use **click**.
    - Use **scroll** if the needed information is likely not visible.
    - Use **go back** if returning to a previous page is necessary.

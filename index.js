@@ -789,3 +789,14 @@ fs.createReadStream('./webvoyager/coursera.csv')
   console.error('Error reading the CSV file:', err);
 });
 
+/*
+Go on Wikipedia and search for Mozart, find his last composition, play this song on youtube.
+Go on google and find two high school math problems, solve these with WolframAlpha.
+*/
+
+/*
+async function navigate() {
+  await browse({ task: "Go on Wikipedia and search for Mozart, find his last composition, play this song on youtube.", web: "", verbose: false, headless: false, taskUpdate: true });
+}
+navigate();
+*/
