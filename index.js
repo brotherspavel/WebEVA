@@ -70,16 +70,9 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
   const context = await browser.newContext();
   const page = await context.newPage();
   await page.setViewportSize({ width: segmentWidth, height: segmentHeight });
-  await page.setDefaultTimeout(150000); // Default timeout set to 60 seconds
+  await page.setDefaultTimeout(60000); // Default timeout set to 60 seconds
 
-  let datedTask = task;
-
-  if (containsDateIndicator(task)) {
-    const currentDateTime = getCurrentDateTime();
-    datedTask = `${currentDateTime} ${task}`
-  }
-
-  const localState = {...state, task: datedTask, originalTask: task };
+  const localState = {...state, task: task };
 
   // If web, we turn off task update. Otherwise, it may browse other urls which isnt allowed for webvoyager
   if (web && web.length) {
@@ -192,7 +185,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
           localState.errors += 1;
           console.error("closing popup error", e);
         }
-        
+      await page.waitForTimeout(newUrlWait)
         // Take a screenshot as a Base64-encoded string
         await page.screenshot({ path: 'screenshot.png' });
         const base64Image = fs.readFileSync('screenshot.png', 'base64');
@@ -432,7 +425,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
           let elementsSet = null;
 
           if (localState.actionJson.action === "click" && localState.actionJson.no_inner_text_click) {
-            const elements = page.locator('button, a, img, input:not([type="hidden"]):is([type="button"], [type="submit"], [type="reset"], [type="checkbox"], [type="radio"], [type="image"], [type="file"])');
+            const elements = page.locator('button, a, img, input');
 
             // Filter elements without innerText or placeholder
             const elementsWithoutInnerText = await Promise.all(
@@ -471,8 +464,8 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
             const normalizedStringToMatch = stringToMatch.trim() || 'probablynotneededbutjustincase';
             // Create a locator that includes elements matching both specific tags and navigation-related classes
             const elements = page.locator(`
-              button:not([disabled]), 
-              a[href], 
+              button, 
+              a, 
               option, 
               select, 
               td, 
@@ -490,7 +483,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                   return null;
                 }
                 // Check if the element is a checkbox
-                const isCheckbox = (await element.getAttribute('type')) === 'checkbox';
+                const isCheckbox = (await element.getAttribute('type')) === 'checkbox' || (await element.getAttribute('type')) === 'radio'
 
                 let innerText;
                 if (isCheckbox) {
@@ -571,7 +564,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
             // sometimes it interprets text images as inner text, this is to catch those cases
             if (!elementsSet.length) {
-              const elements2 = page.locator('button, a, img, input:not([type="hidden"]):is([type="button"], [type="submit"], [type="reset"], [type="checkbox"], [type="radio"], [type="image"], [type="file"])');
+              const elements2 = page.locator('button, a, img, input)');
 
               // Filter elements without innerText or placeholder
               const elementsWithoutInnerText = await Promise.all(
@@ -606,12 +599,12 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
           } else if (localState.actionJson.action === "text") {
             // Locate all valid inputs and textareas
             const validInputs = page.locator(
-              'input:not([type="hidden"]):not([type="checkbox"]):not([type="range"]):not([type="submit"]), textarea'
+              'input[type="text"], input:not([type]), textarea'
             );
 
             // Filter only visible elements
             const visibleEnabledElements = await validInputs.filter(async (element) => {
-              return await element.isVisible() && await element.isEnabled();
+              return await element.isEnabled();
             }).all();
 
             // Use the filtered elements directly
@@ -750,8 +743,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                   // Ensure the input is interactable
                   if (await specificElement.isEnabled()) {
                     await specificElement.focus(); // Explicitly focus on the input element
-                    //await specificElement.fill(inputValue); // Clears and types the value
-                    await page.fill('input[type="text"]', ''); // Clear the input field by setting it to an empty string
+                    await specificElement.fill(''); // Clear the input field by setting it to an empty string
                     await specificElement.pressSequentially(inputValue, { delay: 100 });
                     await page.keyboard.press("Enter"); // Simulate pressing Enter
                   } 
@@ -833,12 +825,7 @@ fs.createReadStream('./webvoyager/wolfram.csv')
 
 */
 
-/*
-Go on google and find two high school math problems, solve these with WolframAlpha.
-*/
-
-
 async function navigate() {
-  await browse({ task: "Go on google and find two high school math problems, solve these with WolframAlpha.", web: "", verbose: false, headless: false });
+  await browse({ task: "Find hunchback of notre dame on good reads, note its rating, then find the disney movie on imdb, note its rating", web: "", verbose: false, headless: false });
 }
 navigate();
