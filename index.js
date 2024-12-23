@@ -5,7 +5,7 @@ const csv = require('csv-parser');
 const path = require('path');
 const { writeToStream } = require('fast-csv');
 const sharp = require('sharp');
-
+import { containsDateIndicator, getCurrentTime } from './utils';
 const segmentWidth = 900;
 const segmentHeight = 1600;
 const yOffset = 1000;
@@ -32,6 +32,7 @@ const state = {
   currentStep: 0,
   scrollY: 0,
   errors: 0,
+  taskUpdate: true,
 
   // Method to reset the state
   reset(prompt) {
@@ -45,10 +46,11 @@ const state = {
     this.nextActionText = "";
     this.scrollY = 0;
     this.screenshotIndex = 0;
+    this.taskUpdate = true;
   },
 };
 
-async function browse({ task, web = "", verbose = false, headless = false, taskUpdate = true }) {
+async function browse({ task, web = "", verbose = false, headless = false }) {
   // Path to the directory where the files are located
   const directory = ".";
 
@@ -70,12 +72,22 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
   await page.setViewportSize({ width: segmentWidth, height: segmentHeight });
   await page.setDefaultTimeout(150000); // Default timeout set to 60 seconds
 
-  const localState = {...state, task: task};
+  let datedTask = task;
 
+  if (containsDateIndicator(task)) {
+    const currentDateTime = getCurrentDateTime();
+    datedTask = `${currentDateTime} ${task}`
+  }
+
+  const localState = {...state, task: datedTask, originalTask: task };
+
+  // If web, we turn off task update. Otherwise, it may browse other urls which isnt allowed for webvoyager
   if (web && web.length) {
     localState.web = web;
+    localState.taskUpdate = false;
     localState.stateAction = "goto"
   } else {
+    localState.taskUpdate = true;
     localState.stateAction = "getWeb";
   }
 
@@ -289,7 +301,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
         }
         // current url
         localState.web = page.url();
-        if (taskUpdate) {
+        if (localState.taskUpdate) {
           await getUpdateTask(localState.observations, localState.web, localState.currentImage).then((res) => {
             const content = JSON.parse(res.content);
 
@@ -465,7 +477,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
               option, 
               select, 
               td, 
-              input:is([type="button"], [type="submit"], [type="reset"], [type="checkbox"], [type="radio"], [type="image"], [type="file"], [type="text"])
+              input,  .
             `);
             console.log("Elements.length", (await elements.all()).length);
             // Filter elements based on conditions
@@ -634,8 +646,13 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
 
                 // Extract the tag name and attributes
                 const tagName = el.tagName.toLowerCase();
+                const maxLength = 100; // Define a threshold for long attributes
                 const attributes = Array.from(el.attributes)
-                  .map(attr => `${attr.name}="${attr.value}"`)
+                  .filter(attr => !['src', 'style'].includes(attr.name)) // Exclude 'src' and 'style'
+                  .map(attr => {
+                    const value = attr.value.length > maxLength ? attr.value.slice(0, maxLength) + '...' : attr.value;
+                    return `${attr.name}="${value}"`;
+                  })
                   .join(' ');
 
                 // Construct the first-layer outerHTML
@@ -736,6 +753,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
                   if (await specificElement.isEnabled()) {
                     await specificElement.focus(); // Explicitly focus on the input element
                     //await specificElement.fill(inputValue); // Clears and types the value
+                    await page.fill('input[type="text"]', ''); // Clear the input field by setting it to an empty string
                     await specificElement.pressSequentially(inputValue, { delay: 100 });
                     await page.keyboard.press("Enter"); // Simulate pressing Enter
                   } 
@@ -768,7 +786,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
   
   await browser.close();
   return {
-    observations: localState.observations,
+    observations: localState.observations
   }
 }
 
@@ -777,7 +795,7 @@ async function browse({ task, web = "", verbose = false, headless = false, taskU
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/flights.csv')
+fs.createReadStream('./webvoyager/wolfram.csv')
 .pipe(csv())
 .on('data', (row) => {
   data.push(row);
@@ -791,12 +809,12 @@ fs.createReadStream('./webvoyager/flights.csv')
       let resObs = [];
       try {
         console.log("Row", row)
-        const { observations } = await browse({ task: row.ques, web: row.web, verbose: true, headless: false, taskUpdate: false });
+        const { observations } = await browse({ task: row.ques, web: row.web, verbose: true, headless: true });
         resObs = observations;
       } catch (e) {
         console.error(`Error browsing ${row.id}`, e);
       }
-      const filePath = `./webvoyager/flights/${row.id}.csv`;
+      const filePath = `./webvoyager/wolfram/${row.id}.csv`;
       const stream = fs.createWriteStream(filePath);
   
       writeToStream(stream, resObs, { headers: true })
