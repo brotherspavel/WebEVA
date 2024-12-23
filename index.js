@@ -72,7 +72,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
   await page.setViewportSize({ width: segmentWidth, height: segmentHeight });
   await page.setDefaultTimeout(60000); // Default timeout set to 60 seconds
 
-  const localState = {...state, task: task };
+  const localState = { ...state, task: task };
 
   // If web, we turn off task update. Otherwise, it may browse other urls which isnt allowed for webvoyager
   if (web && web.length) {
@@ -84,13 +84,13 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
     localState.stateAction = "getWeb";
   }
 
-  while (localState.stateAction !== null && localState.currentStep < MAX_STEPS 
-    && localState.errors < MAX_ERRORS 
+  while (localState.stateAction !== null && localState.currentStep < MAX_STEPS
+    && localState.errors < MAX_ERRORS
   ) {
     switch (localState.stateAction) {
       case 'getWeb':
         //getWeb(previousTask, previousObservation, currentTask, currentUrl)
-        const lastObservation = localState.observations[localState.observations.length - 1] || { 
+        const lastObservation = localState.observations[localState.observations.length - 1] || {
           task: '',
           observation: '',
         };
@@ -100,7 +100,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
           const baseUrl1 = `${url1.protocol}//${url1.host}`;
           const url2 = new URL(localState.web || "");
           const baseUrl2 = `${url2.protocol}//${url2.host}` || "";
-          if (baseUrl1 !== baseUrl2) { 
+          if (baseUrl1 !== baseUrl2) {
             localState.web = content.website_url;
             localState.stateAction = "goto";
           } else {
@@ -137,12 +137,12 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
         break;
       case 'observe':
         try {
-        const scrollY = await page.evaluate(() => window.scrollY);
-        localState.scrollY = scrollY;
+          const scrollY = await page.evaluate(() => window.scrollY);
+          localState.scrollY = scrollY;
 
-        // Close popups, these sometimes appear when scrapping the same site multiple times.
-        await page.evaluate(() => {
-          // Define selectors for various modals and backdrops
+          // Close popups, these sometimes appear when scrapping the same site multiple times.
+          await page.evaluate(() => {
+            // Define selectors for various modals and backdrops
             const modalSelectors = [
               '[role="dialog"]', // ARIA role for accessibility
               '.modal', // Bootstrap or custom modals
@@ -150,13 +150,13 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
               '.popup', // Generic popups
               '[role="presentation"]', // ARIA role for presentation
             ];
-          
+
             const backdropSelectors = [
               '.modal-backdrop', // Bootstrap backdrops
               '.overlay-backdrop', // Generic overlay backdrops
               '.popup-backdrop', // Generic popup backdrops
             ];
-        
+
             // Query and close all modals
             const modals = document.querySelectorAll(modalSelectors.join(','));
             modals.forEach((modal) => {
@@ -172,11 +172,11 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 }
               }
             });
-          
+
             // Query and remove all backdrops
             const backdrops = document.querySelectorAll(backdropSelectors.join(','));
             backdrops.forEach((backdrop) => backdrop.remove());
-          
+
             // Reset body scroll locking caused by modals
             document.body.style.overflow = '';
             document.body.classList.remove('modal-open');
@@ -185,7 +185,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
           localState.errors += 1;
           console.error("closing popup error", e);
         }
-      await page.waitForTimeout(newUrlWait)
+        await page.waitForTimeout(newUrlWait)
         // Take a screenshot as a Base64-encoded string
         await page.screenshot({ path: 'screenshot.png' });
         const base64Image = fs.readFileSync('screenshot.png', 'base64');
@@ -222,39 +222,39 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
               localState.stateAction = null;
 
               const screenshotBuffer = await page.screenshot({ fullPage: true });
-              
+
               // Get dimensions of the screenshot
               const { height, width } = await sharp(screenshotBuffer).metadata();
               // Define the base yOffset and height for cropping
               const baseYOffset = localState.scrollY;
               const cropHeight = segmentHeight;
-  
+
               // Initialize sections
               const sections = [];
               let currentYOffset = baseYOffset;
-            
+
               while (currentYOffset < height && sections.length < 3) {
                 // Calculate the height of the current section
                 const adjustedHeight = Math.min(cropHeight, height - currentYOffset);
-            
+
                 sections.push({ yOffset: currentYOffset, height: adjustedHeight });
-            
+
                 // Update yOffset for the next section
                 currentYOffset += cropHeight;
               }
-                
+
               // Variables to hold Base64 image URLs
               let screenshot1base64ImageUrl;
               let screenshot2base64ImageUrl;
               let screenshot3base64ImageUrl;
-            
+
               // Process and save each section
               await Promise.all(
                 sections.map(async ({ yOffset, height }, index) => {
                   const croppedBuffer = await sharp(screenshotBuffer)
                     .extract({ left: 0, top: yOffset, width, height })
                     .toBuffer();
-                  
+
                   // Assign Base64 image URLs
                   const base64String = `data:image/png;base64,${croppedBuffer.toString('base64')}`;
                   if (index === 0) {
@@ -266,7 +266,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                   }
                 })
               );
-            
+
               await getSummarizedTask(localState.observations, screenshot1base64ImageUrl, screenshot2base64ImageUrl, screenshot3base64ImageUrl).then((response) => {
                 const content = JSON.parse(response.content);
                 if (verbose) {
@@ -282,7 +282,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 console.error("getSummarizedTask error", e);
               });
             }
-          } 
+          }
         }).catch((e) => {
           localState.stateAction = "getNextAction";
           localState.errors += 1;
@@ -361,7 +361,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
               break;
             default:
               localState.stateAction = "scrollDown";
-            }
+          }
         }).catch((e) => {
           console.error("getDescribeAction error", e);
           localState.stateAction = "getNextAction";
@@ -415,7 +415,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
         await page.evaluate((scrollTo) => {
           window.scrollTo(0, Number(scrollTo));
         }, localState.scrollY + yOffset);
-        
+
         await page.waitForTimeout(sameUrlWait);
         localState.stateAction = "observe";
         break
@@ -435,16 +435,16 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 const placeholder = (await element.getAttribute('placeholder')) || '';
                 const isEnabled = await element.isEnabled();
                 const isVisible = await element.isVisible();
-                
+
                 // Exclude elements with any non-empty innerText or placeholder
                 if (!trimmedText && !placeholder && isEnabled && isVisible) {
                   // Get the bounding box of the element
-        
+
                   const boundingBox = await element.boundingBox();
                   if (boundingBox) {
                     const { y, height } = boundingBox;
                     const bottomY = y + height;
-            
+
                     // Check if any part of the element overlaps the range [scrollY, scrollY + segmentHeight]
                     const isWithinRange = bottomY >= localState.scrollY && y <= localState.scrollY + segmentHeight;
                     return isWithinRange ? element : null;
@@ -478,7 +478,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 const isInteractable =
                   (await element.isEnabled()) &&
                   (await element.isVisible() || !!(await element.getAttribute('href')));
-            
+
                 if (!isInteractable) {
                   return null;
                 }
@@ -507,11 +507,11 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 let isMatch =
                   (innerText && (innerText.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(innerText))) ||
                   (placeholder && (placeholder.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(placeholder)));
-            
+
                 return isMatch ? element : null;
               })
             );
-            
+
             // Filter out null values and assign to elementsSet
             elementsSet = interactableElements.filter(Boolean);
             if (verbose) {
@@ -525,14 +525,14 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 span,
                 p
               `);
-              
+
               // Filter elements based on conditions
               const interactableElementsDivSpan = await Promise.all(
                 (await elementsDivSpan.all()).map(async (element) => {
                   const isInteractable =
                     (await element.isEnabled()) &&
                     (await element.isVisible() || !!(await element.getAttribute('href')));
-              
+
                   if (!isInteractable) {
                     return null;
                   }
@@ -545,16 +545,16 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                   // Check element's innerText and placeholder
                   const innerText = ((await element.innerText()) || '').trim().toLowerCase();
                   const placeholder = ((await element.getAttribute('placeholder')) || '').trim().toLowerCase();
-              
+
                   let isMatch =
                     (innerText && (innerText.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(innerText))) ||
                     (placeholder && (placeholder.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(placeholder)));
-              
+
 
                   return isMatch ? element : null;
                 })
               );
-            
+
               elementsSet = interactableElementsDivSpan.filter(Boolean);
 
               if (verbose) {
@@ -574,7 +574,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                   const placeholder = (await element.getAttribute('placeholder')) || '';
                   const isEnabled = await element.isEnabled();
                   const isVisible = await element.isVisible();
-              
+
                   // Exclude elements with any non-empty innerText or placeholder
                   if (!trimmedText && !placeholder && isEnabled && isVisible) {
                     // Get the bounding box of the element
@@ -582,7 +582,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                     if (boundingBox) {
                       const { y, height } = boundingBox;
                       const bottomY = y + height;
-              
+
                       // Check if any part of the element overlaps the range [scrollY, scrollY + segmentHeight]
                       const isWithinRange = bottomY >= localState.scrollY && y <= localState.scrollY + segmentHeight;
                       return isWithinRange ? element : null;
@@ -592,7 +592,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                   return null;
                 })
               );
-  
+
               // Store the filtered elements
               elementsSet = elementsWithoutInnerText.filter(Boolean);
             }
@@ -614,7 +614,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
             console.log("elementsSet length", elementsSet.length);
           }
 
-          let specificElement = null; 
+          let specificElement = null;
 
           if (elementsSet.length === 1) {
             specificElement = elementsSet[0];
@@ -629,7 +629,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 }
                 break;
               }
-            
+
               // Combine operations into a single evaluate call for efficiency
               const elementData = await element.evaluate((el, id) => {
                 // Add a unique attribute
@@ -661,7 +661,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
               elementDetails.push(elementData);
             }
-       
+
             await getElement(localState.task, localState.user_action_and_explanation, elementDetails, localState.currentImage).then(async (res) => {
               const content = JSON.parse(res.content);
               if (verbose) {
@@ -679,18 +679,18 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
             const tagName = (await specificElement.evaluate(el => el.tagName) || '').toLowerCase();
 
             if (tagName === 'option' || tagName === 'select') {
-              let selectElement1; 
+              let selectElement1;
               // Find the parent <select> element as a locator
               if (tagName === 'option') {
                 selectElement1 = specificElement.locator('xpath=ancestor::select');
               } else {
                 selectElement1 = specificElement;
-              }            
+              }
               // Retrieve all <option> elements within the parent <select>
               const optionsOuterHTML = await selectElement.evaluate((select) =>
                 Array.from(select.options).map(option => option.outerHTML)
               );
-            
+
               await getOptions(localState.user_action_and_explanation, optionsOuterHTML).then(async (res) => {
                 try {
                   const content = JSON.parse(res.content);
@@ -720,7 +720,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 try {
                   // Check for href since hrefs aren't always clickable
                   const href = await specificElement.getAttribute('href');
-                
+
                   if (href) {
                     const absoluteHref = new URL(href, page.url()).href; // Resolves relative URLs based on the current page URL
                     await page.goto(absoluteHref);
@@ -746,7 +746,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                     await specificElement.fill(''); // Clear the input field by setting it to an empty string
                     await specificElement.pressSequentially(inputValue, { delay: 100 });
                     await page.keyboard.press("Enter"); // Simulate pressing Enter
-                  } 
+                  }
                 } catch (e) {
                   console.error("Error interacting with the input element:", e);
                   localState.errors += 1;
@@ -759,7 +759,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
           for (const element of elementsSet) {
             await element.evaluate((el) => {
-                el.removeAttribute('element_id');
+              el.removeAttribute('element_id');
             });
           }
         } catch (e) {
@@ -773,7 +773,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
         console.log("Invalid day");
     }
   }
-  
+
   await browser.close();
   return {
     observations: localState.observations
