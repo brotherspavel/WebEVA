@@ -5,7 +5,7 @@ const csv = require('csv-parser');
 const path = require('path');
 const { writeToStream } = require('fast-csv');
 const sharp = require('sharp');
-import { containsDateIndicator, getCurrentTime } from './utils';
+const { containsDateIndicator, getCurrentTime } = require('./utils');
 const segmentWidth = 900;
 const segmentHeight = 1600;
 const yOffset = 1000;
@@ -329,9 +329,8 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
             return;
           }
           const content = JSON.parse(res.content);
-          if (verbose) {
-            console.log("getNextAction", content);
-          }
+          console.log("Next Action", content.user_action_and_explanation);
+
           localState.user_action_and_explanation = content.user_action_and_explanation;
           localState.stateAction = "getDescribeAction";
         }).catch((e) => {
@@ -477,9 +476,8 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
               option, 
               select, 
               td, 
-              input,  .
+              input
             `);
-            console.log("Elements.length", (await elements.all()).length);
             // Filter elements based on conditions
             const interactableElements = await Promise.all(
               (await elements.all()).map(async (element) => {
@@ -670,7 +668,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
               elementDetails.push(elementData);
             }
-            console.log("elementDetails", elementDetails)
+       
             await getElement(localState.task, localState.user_action_and_explanation, elementDetails, localState.currentImage).then(async (res) => {
               const content = JSON.parse(res.content);
               if (verbose) {
@@ -790,7 +788,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
   }
 }
 
-
+/*
 
 // Example call to the function
 const data = [];
@@ -833,14 +831,14 @@ fs.createReadStream('./webvoyager/wolfram.csv')
   console.error('Error reading the CSV file:', err);
 });
 
-/*
-Go on Wikipedia and search for Mozart, find his last composition, play this song on youtube.
-Go on google and find two high school math problems, solve these with WolframAlpha.
 */
 
 /*
+Go on google and find two high school math problems, solve these with WolframAlpha.
+*/
+
+
 async function navigate() {
-  await browse({ task: "Go on Wikipedia and search for Mozart, find his last composition, play this song on youtube.", web: "", verbose: false, headless: false, taskUpdate: true });
+  await browse({ task: "Go on google and find two high school math problems, solve these with WolframAlpha.", web: "", verbose: false, headless: false });
 }
 navigate();
-*/

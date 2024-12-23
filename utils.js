@@ -50,7 +50,7 @@ const dateIndicators = [
   "September", "Sep",
   "October", "Oct",
   "November", "Nov",
-  "December", "Dec", "days"
+  "December", "Dec", "days", "weeks", "months", "years", "now", 2024, 2025, 2026, 2027, 2028, 2029, 2030
 ];
 
 function containsDateIndicator(str) {
