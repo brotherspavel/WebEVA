@@ -31,6 +31,10 @@ const isClickable = async (elementHandle) => {
   });
 };
 
+/*
+We only run this when it matches one.
+Albeit, we can let chatGPT decide, but this saves money and time.
+*/
 const dateIndicators = [
   "today", "yesterday", "tomorrow",
   "newest", "latest", "earliest", 
@@ -50,7 +54,7 @@ const dateIndicators = [
   "September", "Sep",
   "October", "Oct",
   "November", "Nov",
-  "December", "Dec", "days", "weeks", "months", "years", "now", 2024, 2025, 2026, 2027, 2028, 2029, 2030
+  "December", "Dec", "days", "weeks", "months", "years", "now", "currently", 2024, 2025, 2026, 2027, 2028, 2029, 2030
 ];
 
 function containsDateIndicator(str) {
@@ -73,7 +77,7 @@ function getCurrentDateTime() {
   const minutes = String(now.getMinutes()).padStart(2, '0');
   
   // Format: YYYY-MM-DD HH:MM
-  return `Current datetime is: ${year}-${month}-${day} ${hours}:${minutes}.`;
+  return `${year}-${month}-${day} ${hours}:${minutes}.`;
 }
 
 module.exports = { isClickable, containsDateIndicator, getCurrentDateTime };

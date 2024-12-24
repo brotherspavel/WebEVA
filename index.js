@@ -1,11 +1,10 @@
-const { getNextAction, getWeb, getDescribeAction, getObservation, getUpdateTask, getIsTaskComplete, getElement, getSummarizedTask, getCustomAction, getOptions } = require('./api');
+const { getDateTask, getNextAction, getWeb, getDescribeAction, getObservation, getUpdateTask, getIsTaskComplete, getElement, getSummarizedTask, getCustomAction, getOptions } = require('./api');
 const { chromium } = require('playwright');
 const fs = require('fs');
 const csv = require('csv-parser');
 const path = require('path');
 const { writeToStream } = require('fast-csv');
 const sharp = require('sharp');
-const { containsDateIndicator, getCurrentTime } = require('./utils');
 const segmentWidth = 900;
 const segmentHeight = 1600;
 const yOffset = 1000;
@@ -83,6 +82,13 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
     localState.taskUpdate = true;
     localState.stateAction = "getWeb";
   }
+
+  await getDateTask(localState.task).then((res) => {
+    localState.task = res;
+  }).catch((e) => {
+    console.error("getDateTask error", e);
+    localState.errors += 1;
+  });
 
   while (localState.stateAction !== null && localState.currentStep < MAX_STEPS
     && localState.errors < MAX_ERRORS
@@ -425,7 +431,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
           let elementsSet = null;
 
           if (localState.actionJson.action === "click" && localState.actionJson.no_inner_text_click) {
-            const elements = page.locator('button, a, img, input');
+            const elements = page.locator('button, a, img[role="button"], input');
 
             // Filter elements without innerText or placeholder
             const elementsWithoutInnerText = await Promise.all(
@@ -564,7 +570,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
             // sometimes it interprets text images as inner text, this is to catch those cases
             if (!elementsSet.length) {
-              const elements2 = page.locator('button, a, img, input)');
+              const elements2 = page.locator('button, a, img[role="button"], input)');
 
               // Filter elements without innerText or placeholder
               const elementsWithoutInnerText = await Promise.all(
@@ -826,6 +832,6 @@ fs.createReadStream('./webvoyager/wolfram.csv')
 */
 
 async function navigate() {
-  await browse({ task: "Find hunchback of notre dame on good reads, note its rating, then find the disney movie on imdb, note its rating", web: "", verbose: false, headless: false });
+  await browse({ task: "Find the upcoming president of US on wikipedia", web: "", verbose: false, headless: false });
 }
 navigate();
