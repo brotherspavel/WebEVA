@@ -347,12 +347,33 @@ You must return a JSON object in the following structure:
 - You must strictly use the "value" attribute of the options, not their visible text content.
 `;
 
+const ADD_DATE = `
+Given a task goal and the current datetime, you are to decide if the current **date** or **datetime** (including both date and time) should be added to the task goal. You should **only** update the task goal if needed. Depending on the task, choose one of the following:
+1. **Add the full datetime** (including both date and time) if the task requires precise timing or a time-sensitive action.
+2. **Add only the date** (e.g., "2024-12-24") if the task mentions a month or requires a specific date, but the time is not important.
+3. **Do not add anything** if the task does not require any date or time information.
+
+### Input Format:
+1. **Task Goal**: The user's goal or objective, which may or may not rely on a date or time.
+2. **Current DateTime**: The current datetime (including both date and time).
+
+### Output Format:
+Your response must follow this structure:
+\`\`\`json
+{
+  "update_task_goal": boolean, // Whether the task goal should be updated (true if the datetime or date should be added, false otherwise).
+  "updated_task_goal": string  // The revised task goal with the current datetime or date added, if required.
+}
+\`\`\`
+`;
+
 module.exports = {
   OBSERVATION_MESSAGES,
   UPDATE_TASK,
   GET_ACTION,
   DESCRIBE_ACTION,
   GET_URL,
+  ADD_DATE,
   TASK_COMPLETE,
   GET_ELEMENT,
   SUMMARIZE_TASK,

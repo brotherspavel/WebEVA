@@ -2,8 +2,8 @@ const axios = require('axios');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { OBSERVATION_MESSAGES, UPDATE_TASK, GET_ACTION, DESCRIBE_ACTION, TASK_COMPLETE, GET_URL, GET_ELEMENT, SUMMARIZE_TASK, CUSTOM_ACTION, IDENTIFY_OPTIONS } = require('./messages');
-
+const { ADD_DATE, OBSERVATION_MESSAGES, UPDATE_TASK, GET_ACTION, DESCRIBE_ACTION, TASK_COMPLETE, GET_URL, GET_ELEMENT, SUMMARIZE_TASK, CUSTOM_ACTION, IDENTIFY_OPTIONS } = require('./messages');
+const { containsDateIndicator, getCurrentDateTime } = require('./utils');
 const MAX_OBSERVATIONS_GET_NEXT_ACTION = 6
 const MAX_OBSERVATIONS_NEW_OBSERVATION = 7
 const MAX_OBSERVATIONS_UPDATE_TASK = 13
@@ -13,6 +13,84 @@ const MAX_OBSERVATIONS_IS_TASK_COMPLETE = 24
 const MAX_GET_SUMMARIZED_TASK = 10
 
 const placeholderScreenshot = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIcwt4U72qbCuk1Bzes5qODmYmrN2xp9MvOw&s";
+
+async function getDateTask(task_goal) {
+  if (!containsDateIndicator(task_goal)) {
+    return task_goal;
+  }
+
+  const webMessages = [
+    {
+      role: "system",
+      content: ADD_DATE,
+    }
+  ];
+  
+  webMessages.push({
+    role: "user",
+    content: [
+      {
+        type: "text",
+        text: `**Task Goal**: ${task_goal}
+        **Current DateTime**: ${getCurrentDateTime()}`,
+      },
+    ],
+  });
+
+  const jsonPayload = {
+    model: process.env.model, // Replace with your desired model name
+    messages: webMessages,
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "action_schema",
+        schema: {
+          type: "object",
+          properties: {
+            update_task_goal: {
+              type: "boolean",
+            },
+            updated_task_goal: {
+              type: "string",
+            },
+          },
+          required: ["update_task_goal"],
+          additionalProperties: false,
+        },
+      },
+    },
+  };  
+
+  try {
+    // Prepare the data payload for the API
+    const response = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      jsonPayload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
+        },
+      }
+    );
+    // Extract the result
+    if (response.status === 200) {
+      const result = response.data;
+      const content = JSON.parse(result.choices[0].message?.content);
+      if (content.update_task_goal && content.updated_task_goal?.length) {
+        return content.updated_task_goal;
+      } else {
+        return task_goal;
+      }
+    } else {
+      console.error(`Errorh: ${response.status}, ${response.data}`);
+      return task_goal;
+    }
+  } catch (error) {
+    console.error(`An error occurred: ${error}`);
+    return task_goal;
+  }
+}
 
 async function getSummarizedTask(observations, screenshot1, screenshot2, screenshot3) {
   const webMessages = [
@@ -951,4 +1029,5 @@ module.exports = {
   getSummarizedTask,
   getCustomAction,
   getOptions,
+  getDateTask,
 };
