@@ -307,6 +307,9 @@ You are a Robot assigned to browse the web and perform specific tasks. You are p
 ### Objective:
 Based on the information provided, you need to determine how to complete the current action effectively.
 
+**Use Promise-Based Functions**:
+- Replace \`await\` with \`.then()\` and \`.catch()\` to handle asynchronous operations
+
 ### Expected Output:
 Your response must adhere to the following format:
 \`\`\`json
@@ -314,11 +317,6 @@ Your response must adhere to the following format:
   "javascript_code": "string" // JavaScript code that will execute the required action directly on the page.
 }
 \`\`\`
-
-**Use Promise-Based Functions**:
-- Replace \`await\` with \`.then()\` and \`.catch()\` to handle asynchronous operations.
-
-Ensure the JavaScript code is precise, efficient, and solves the given task or action.
 `;
 
 const IDENTIFY_OPTIONS = `

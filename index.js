@@ -787,11 +787,10 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 }
 
 /*
-
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/wolfram.csv')
+fs.createReadStream('./webvoyager/allrecipes_DONE.csv')
 .pipe(csv())
 .on('data', (row) => {
   data.push(row);
@@ -805,12 +804,12 @@ fs.createReadStream('./webvoyager/wolfram.csv')
       let resObs = [];
       try {
         console.log("Row", row)
-        const { observations } = await browse({ task: row.ques, web: row.web, verbose: true, headless: true });
+        const { observations } = await browse({ task: row.ques, web: row.web, verbose: true, headless: false });
         resObs = observations;
       } catch (e) {
         console.error(`Error browsing ${row.id}`, e);
       }
-      const filePath = `./webvoyager/wolfram/${row.id}.csv`;
+      const filePath = `./webvoyager/wolfram2/${row.id}.csv`;
       const stream = fs.createWriteStream(filePath);
   
       writeToStream(stream, resObs, { headers: true })
@@ -828,10 +827,10 @@ fs.createReadStream('./webvoyager/wolfram.csv')
 .on('error', (err) => {
   console.error('Error reading the CSV file:', err);
 });
-
 */
 
+
 async function navigate() {
-  await browse({ task: "Find the upcoming president of US on wikipedia", web: "", verbose: false, headless: false });
+  await browse({ task: "Visit Amazon and find a wireless gaming mouse under $50 with over 500 reviews. Note the brand and model. Then, visit Walmart and search for the same brand (or model) of mouse. Compare the price and features listed on Walmart’s page to Amazon’s page, and note the differences.", web: "", verbose: false, headless: false });
 }
 navigate();
