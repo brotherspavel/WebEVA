@@ -57,6 +57,7 @@ const dateIndicators = [
   "December", "Dec", "days", "weeks", "months", "years", "now", "currently", 2024, 2025, 2026, 2027, 2028, 2029, 2030
 ];
 
+// use getTaskDate instead.
 function containsDateIndicator(str) {
   for (let i = 0; i < dateIndicators.length; i++) {
     const word = dateIndicators[i];

@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const { ADD_DATE, OBSERVATION_MESSAGES, UPDATE_TASK, GET_ACTION, DESCRIBE_ACTION, TASK_COMPLETE, GET_URL, GET_ELEMENT, SUMMARIZE_TASK, CUSTOM_ACTION, IDENTIFY_OPTIONS } = require('./messages');
-const { containsDateIndicator, getCurrentDateTime } = require('./utils');
+const { getCurrentDateTime } = require('./utils');
 const MAX_OBSERVATIONS_GET_NEXT_ACTION = 6
 const MAX_OBSERVATIONS_NEW_OBSERVATION = 7
 const MAX_OBSERVATIONS_UPDATE_TASK = 13
@@ -15,10 +15,6 @@ const MAX_GET_SUMMARIZED_TASK = 10
 const placeholderScreenshot = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIcwt4U72qbCuk1Bzes5qODmYmrN2xp9MvOw&s";
 
 async function getDateTask(task_goal) {
-  if (!containsDateIndicator(task_goal)) {
-    return task_goal;
-  }
-
   const webMessages = [
     {
       role: "system",
