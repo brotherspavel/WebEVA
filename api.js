@@ -2,7 +2,7 @@ const axios = require('axios');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { ADD_DATE, OBSERVATION_MESSAGES, UPDATE_TASK, GET_ACTION, DESCRIBE_ACTION, TASK_COMPLETE, GET_URL, GET_ELEMENT, SUMMARIZE_TASK, CUSTOM_ACTION, IDENTIFY_OPTIONS } = require('./messages');
+const { ADD_DATE, OBSERVATION_MESSAGES, UPDATE_TASK, GET_ACTION, PARSE_ACTION, TASK_COMPLETE, GET_URL, GET_ELEMENT, SUMMARIZE_TASK, CUSTOM_ACTION, IDENTIFY_OPTIONS } = require('./messages');
 const { getCurrentDateTime } = require('./utils');
 const MAX_OBSERVATIONS_GET_NEXT_ACTION = 6
 const MAX_OBSERVATIONS_NEW_OBSERVATION = 7
@@ -701,11 +701,11 @@ async function getWeb(previousTask, previousObservation, currentTask, currentUrl
   }
 }
 
-async function getDescribeAction(task, current_action, current_screenshot = placeholderScreenshot) {
+async function getParseAction(task, current_action, current_screenshot = placeholderScreenshot) {
   const webMessages = [
     {
       role: "system",
-      content: DESCRIBE_ACTION,
+      content: PARSE_ACTION,
     },
     {
       role: "user",
@@ -1017,7 +1017,7 @@ async function getOptions(current_action, elementsList = []) {
 module.exports = {
   getNextAction,
   getWeb,
-  getDescribeAction,
+  getParseAction,
   getObservation,
   getUpdateTask,
   getIsTaskComplete,

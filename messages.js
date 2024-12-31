@@ -118,8 +118,6 @@ Your response must follow this structure:
 \`\`\`
 `;
 
-
-
 const GET_ACTION = `
 Role: You are a Robot tasked with browsing the web to complete a specific task. You are provided with a chronological list of tasks, each represented as [task, user_action_and_explanation, observation]. The final element in this list represents the most recent state of the user's progress. Additionally, you are provided with a \`current_screenshot\` that shows the current webpage after the most recent observation.
 
@@ -168,7 +166,7 @@ Your response should be structured as follows:
   "user_action_and_explanation": "string" // The optimal action to take, including the action type, target element, and rationale.
 }
 `
-const DESCRIBE_ACTION = `
+const PARSE_ACTION = `
 You are a Robot tasked with browsing the web. You are given:
 - The **task**.
 - The **current action** to take.
@@ -249,6 +247,7 @@ const GET_URL = `
 
 const GET_ELEMENT = `
 Your task is to identify the **most suitable element** that fulfills the action.
+If the element is not found, return 0.
 
 ### Inputs Provided:
    1. **Task**:
@@ -266,7 +265,7 @@ You must return a JSON object in the following structure:
 
 \`\`\`json
 {
-   "element_id": "string" // The element_id MUST be part of the provided list of elements.
+   "element_id": "string" 
 }
 \`\`\`
 `;
@@ -346,10 +345,12 @@ You must return a JSON object in the following structure:
 `;
 
 const ADD_DATE = `
-Given a task goal and the current datetime, you are to decide if the current **date** or **datetime** (including both date and time) should be added to the task goal. You should **only** update the task goal if needed. Depending on the task, choose one of the following:
-1. **Add the full datetime** (including both date and time) if the task requires precise timing or a time-sensitive action.
-2. **Add only the date** (e.g., "2024-12-24") if the task mentions a month or requires a specific date, but the time is not important.
-3. **Do not add anything** if the task does not require any date or time information.
+Given a task goal and the current datetime, decide whether the datetime is relevant to the task. If it is, add the current year, date, or datetime to the task goal without altering the original intent of the task.
+
+You may assume that the person you are communicating with may not have knowledge of the current date and time and might need this information to complete the task.
+
+Make sure to update the task goal with current date if it mentions a date, month, or year. 
+ALWAYS include year if the task mentions a month or date.
 
 ### Input Format:
 1. **Task Goal**: The user's goal or objective, which may or may not rely on a date or time.
@@ -369,7 +370,7 @@ module.exports = {
   OBSERVATION_MESSAGES,
   UPDATE_TASK,
   GET_ACTION,
-  DESCRIBE_ACTION,
+  PARSE_ACTION,
   GET_URL,
   ADD_DATE,
   TASK_COMPLETE,

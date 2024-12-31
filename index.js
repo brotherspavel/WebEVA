@@ -1,10 +1,11 @@
-const { getDateTask, getNextAction, getWeb, getDescribeAction, getObservation, getUpdateTask, getIsTaskComplete, getElement, getSummarizedTask, getCustomAction, getOptions } = require('./api');
+const { getDateTask, getNextAction, getWeb, getParseAction, getObservation, getUpdateTask, getIsTaskComplete, getElement, getSummarizedTask, getCustomAction, getOptions } = require('./api');
 const { chromium } = require('playwright');
 const fs = require('fs');
 const csv = require('csv-parser');
 const path = require('path');
 const { writeToStream } = require('fast-csv');
 const sharp = require('sharp');
+const { text } = require('stream/consumers');
 const segmentWidth = 900;
 const segmentHeight = 1600;
 const yOffset = 1000;
@@ -14,7 +15,7 @@ const firstUrlWait = 4000; // when scroll to
 const newUrlWait = 3000;  // when button click
 const sameUrlWait = 500; // scroll
 
-const MAX_STEPS = 25;
+const MAX_STEPS = 15;
 const MAX_ERRORS = 8;
 
 const state = {
@@ -50,6 +51,8 @@ const state = {
 };
 
 async function browse({ task, web = "", verbose = false, headless = false }) {
+  const text_elements = [];
+  const no_text_elements = [];
   // Path to the directory where the files are located
   const directory = ".";
 
@@ -64,6 +67,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
     headless, // Set to true if you want headless mode
     args: ["--lang=en-US"], // Force US English locale
     ignoreDefaultArgs: ["--hide-scrollbars"], // Ignore default args
+    channel: "chrome"
   });
 
   const context = await browser.newContext();
@@ -85,6 +89,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
   await getDateTask(localState.task).then((res) => {
     localState.task = res;
+    console.log("currenTask", res)
   }).catch((e) => {
     console.error("getDateTask error", e);
     localState.errors += 1;
@@ -166,16 +171,20 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
             // Query and close all modals
             const modals = document.querySelectorAll(modalSelectors.join(','));
             modals.forEach((modal) => {
-              // Try to find a close button within the modal
-              const closeButton = modal.querySelector('[aria-label="Close"], .close, .btn-close, [data-dismiss="modal"]');
-              if (closeButton) {
-                closeButton.click(); // Simulate a click on the close button
-              } else {
-                // check if modal is dialog, modals are only popups if has remove button.
-                const isDialogOrPresentation = modal.getAttribute('role') === 'dialog' || modal.getAttribute('role') === 'presentation';
-                if (!isDialogOrPresentation) {
-                  modal.remove(); // Remove the modal if it's not a dialog
+              const closeButtons = modal.querySelectorAll('[aria-label*="close"], [aria-label*="dismiss"], .close, .btn-close, [data-dismiss="modal"]');
+              
+              closeButtons.forEach((closeButton) => {
+                try {
+                  closeButton.click(); // Simulate a click on each close button
+                } catch (error) {
+                  console.error('Failed to click close button:', error);
                 }
+              });
+              
+              // Check if modal is dialog or presentation
+              const isDialogOrPresentation = modal.getAttribute('role') === 'dialog' || modal.getAttribute('role') === 'presentation' || modal.hasAttribute('aria-hidden');
+              if (!isDialogOrPresentation) {
+                modal.remove(); // Remove the modal if it's not a dialog
               }
             });
 
@@ -331,18 +340,18 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
           console.log("Next Action", content.user_action_and_explanation);
 
           localState.user_action_and_explanation = content.user_action_and_explanation;
-          localState.stateAction = "getDescribeAction";
+          localState.stateAction = "getParseAction";
         }).catch((e) => {
           console.error("getNextAction error", e);
           localState.errors += 1;
         });
         break;
-      case "getDescribeAction":
-        //getDescribeAction(task, current_action, current_screenshot = placeholderScreenshot)
-        await getDescribeAction(localState.task, localState.user_action_and_explanation, localState.currentImage).then(async (res) => {
+      case "getParseAction":
+        //getParseAction(task, current_action, current_screenshot = placeholderScreenshot)
+        await getParseAction(localState.task, localState.user_action_and_explanation, localState.currentImage).then(async (res) => {
           const content = JSON.parse(res.content);
           if (verbose) {
-            console.log("getDescribeAction", content);
+            console.log("getParseAction", content);
           }
           localState.actionJson = content;
 
@@ -369,7 +378,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
               localState.stateAction = "scrollDown";
           }
         }).catch((e) => {
-          console.error("getDescribeAction error", e);
+          console.error("getParseAction error", e);
           localState.stateAction = "getNextAction";
           localState.errors += 1;
         });
@@ -462,6 +471,14 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
             // Store the filtered elements
             elementsSet = elementsWithoutInnerText.filter(Boolean);
+
+            if (elementsSet.length) {
+              const original_length = await elements.count();
+              no_text_elements.push({
+                original_length,
+                filtered_length: elementsSet.length
+              })
+            }
           } else if (localState.actionJson.action === "click") {
 
             const stringToMatch = (localState.actionJson.inner_text || "").toLowerCase();
@@ -524,6 +541,14 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
               console.log("elementsSet1 length", elementsSet.length);
             }
 
+            if (elementsSet.length) {
+              const original_length = await elements.count();
+              text_elements.push({
+                original_length,
+                filtered_length: elementsSet.length
+              })
+            }
+
             if (!elementsSet.length) {
               // not regular clickable elements, try div, span, and p
               const elementsDivSpan = page.locator(`
@@ -562,6 +587,14 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
               );
 
               elementsSet = interactableElementsDivSpan.filter(Boolean);
+
+              if (elementsSet.length) {
+                const original_length = await elementsDivSpan.count();
+                text_elements.push({
+                  original_length,
+                  filtered_length: elementsSet.length
+                })
+              }
 
               if (verbose) {
                 console.log("elementsSetDivSpan length", elementsSet.length);
@@ -631,7 +664,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
               // Stop the loop if elementDetails reaches 100
               if (elementDetails.length >= 100) {
                 if (verbose) {
-                  console.log("Reached maximum allowed elements (199). Stopping loop.");
+                  console.log("Reached maximum allowed elements (100). Stopping loop.");
                 }
                 break;
               }
@@ -667,7 +700,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
               elementDetails.push(elementData);
             }
-
+            console.log("elementDetails", elementDetails);
             await getElement(localState.task, localState.user_action_and_explanation, elementDetails, localState.currentImage).then(async (res) => {
               const content = JSON.parse(res.content);
               if (verbose) {
@@ -748,10 +781,37 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
                   // Ensure the input is interactable
                   if (await specificElement.isEnabled()) {
+                    await specificElement.click(); // Explicitly focus on the input element
                     await specificElement.focus(); // Explicitly focus on the input element
+                    await page.waitForTimeout(100); // Wait for 100ms
                     await specificElement.fill(''); // Clear the input field by setting it to an empty string
+                    await page.waitForTimeout(100); // Wait for 100ms
                     await specificElement.pressSequentially(inputValue, { delay: 100 });
-                    await page.keyboard.press("Enter"); // Simulate pressing Enter
+
+                    const isASearch = await specificElement.evaluate((element) => {
+                      const attributesToCheck = ['placeholder', 'aria-label', 'id'];
+                      const includesSearch = attributesToCheck.some(attr =>
+                        element.getAttribute(attr)?.toLowerCase().includes('search')
+                      );
+                      const hasEnterKeyHint = element.hasAttribute('enterkeyhint');
+                      return includesSearch || hasEnterKeyHint;
+                    });
+
+                    if (isASearch) {
+                      console.log("is a searc")
+                      await page.keyboard.press("Enter"); // Simulate pressing Enter
+                    } else {
+                      const isCombobox = await specificElement.evaluate((element) => {
+                        return element.getAttribute('role') === 'combobox';
+                      });
+
+                      if (isCombobox) {
+                        await page.waitForTimeout(1000);
+                        await page.keyboard.press('ArrowDown');
+                        await page.waitForTimeout(100);
+                        await page.keyboard.press("Enter"); // Simulate pressing Enter
+                      }
+                    }
                   }
                 } catch (e) {
                   console.error("Error interacting with the input element:", e);
@@ -782,20 +842,24 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
   await browser.close();
   return {
-    observations: localState.observations
+    observations: localState.observations,
+    no_text_elements,
+    text_elements,
   }
 }
 
-/*
+
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/allrecipes_DONE.csv')
+fs.createReadStream('./webvoyager/flights.csv')
 .pipe(csv())
 .on('data', (row) => {
   data.push(row);
 })
 .on('end', async () => {
+  let no_text_elements_arr = [];
+  let text_elements_arr = [];
   for (const row of data) {
     if (!row.ques) {
       continue;
@@ -803,8 +867,11 @@ fs.createReadStream('./webvoyager/allrecipes_DONE.csv')
     try {
       let resObs = [];
       try {
-        console.log("Row", row)
-        const { observations } = await browse({ task: row.ques, web: row.web, verbose: true, headless: false });
+        const { observations, no_text_elements, text_elements } = await browse({ task: row.ques, web: row.web, verbose: true, headless: false });
+
+        no_text_elements_arr.push(no_text_elements);
+        text_elements_arr.push(text_elements);
+        
         resObs = observations;
       } catch (e) {
         console.error(`Error browsing ${row.id}`, e);
@@ -812,6 +879,8 @@ fs.createReadStream('./webvoyager/allrecipes_DONE.csv')
       const filePath = `./webvoyager/wolfram2/${row.id}.csv`;
       const stream = fs.createWriteStream(filePath);
   
+    //  console.log("no_text_elements_arr", no_text_elements_arr);
+     // console.log("text_elements_arr", text_elements_arr);
       writeToStream(stream, resObs, { headers: true })
         .on('finish', () => {
           console.log(`CSV file written successfully! ${row.id}`);
@@ -827,10 +896,12 @@ fs.createReadStream('./webvoyager/allrecipes_DONE.csv')
 .on('error', (err) => {
   console.error('Error reading the CSV file:', err);
 });
-*/
 
+
+/*
 
 async function navigate() {
   await browse({ task: "Visit Amazon and find a wireless gaming mouse under $50 with over 500 reviews. Note the brand and model. Then, visit Walmart and search for the same brand (or model) of mouse. Compare the price and features listed on Walmart’s page to Amazon’s page, and note the differences.", web: "", verbose: false, headless: false });
 }
 navigate();
+*/
