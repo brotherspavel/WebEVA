@@ -2,17 +2,87 @@ const axios = require('axios');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { ADD_DATE, OBSERVATION_MESSAGES, UPDATE_TASK, GET_ACTION, PARSE_ACTION, TASK_COMPLETE, GET_URL, GET_ELEMENT, SUMMARIZE_TASK, CUSTOM_ACTION, IDENTIFY_OPTIONS } = require('./messages');
+const { ADD_DATE, OBSERVATION_MESSAGES, UPDATE_TASK, GET_ACTION, PARSE_ACTION, TASK_COMPLETE, GET_URL, GET_ELEMENT, SUMMARIZE_TASK, CUSTOM_ACTION, IDENTIFY_OPTIONS, MODIFY_URL_PARAMS } = require('./messages');
 const { getCurrentDateTime } = require('./utils');
 const MAX_OBSERVATIONS_GET_NEXT_ACTION = 6
 const MAX_OBSERVATIONS_NEW_OBSERVATION = 7
-const MAX_OBSERVATIONS_UPDATE_TASK = 13
+const MAX_OBSERVATIONS_UPDATE_TASK = 10
 
 // note that there is 1 more in addition to whats listed here for MAX
 const MAX_OBSERVATIONS_IS_TASK_COMPLETE = 24
-const MAX_GET_SUMMARIZED_TASK = 10
+const MAX_GET_SUMMARIZED_TASK = 6
 
 const placeholderScreenshot = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIcwt4U72qbCuk1Bzes5qODmYmrN2xp9MvOw&s";
+
+async function getUpdatedURL(task_goal, current_url, action) {
+  const webMessages = [
+    {
+      role: "system",
+      content: MODIFY_URL_PARAMS,
+    }
+  ];
+  
+  webMessages.push({
+    role: "user",
+    content: [
+      {
+        type: "text",
+        text: `**Task Goal**: ${task_goal}
+        **Current URL**: ${current_url}
+        **Action**: ${action || ''}`,
+      },
+    ],
+  });
+
+  const jsonPayload = {
+    model: process.env.model, // Replace with your desired model name
+    messages: webMessages,
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "action_schema",
+        schema: {
+          type: "object",
+          properties: {
+            new_url: {
+              type: "string",
+            },
+            reasoning: {
+              type: "string",
+            },
+          },
+          required: ["new_url", "reasoning"],
+          additionalProperties: false,
+        },
+      },
+    },
+  };  
+
+  try {
+    // Prepare the data payload for the API
+    const response = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      jsonPayload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
+        },
+      }
+    );
+    // Extract the result
+    if (response.status === 200) {
+      const result = response.data;
+      return result.choices[0].message
+    } else {
+      console.error(`Errorh: ${response.status}, ${response.data}`);
+      return null;
+    }
+  } catch (error) {
+    console.error(`An error occurred: ${error}`);
+    return null;
+  }
+}
 
 async function getDateTask(task_goal) {
   const webMessages = [
@@ -533,26 +603,7 @@ async function getObservation(observations, current_task, current_user_action_an
       },
     ],
   });
-  //  skip for now:    - \`previous_screenshot\`: Webpage state before the action.
-  /*
-  if (prev_screenshot) {
-    webMessages.push({
-      role: "user",
-      content: [
-        {
-          type: 'text',
-          text: `**Previous Screenshot**`
-        },
-        {
-          type: "image_url",
-          image_url: {
-            url: prev_screenshot,
-          },
-        }
-      ]
-    });
-  }
-*/
+
   webMessages.push({
     role: "user",
     content: [
@@ -582,6 +633,9 @@ async function getObservation(observations, current_task, current_user_action_an
             observation: {
               type: "string",
             },
+            action_fail_or_stuck: {
+              type: "boolean",
+            }
           },
           required: ["observation"],
           additionalProperties: false,
@@ -1026,4 +1080,5 @@ module.exports = {
   getCustomAction,
   getOptions,
   getDateTask,
+  getUpdatedURL,
 };

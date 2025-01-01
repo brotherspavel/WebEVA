@@ -19,7 +19,7 @@ const OPENAI_API_VERSION = process.env.OPENAI_API_VERSION;
 const DEPLOYMENT_NAME = 'your-deployment-name'; // e.g., 'gpt-4-deployment'
 
 // Construct the API endpoint
-const API_ENDPOINT = `${OPENAI_API_BASE}openai/deployments/gpt-4o/chat/completions?api-version=${OPENAI_API_VERSION}`;
+const API_ENDPOINT = `${OPENAI_API_BASE}openai/deployments/gpt-4o/chat/completions?api-version=2024-08-01-preview`;
 
 // Define the request payload
 const data = {
@@ -27,8 +27,36 @@ const data = {
     { role: 'system', content: 'You are a helpful assistant.' },
     { role: 'user', content: 'Hello, how can you assist me today?' },
   ],
-  temperature: 0.7,
-  max_tokens: 150,
+  "response_format": {
+    "type": "json_schema",
+    "json_schema": {
+        "name": "CalendarEventResponse",
+        "strict": true,
+        "schema": {
+            "type": "object",
+            "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "participants": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "name",
+                "date",
+                "participants"
+            ],
+            "additionalProperties": false
+        }
+    },
+  }
 };
 
 const config = {

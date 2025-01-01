@@ -1,5 +1,3 @@
 web_name,id,ques,web
-Allrecipes,Allrecipes--6,Search for a vegetarian lasagna recipe that has at least a four-star rating and over 500 reviews.,https://www.allrecipes.com/
-Allrecipes,Allrecipes--8,Search for a recipe for Beef Wellington on Allrecipes that has at least 200 reviews and an average rating of 4.5 stars or higher. List the main ingredients required for the dish.,https://www.allrecipes.com/
-Coursera,Coursera--3,"Identify a new course or Specialization on Coursera related to Python Data Science, sort the courses by newest, what the first course is and which institution offers it.",https://www.coursera.org/
-Coursera,Coursera--4,Identify a course or Specialization on Coursera that helps business process management with with a rating 4.7.,https://www.coursera.org/
+Google Map,Google Map--0,"Find 5 beauty salons with ratings greater than 4.8 in Seattle, WA".,https://www.google.com/maps/
+Google Map,Google Map--1,Tell me one bus stop that is nearest to the intersection of main street and Amherst street in Altavista.,https://www.google.com/maps/

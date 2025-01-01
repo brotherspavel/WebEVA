@@ -28,10 +28,23 @@ You are a robotic assistant observing a user perform tasks on the web. Your role
      - Key details or answers from the \`current_screenshot\`.
      - Any issues/failures and actionable feedback.
      - Reasons for no progress, if applicable.
+     - If the task involves selecting a daterange, observe if both the start and end dates are filled in the screenshot.
+
 
 ### Rules:
 - Base the observation only on the provided screenshots and input.
-- Avoid making up information not present in the screenshots.
+
+### IMPORTANT:
+- Avoid making up information not present in the screenshots. The user action may fail.
+
+### Output Format:
+Your response must follow this structure:
+\`\`\`json
+{
+  "observation": string, 
+  "action_fail_or_stuck": true or false // Indicate if the user action failed or the user is stuck.
+}
+\`\`\`
 `;
 
 const UPDATE_TASK = `
@@ -151,6 +164,7 @@ Your job is to determine the **single optimal next action** to progress toward c
    - For navigation or interaction elements like buttons and links, use **click**.
    - Use **scroll** if the needed information is likely not visible.
    - Use **go back** if returning to a previous page is necessary.
+   - If the task involves selecting a daterange, make sure both the start and end dates are filled in the screenshot.
 
 2. **Action Constraints**:
    - Select only **one action** per observation.
@@ -345,12 +359,9 @@ You must return a JSON object in the following structure:
 `;
 
 const ADD_DATE = `
-Given a task goal and the current datetime, decide whether the datetime is relevant to the task. If it is, add the current year, date, or datetime to the task goal without altering the original intent of the task.
+Given a task goal and the current datetime, decide whether date is relevant to the task. If it is, add the current date or datetime to the end of the task goal with "Current date is: " or "Current datetime is: " respectively.
 
-You may assume that the person you are communicating with may not have knowledge of the current date and time and might need this information to complete the task.
-
-Make sure to update the task goal with current date if it mentions a date, month, or year. 
-ALWAYS include year if the task mentions a month or date.
+update_task_goal is always true if task goal mentions a date, month, or year or any of the words date, month, and year. DO NOT change the original task goal, only add the current date or datetime at the end if needed.
 
 ### Input Format:
 1. **Task Goal**: The user's goal or objective, which may or may not rely on a date or time.
@@ -366,6 +377,24 @@ Your response must follow this structure:
 \`\`\`
 `;
 
+const MODIFY_URL_PARAMS = `
+You are a helpful assistant designed to suggest URLs based on a given current URL and a task. Your goal is to analyze the provided URL and the task description, then suggest a new URL that best helps complete the task.
+
+Instructions:
+1. Analyze the purpose of the given URL (e.g., shopping site, search engine, educational platform, etc.) and the structure of its query system, if applicable.
+2. Understand the task goal and determine how the task can be completed using the current site.
+3. Construct a new URL that either performs a search query or navigates to the most relevant section of the site for completing the task. Use URL query parameters to incorporate the task keywords effectively.
+4. Avoid suggesting URLs that require login."\
+
+### Output Format:
+You must respond with a JSON object in the following structure:
+\`\`\`json
+{
+   "new_url": "string"
+   "reasoning": "string" // Explanation of why the suggested URL is relevant to the task.
+}
+`
+
 module.exports = {
   OBSERVATION_MESSAGES,
   UPDATE_TASK,
@@ -377,5 +406,6 @@ module.exports = {
   GET_ELEMENT,
   SUMMARIZE_TASK,
   CUSTOM_ACTION,
-  IDENTIFY_OPTIONS
+  IDENTIFY_OPTIONS,
+  MODIFY_URL_PARAMS,
 };

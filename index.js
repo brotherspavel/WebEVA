@@ -1,11 +1,10 @@
-const { getDateTask, getNextAction, getWeb, getParseAction, getObservation, getUpdateTask, getIsTaskComplete, getElement, getSummarizedTask, getCustomAction, getOptions } = require('./api');
+const { getDateTask, getNextAction, getWeb, getParseAction, getObservation, getUpdateTask, getIsTaskComplete, getElement, getSummarizedTask, getCustomAction, getOptions, getUpdatedURL } = require('./api');
 const { chromium } = require('playwright');
 const fs = require('fs');
 const csv = require('csv-parser');
 const path = require('path');
 const { writeToStream } = require('fast-csv');
 const sharp = require('sharp');
-const { text } = require('stream/consumers');
 const segmentWidth = 900;
 const segmentHeight = 1600;
 const yOffset = 1000;
@@ -95,7 +94,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
     localState.errors += 1;
   });
 
-  while (localState.stateAction !== null && localState.currentStep < MAX_STEPS
+  while (localState.stateAction !== null && Number(localState.observations?.length) < MAX_STEPS
     && localState.errors < MAX_ERRORS
   ) {
     switch (localState.stateAction) {
@@ -133,11 +132,13 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
           ]
 
           // Take a screenshot as a Base64-encoded string
-          await page.screenshot({ path: 'screenshot.png' });
-          const gotobase64Image = fs.readFileSync('screenshot.png', 'base64');
-          const gotobase64ImageUrl = `data:image/png;base64,${gotobase64Image}`;
+          const base64Image = await page.screenshot({ encoding: 'base64' });
+          const base64ImageUrl = `data:image/png;base64,${base64Image}`;
+
+          // Update the local state
           localState.prevImage = localState.currentImage;
-          localState.currentImage = gotobase64ImageUrl;
+          localState.currentImage = base64ImageUrl;
+
           localState.scrollY = 0;
           localState.stateAction = "getNextAction";
         } catch (e) {
@@ -202,24 +203,31 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
         }
         await page.waitForTimeout(newUrlWait)
         // Take a screenshot as a Base64-encoded string
-        await page.screenshot({ path: 'screenshot.png' });
-        const base64Image = fs.readFileSync('screenshot.png', 'base64');
+        const base64Image = await page.screenshot({ encoding: 'base64' });
         const base64ImageUrl = `data:image/png;base64,${base64Image}`;
+
+        // Update the local state
         localState.prevImage = localState.currentImage;
         localState.currentImage = base64ImageUrl;
+
         //getObservation(observations, current_task, current_user_action_and_explanation, prev_screenshot, current_screenshot) 
         await getObservation(localState.observations, localState.task, localState.user_action_and_explanation, localState.prevImage, localState.currentImage).then((res) => {
           const content = JSON.parse(res.content);
 
-
-          console.log(content.observation);
+          // change to get Url if user is stuck and need to have different parameters.
+          console.log(content);
 
           localState.observations = [...localState.observations, {
             task: localState.task,
             user_action_and_explanation: localState.user_action_and_explanation,
             observation: content.observation,
           }];
-          localState.stateAction = "getUpdatedTask";
+          //scroll down isn't stuck and don't try to change parameters too early
+          if (content.action_fail_or_stuck && localState.user_action_and_explanation !== "scrollDown" && localState.observations.length > 14) {
+            localState.stateAction = "changeParams";
+          } else {
+            localState.stateAction = "getUpdatedTask";
+          }
         }).catch((e) => {
           localState.errors += 1;
           localState.stateAction = "getUpdatedTask";
@@ -450,7 +458,6 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 const placeholder = (await element.getAttribute('placeholder')) || '';
                 const isEnabled = await element.isEnabled();
                 const isVisible = await element.isVisible();
-
                 // Exclude elements with any non-empty innerText or placeholder
                 if (!trimmedText && !placeholder && isEnabled && isVisible) {
                   // Get the bounding box of the element
@@ -498,9 +505,11 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
             const interactableElements = await Promise.all(
               (await elements.all()).map(async (element) => {
                 // Check if the element is an HTMLElement
+                const isInput = await element.evaluate(el => el.tagName.toLowerCase() === 'input');
+
                 const isInteractable =
                   (await element.isEnabled()) &&
-                  (await element.isVisible() || !!(await element.getAttribute('href')));
+                  (await element.isVisible() || !!(await element.getAttribute('href')) || isInput);
 
                 if (!isInteractable) {
                   return null;
@@ -526,10 +535,12 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 }
 
                 const placeholder = ((await element.getAttribute('placeholder')) || '').trim().toLowerCase();
+                const value = ((await element.getAttribute('value')) || '').trim().toLowerCase();
 
                 let isMatch =
                   (innerText && (innerText.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(innerText))) ||
-                  (placeholder && (placeholder.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(placeholder)));
+                  (placeholder && (placeholder.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(placeholder))) ||
+                    (value && (value.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(value)));
 
                 return isMatch ? element : null;
               })
@@ -601,6 +612,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
               }
             }
 
+            /*
             // sometimes it interprets text images as inner text, this is to catch those cases
             if (!elementsSet.length) {
               const elements2 = page.locator('button, a, img[role="button"], input)');
@@ -635,19 +647,51 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
               // Store the filtered elements
               elementsSet = elementsWithoutInnerText.filter(Boolean);
             }
+              */
           } else if (localState.actionJson.action === "text") {
             // Locate all valid inputs and textareas
             const validInputs = page.locator(
               'input[type="text"], input:not([type]), textarea'
+            );            
+            const stringToMatch = (localState.actionJson.inner_text || "").toLowerCase();
+
+            // Normalize the string to match
+            const normalizedStringToMatch = stringToMatch.trim() || 'probablynotneededbutjustincase';
+
+            // Filter elements based on conditions
+            const validInputsMatch = await Promise.all(
+              (await validInputs.all()).map(async (element) => {
+                // Check if the element is an HTMLElement
+                const isInteractable = await element.isEnabled()
+
+                if (!isInteractable) {
+                  return null;
+                }
+
+                let innerText = ((await element.innerText()) || '').trim().toLowerCase();
+
+                const placeholder = ((await element.getAttribute('placeholder')) || '').trim().toLowerCase();
+
+                let isMatch =
+                  (innerText && (innerText.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(innerText))) ||
+                  (placeholder && (placeholder.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(placeholder)));
+
+                return isMatch ? element : null;
+              })
             );
 
-            // Filter only visible elements
-            const visibleEnabledElements = await validInputs.filter(async (element) => {
-              return await element.isEnabled();
-            }).all();
+            // Filter out null values and assign to elementsSet
+            elementsSet = validInputsMatch.filter(Boolean);
 
-            // Use the filtered elements directly
-            elementsSet = visibleEnabledElements; // Locators of visible elements
+            // if no match, we use all visible inputs
+            if (!elementsSet.length) {
+              // Filter only visible elements
+              const visibleEnabledElements = await validInputs.filter(async (element) => {
+                return await element.isEnabled();
+              }).all();
+
+              elementsSet = visibleEnabledElements; // Locators of visible elements
+            }
           }
           if (verbose) {
             console.log("elementsSet length", elementsSet.length);
@@ -661,7 +705,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
             const elementDetails = [];
 
             for (const [index, element] of elementsSet.entries()) {
-              // Stop the loop if elementDetails reaches 100
+              // Stop the loop if elementDetails reaches 100, 
               if (elementDetails.length >= 100) {
                 if (verbose) {
                   console.log("Reached maximum allowed elements (100). Stopping loop.");
@@ -673,6 +717,21 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
               const elementData = await element.evaluate((el, id) => {
                 // Add a unique attribute
                 el.setAttribute('element_id', id);
+
+                  // Add an aria-label attribute if not already present
+                if (!el.hasAttribute('aria-label')) {
+                  // Derive aria-label from children's aria-label attributes
+                  let textForAriaLabel = Array.from(el.children)
+                    .map(child => child.getAttribute('aria-label')) // Get aria-label from children
+                    .filter(label => label && label.trim().length > 0) // Filter out null or empty labels
+                    .join(' ')
+                    .trim();
+
+                  // Set the aria-label if derived content is available
+                  if (textForAriaLabel) {
+                    el.setAttribute('aria-label', textForAriaLabel);
+                  }
+                }
 
                 // Extract the tag name and attributes
                 const tagName = el.tagName.toLowerCase();
@@ -700,7 +759,9 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
               elementDetails.push(elementData);
             }
-            console.log("elementDetails", elementDetails);
+            if (verbose) {
+              console.log("elementDetails", elementDetails);
+            }
             await getElement(localState.task, localState.user_action_and_explanation, elementDetails, localState.currentImage).then(async (res) => {
               const content = JSON.parse(res.content);
               if (verbose) {
@@ -708,11 +769,15 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
               }
               if (Number(content.element_id) > 0 && Number(content.element_id) <= elementDetails.length) {
                 specificElement = page.locator(`[element_id="${content.element_id}"]`);
-              }
+              } 
             }).catch((e) => {
               console.error("getElement error", e);
               localState.errors += 1;
             });
+          }
+          if (!specificElement) {
+            localState.stateAction = "changeParams";
+            break;
           }
           if (specificElement) {
             const tagName = (await specificElement.evaluate(el => el.tagName) || '').toLowerCase();
@@ -765,14 +830,16 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                     await page.goto(absoluteHref);
                   } else {
                     // Ensure the element is visible and enabled before clicking
-                    if (await specificElement.isVisible() && await specificElement.isEnabled()) {
+                    if (await specificElement.isEnabled()) {
                       await specificElement.click();
                     } else {
                       throw new Error('Element is not interactable');
                     }
                   }
                 } catch (e) {
-                  console.error("Error interacting with the element:", e);
+                  console.error("Error interacting with the click element:", e);
+                  localState.stateAction = "changeParams";
+
                   localState.errors += 1;
                 }
               } else {
@@ -781,9 +848,8 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
                   // Ensure the input is interactable
                   if (await specificElement.isEnabled()) {
-                    await specificElement.click(); // Explicitly focus on the input element
                     await specificElement.focus(); // Explicitly focus on the input element
-                    await page.waitForTimeout(100); // Wait for 100ms
+                    await page.waitForTimeout(200); // Wait for 100ms
                     await specificElement.fill(''); // Clear the input field by setting it to an empty string
                     await page.waitForTimeout(100); // Wait for 100ms
                     await specificElement.pressSequentially(inputValue, { delay: 100 });
@@ -798,7 +864,6 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                     });
 
                     if (isASearch) {
-                      console.log("is a searc")
                       await page.keyboard.press("Enter"); // Simulate pressing Enter
                     } else {
                       const isCombobox = await specificElement.evaluate((element) => {
@@ -815,6 +880,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                   }
                 } catch (e) {
                   console.error("Error interacting with the input element:", e);
+                  localState.stateAction = "changeParams";
                   localState.errors += 1;
                 }
               }
@@ -834,6 +900,57 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
         }
         localState.stateAction = "observe";
         break;
+      case 'changeParams':
+        const currentUrl = page.url();
+
+        await getUpdatedURL(localState.task, currentUrl, localState.user_action_and_explanation).then(async(res) => {
+          if (!res?.content) {
+            throw new Error("No response from getUpdatedUrl");
+          }
+          const newUrl = JSON.parse(res.content).new_url;
+          const reasoning = JSON.parse(res.content).reasoning;
+          const url1 = new URL(newUrl);
+          const baseUrl1 = `${url1.protocol}//${url1.host}`;
+          const url2 = new URL(currentUrl);
+          const baseUrl2 = `${url2.protocol}//${url2.host}` || "";
+          if (baseUrl1 === baseUrl2 && url1 !== url2) {
+            localState.web = newUrl;
+            try {
+              await page.goto(localState.web);
+              await page.waitForTimeout(firstUrlWait);
+              localState.observations = [
+                ...localState.observations,
+                { task: localState.task, user_action_and_explanation: `Changing URL parameters. ${reasoning}`, observation: `Went to ${localState.web}` },
+              ]
+    
+              if (verbose) {
+                console.log("reasoning for new url", reasoning);
+              }
+              // Take a screenshot as a Base64-encoded string
+          // Take a screenshot as a Base64-encoded string
+              const base64Image = await page.screenshot({ encoding: 'base64' });
+              const base64ImageUrl = `data:image/png;base64,${base64Image}`;
+
+              // Update the local state
+              localState.prevImage = localState.currentImage;
+              localState.currentImage = base64ImageUrl;
+              localState.scrollY = 0;
+              localState.stateAction = "getUpdatedTask";
+            } catch (e) {
+              console.error("updated url error error", e);
+              localState.errors += 1;
+              localState.stateAction = "getNextAction";
+            }
+          } else {
+            localState.stateAction = "getNextAction";
+          }
+        }).catch((e) => {
+          localState.errors += 1;
+          localState.stateAction = "getNextAction";
+
+          console.error("web browsing error", e);
+        });
+        break;
       default:
         localState.stateAction = null;
         console.log("Invalid day");
@@ -852,7 +969,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/flights.csv')
+fs.createReadStream('./webvoyager/testing.csv')
 .pipe(csv())
 .on('data', (row) => {
   data.push(row);
