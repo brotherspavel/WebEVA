@@ -693,14 +693,6 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
             // Filter out null values and assign to elementsSet
             elementsSet = validInputsMatch.filter(Boolean);
-            // for determining elements length
-            if (elementsSet.length) {
-              const original_length = await validInputs.count();
-              text_elements.push({
-                original_length,
-                filtered_length: elementsSet.length
-              })
-            }
 
             // if no match, we use all visible inputs
             if (!elementsSet.length) {
@@ -711,9 +703,15 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
               elementsSet = visibleEnabledElements; // Locators of visible elements
             }
-          }
-          if (verbose) {
-            console.log("elementsSet length", elementsSet.length);
+
+            // for determining elements length
+            if (elementsSet.length) {
+              const original_length = await validInputs.count();
+              text_elements.push({
+                original_length,
+                filtered_length: elementsSet.length
+              })
+            }
           }
 
           let specificElement = null;
@@ -1008,7 +1006,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/allrecipes.csv')
+fs.createReadStream('./webvoyager/testing.csv')
 .pipe(csv())
 .on('data', (row) => {
   data.push(row);
@@ -1032,7 +1030,7 @@ fs.createReadStream('./webvoyager/allrecipes.csv')
       } catch (e) {
         console.error(`Error browsing ${row.id}`, e);
       }
-      const path = './webvoyager/allrecipes';
+      const path = './webvoyager/wolfram2';
 
       const filePaths = {
         main: `${path}/${row.id}.csv`,
