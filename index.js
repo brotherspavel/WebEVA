@@ -11,12 +11,16 @@ const segmentHeight = 1600;
 const yOffset = 1000;
 
 // Adjust these when needed. Depends on vpn and network speed.
-const firstUrlWait = 4000; // when scroll to
+const firstUrlWait = 4000; // when browsed
 const newUrlWait = 3000;  // when button click
 const sameUrlWait = 500; // scroll
 
-const MAX_STEPS = 15;
+// breaks if at these limits
+const MAX_STEP_OBSERVATIONS = 25;
 const MAX_ERRORS = 8;
+
+// if observations no change, change parameters after these many observatins
+const ENABLE_PARAM_LENGTH = 15;
 
 const state = {
   stateAction: null,
@@ -95,7 +99,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
     localState.errors += 1;
   });
 
-  while (localState.stateAction !== null && Number(localState.observations?.length) < MAX_STEPS
+  while (localState.stateAction !== null && Number(localState.observations?.length) < MAX_STEP_OBSERVATIONS
     && localState.errors < MAX_ERRORS
   ) {
     switch (localState.stateAction) {
@@ -229,7 +233,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
             observation: content.observation,
           }];
           //scroll down isn't stuck and don't try to change parameters too early
-          if (content.action_fail_or_stuck && localState.user_action_and_explanation !== "scrollDown" && localState.observations.length > 14) {
+          if (content.action_fail_or_stuck && localState.user_action_and_explanation !== "scrollDown" && localState.observations.length > ENABLE_PARAM_LENGTH) {
             localState.stateAction = "changeParams";
           } else {
             localState.stateAction = "getUpdatedTask";
@@ -796,8 +800,8 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
           }
           if (specificElement) {
             let tagNameChild = (await specificElement.evaluate(el => el.tagName) || '').toLowerCase();
-
-            while (tagNameChild === 'span') {
+            let classNameChild = (await specificElement.evaluate(el => el.className) || '').toLowerCase();
+            while (tagNameChild === 'span' && !classNameChild.includes('link')) {
               specificElement = specificElement.locator('..'); // Move to the parent
               tagNameChild = (await specificElement.evaluate(node => node.tagName) || '').toLowerCase(); // Update the existing variable
             }
@@ -1004,7 +1008,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/testing.csv')
+fs.createReadStream('./webvoyager/allrecipes.csv')
 .pipe(csv())
 .on('data', (row) => {
   data.push(row);
@@ -1019,7 +1023,7 @@ fs.createReadStream('./webvoyager/testing.csv')
     try {
       let resObs = [];
       try {
-        const { observations, no_text_elements, text_elements } = await browse({ task: row.ques, web: row.web, verbose: true, headless: false });
+        const { observations, no_text_elements, text_elements } = await browse({ task: row.ques, web: row.web, verbose: true, headless: true });
 
         no_text_elements_arr = [...no_text_elements_arr, ...no_text_elements];
         text_elements_arr = [...text_elements_arr, ...text_elements];
@@ -1028,7 +1032,7 @@ fs.createReadStream('./webvoyager/testing.csv')
       } catch (e) {
         console.error(`Error browsing ${row.id}`, e);
       }
-      const path = './webvoyager/wolfram2';
+      const path = './webvoyager/allrecipes';
 
       const filePaths = {
         main: `${path}/${row.id}.csv`,
