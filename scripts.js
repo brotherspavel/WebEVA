@@ -19,7 +19,7 @@ const OPENAI_API_VERSION = process.env.OPENAI_API_VERSION;
 const DEPLOYMENT_NAME = 'your-deployment-name'; // e.g., 'gpt-4-deployment'
 
 // Construct the API endpoint
-const API_ENDPOINT = `${OPENAI_API_BASE}openai/deployments/gpt-4o/chat/completions?api-version=2024-08-01-preview`;
+const API_ENDPOINT = `${OPENAI_API_BASE}openai/deployments/gpt-4o/chat/completions?api-version=2024-10-21`;
 
 // Define the request payload
 const data = {

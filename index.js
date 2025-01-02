@@ -1,10 +1,11 @@
-const { getDateTask, getNextAction, getWeb, getParseAction, getObservation, getUpdateTask, getIsTaskComplete, getElement, getSummarizedTask, getCustomAction, getOptions, getUpdatedURL } = require('./api');
+const { getInput, getDateTask, getNextAction, getWeb, getParseAction, getObservation, getUpdateTask, getIsTaskComplete, getElement, getSummarizedTask, getCustomAction, getOptions, getUpdatedURL } = require('./api');
 const { chromium } = require('playwright');
 const fs = require('fs');
 const csv = require('csv-parser');
 const path = require('path');
 const { writeToStream } = require('fast-csv');
 const sharp = require('sharp');
+const { text } = require('stream/consumers');
 const segmentWidth = 900;
 const segmentHeight = 1600;
 const yOffset = 1000;
@@ -132,8 +133,11 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
           ]
 
           // Take a screenshot as a Base64-encoded string
-          const base64Image = await page.screenshot({ encoding: 'base64' });
+          // Take a screenshot as a Base64-encoded string
+          const bufferImage = await page.screenshot(); // Screenshot returns a Buffer by default
+          const base64Image = bufferImage.toString('base64'); // Convert the Buffer to Base64
           const base64ImageUrl = `data:image/png;base64,${base64Image}`;
+
 
           // Update the local state
           localState.prevImage = localState.currentImage;
@@ -203,8 +207,10 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
         }
         await page.waitForTimeout(newUrlWait)
         // Take a screenshot as a Base64-encoded string
-        const base64Image = await page.screenshot({ encoding: 'base64' });
+        const bufferImage = await page.screenshot(); // Screenshot returns a Buffer by default
+        const base64Image = bufferImage.toString('base64'); // Convert the Buffer to Base64
         const base64ImageUrl = `data:image/png;base64,${base64Image}`;
+
 
         // Update the local state
         localState.prevImage = localState.currentImage;
@@ -342,7 +348,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
         // getNextAction(observations, current_screenshot = placeholderScreenshot)
         await getNextAction(localState.observations, localState.currentImage).then((res) => {
           if (!res) {
-            return;
+            throw new Error("No response from getNextAction");
           }
           const content = JSON.parse(res.content);
           console.log("Next Action", content.user_action_and_explanation);
@@ -499,6 +505,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
               option, 
               select, 
               td, 
+              li,
               input
             `);
             // Filter elements based on conditions
@@ -682,6 +689,14 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
             // Filter out null values and assign to elementsSet
             elementsSet = validInputsMatch.filter(Boolean);
+            // for determining elements length
+            if (elementsSet.length) {
+              const original_length = await validInputs.count();
+              text_elements.push({
+                original_length,
+                filtered_length: elementsSet.length
+              })
+            }
 
             // if no match, we use all visible inputs
             if (!elementsSet.length) {
@@ -780,8 +795,31 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
             break;
           }
           if (specificElement) {
-            const tagName = (await specificElement.evaluate(el => el.tagName) || '').toLowerCase();
+            let tagNameChild = (await specificElement.evaluate(el => el.tagName) || '').toLowerCase();
 
+            while (tagNameChild === 'span') {
+              specificElement = specificElement.locator('..'); // Move to the parent
+              tagNameChild = (await specificElement.evaluate(node => node.tagName) || '').toLowerCase(); // Update the existing variable
+            }
+            // Shouldn't be a click action
+            if (localState.actionJson.action === "click" && await specificElement.getAttribute('type') === 'text') {
+              await getInput(localState.task, localState.user_action_and_explanation, localState.currentImage).then(async (res) => {
+                if (!res?.content) {
+                  throw new Error("No response from getInput");
+                }
+                const content = JSON.parse(res.content);
+ 
+                localState.actionJson.action = "text";
+                localState.actionJson.input_value = content.input_value;
+                if (verbose) {
+                  console.log("getInput", content);
+                }
+              }).catch((e) => {
+                console.error("getInput error", e);
+                localState.errors += 1;
+              });
+            }
+            const tagName = (await specificElement.evaluate(el => el.tagName) || '').toLowerCase();
             if (tagName === 'option' || tagName === 'select') {
               let selectElement1;
               // Find the parent <select> element as a locator
@@ -829,18 +867,13 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                     const absoluteHref = new URL(href, page.url()).href; // Resolves relative URLs based on the current page URL
                     await page.goto(absoluteHref);
                   } else {
-                    // Ensure the element is visible and enabled before clicking
-                    if (await specificElement.isEnabled()) {
-                      await specificElement.click();
-                    } else {
-                      throw new Error('Element is not interactable');
-                    }
+                    await specificElement.click();
                   }
                 } catch (e) {
                   console.error("Error interacting with the click element:", e);
                   localState.stateAction = "changeParams";
-
                   localState.errors += 1;
+                  break;
                 }
               } else {
                 try {
@@ -882,6 +915,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                   console.error("Error interacting with the input element:", e);
                   localState.stateAction = "changeParams";
                   localState.errors += 1;
+                  break;
                 }
               }
             }
@@ -896,7 +930,9 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
           }
         } catch (e) {
           console.log("error during clicking or text", e)
+          localState.stateAction = "changeParams";
           localState.errors += 1;
+          break;
         }
         localState.stateAction = "observe";
         break;
@@ -927,8 +963,8 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 console.log("reasoning for new url", reasoning);
               }
               // Take a screenshot as a Base64-encoded string
-          // Take a screenshot as a Base64-encoded string
-              const base64Image = await page.screenshot({ encoding: 'base64' });
+              const bufferImage = await page.screenshot(); // Screenshot returns a Buffer by default
+              const base64Image = bufferImage.toString('base64'); // Convert the Buffer to Base64
               const base64ImageUrl = `data:image/png;base64,${base64Image}`;
 
               // Update the local state
@@ -965,7 +1001,6 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
   }
 }
 
-
 // Example call to the function
 const data = [];
 
@@ -986,25 +1021,41 @@ fs.createReadStream('./webvoyager/testing.csv')
       try {
         const { observations, no_text_elements, text_elements } = await browse({ task: row.ques, web: row.web, verbose: true, headless: false });
 
-        no_text_elements_arr.push(no_text_elements);
-        text_elements_arr.push(text_elements);
+        no_text_elements_arr = [...no_text_elements_arr, ...no_text_elements];
+        text_elements_arr = [...text_elements_arr, ...text_elements];
         
         resObs = observations;
       } catch (e) {
         console.error(`Error browsing ${row.id}`, e);
       }
-      const filePath = `./webvoyager/wolfram2/${row.id}.csv`;
-      const stream = fs.createWriteStream(filePath);
-  
-    //  console.log("no_text_elements_arr", no_text_elements_arr);
-     // console.log("text_elements_arr", text_elements_arr);
-      writeToStream(stream, resObs, { headers: true })
-        .on('finish', () => {
-          console.log(`CSV file written successfully! ${row.id}`);
-        })
-        .on('error', (error) => {
-          console.error(`Error writing to CSV file: ${row.id}`, error);
-        });
+      const path = './webvoyager/wolfram2';
+
+      const filePaths = {
+        main: `${path}/${row.id}.csv`,
+        noText: `${path}/${row.id}_no_text_elements.csv`,
+        text: `${path}/${row.id}_text_elements.csv`
+      };
+      
+      const streams = {
+        main: fs.createWriteStream(filePaths.main),
+        noText: fs.createWriteStream(filePaths.noText),
+        text: fs.createWriteStream(filePaths.text)
+      };
+
+      const writeDataToStream = (stream, data, description) => {
+        writeToStream(stream, data, { headers: true })
+          .on('finish', () => {
+            console.log(`CSV file written successfully for ${description}: ${row.id}`);
+          })
+          .on('error', (error) => {
+            console.error(`Error writing to CSV file for ${description}: ${row.id}`, error);
+          });
+      };
+      
+      // Write data to each stream
+      writeDataToStream(streams.main, resObs, 'main data');
+      writeDataToStream(streams.noText, no_text_elements_arr, 'no text elements');
+      writeDataToStream(streams.text, text_elements_arr, 'text elements');
     } catch (e) {
       console.error(`Error browsing ${row.id}`, e);
     }
@@ -1016,9 +1067,9 @@ fs.createReadStream('./webvoyager/testing.csv')
 
 
 /*
-
+const task = "Go on wikipedia and find American food, note the first mentioning of a dish, search for a recipe on allrecipes related to that food"
 async function navigate() {
-  await browse({ task: "Visit Amazon and find a wireless gaming mouse under $50 with over 500 reviews. Note the brand and model. Then, visit Walmart and search for the same brand (or model) of mouse. Compare the price and features listed on Walmart’s page to Amazon’s page, and note the differences.", web: "", verbose: false, headless: false });
+  await browse({ task, web: "", verbose: true, headless: false });
 }
 navigate();
 */

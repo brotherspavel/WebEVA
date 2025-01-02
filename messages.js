@@ -28,7 +28,7 @@ You are a robotic assistant observing a user perform tasks on the web. Your role
      - Key details or answers from the \`current_screenshot\`.
      - Any issues/failures and actionable feedback.
      - Reasons for no progress, if applicable.
-     - If the task involves selecting a daterange, observe if both the start and end dates are filled in the screenshot.
+     - If the last action is selecting daterange, observe if both the start and end dates are filled in the screenshot.
 
 
 ### Rules:
@@ -164,7 +164,6 @@ Your job is to determine the **single optimal next action** to progress toward c
    - For navigation or interaction elements like buttons and links, use **click**.
    - Use **scroll** if the needed information is likely not visible.
    - Use **go back** if returning to a previous page is necessary.
-   - If the task involves selecting a daterange, make sure both the start and end dates are filled in the screenshot.
 
 2. **Action Constraints**:
    - Select only **one action** per observation.
@@ -394,6 +393,16 @@ You must respond with a JSON object in the following structure:
    "reasoning": "string" // Explanation of why the suggested URL is relevant to the task.
 }
 `
+const GET_INPUT = `
+You are a helpful assistant designed to suggest the text for a user to type into an input field.
+
+The previous assistant suggested a click action, but this is incorrect. The correct action is a type action, where the user types the required text into the input field. Based on this, suggest the exact text that should be typed.
+
+### OUTPUT FORMAT: 
+{
+  "input_value": "The exact text to input into the field for type actions"
+}
+`;
 
 module.exports = {
   OBSERVATION_MESSAGES,
@@ -408,4 +417,5 @@ module.exports = {
   CUSTOM_ACTION,
   IDENTIFY_OPTIONS,
   MODIFY_URL_PARAMS,
+  GET_INPUT,
 };

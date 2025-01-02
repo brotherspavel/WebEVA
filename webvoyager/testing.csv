@@ -1,3 +1,4 @@
 web_name,id,ques,web
-Google Map,Google Map--0,"Find 5 beauty salons with ratings greater than 4.8 in Seattle, WA".,https://www.google.com/maps/
-Google Map,Google Map--1,Tell me one bus stop that is nearest to the intersection of main street and Amherst street in Altavista.,https://www.google.com/maps/
+Google Flights,Google Flights--0,Book a journey with return option on same day from Edinburg to Manchester on December 31st and show me the lowest price option available.,https://www.google.com/travel/flights/
+Google Flights,Google Flights--1,"Show me the list of one-way flights (February 17, 2025) from Chicago to Paris.",https://www.google.com/travel/flights/
+

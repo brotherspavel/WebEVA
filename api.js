@@ -2,7 +2,7 @@ const axios = require('axios');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { ADD_DATE, OBSERVATION_MESSAGES, UPDATE_TASK, GET_ACTION, PARSE_ACTION, TASK_COMPLETE, GET_URL, GET_ELEMENT, SUMMARIZE_TASK, CUSTOM_ACTION, IDENTIFY_OPTIONS, MODIFY_URL_PARAMS } = require('./messages');
+const { GET_INPUT, ADD_DATE, OBSERVATION_MESSAGES, UPDATE_TASK, GET_ACTION, PARSE_ACTION, TASK_COMPLETE, GET_URL, GET_ELEMENT, SUMMARIZE_TASK, CUSTOM_ACTION, IDENTIFY_OPTIONS, MODIFY_URL_PARAMS } = require('./messages');
 const { getCurrentDateTime } = require('./utils');
 const MAX_OBSERVATIONS_GET_NEXT_ACTION = 6
 const MAX_OBSERVATIONS_NEW_OBSERVATION = 7
@@ -13,6 +13,81 @@ const MAX_OBSERVATIONS_IS_TASK_COMPLETE = 24
 const MAX_GET_SUMMARIZED_TASK = 6
 
 const placeholderScreenshot = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIcwt4U72qbCuk1Bzes5qODmYmrN2xp9MvOw&s";
+
+async function getInput(task, current_action, current_screenshot = placeholderScreenshot) {
+  const webMessages = [
+    {
+      role: "system",
+      content: GET_INPUT,
+    },
+    {
+      role: "user",
+      content: [
+        {
+          type: "text",
+          text: `
+            **Task**: ${task}
+            **Current Action**: ${current_action}
+          `,
+        },
+        {
+          type: "image_url",
+          image_url: {
+            url: current_screenshot,
+          },
+        }
+      ],
+    },
+  ];
+  
+  const jsonPayload = {
+    model: process.env.model, // Replace with your desired model name
+    messages: webMessages,
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "action_schema",
+        schema: {
+          type: "object",
+          properties: {
+            input_value: {
+              type: "string",
+              description: "The exact text to input into the field for text actions, using essential keywords only. Leave blank for other actions",
+            },
+          },
+          required: ["input_value"],
+          additionalProperties: false,
+        },
+      },
+    },
+  };
+  
+  try {
+    // Make the API call using axios
+    const response = await axios.post(
+      process.env.OPENAI_API_URL,
+      jsonPayload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          'api-key': process.env.OPENAI_API_KEY,
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
+        },
+      }
+    );
+
+    // Handle the response
+    if (response.status === 200) {
+      return response.data.choices[0].message;
+    } else {
+      console.error(`Error: ${response.status}, ${response.data}`);
+      return null;
+    }
+  } catch (error) {
+    console.error(`An error occurred: ${error}`);
+    return null;
+  }
+}
 
 async function getUpdatedURL(task_goal, current_url, action) {
   const webMessages = [
@@ -61,11 +136,12 @@ async function getUpdatedURL(task_goal, current_url, action) {
   try {
     // Prepare the data payload for the API
     const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
+      process.env.OPENAI_API_URL,
       jsonPayload,
       {
         headers: {
           "Content-Type": "application/json",
+          'api-key': process.env.OPENAI_API_KEY,
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
         },
       }
@@ -130,11 +206,12 @@ async function getDateTask(task_goal) {
   try {
     // Prepare the data payload for the API
     const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
+      process.env.OPENAI_API_URL,
       jsonPayload,
       {
         headers: {
           "Content-Type": "application/json",
+          'api-key': process.env.OPENAI_API_KEY,
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
         },
       }
@@ -238,11 +315,12 @@ async function getSummarizedTask(observations, screenshot1, screenshot2, screens
   try {
     // Prepare the data payload for the API
     const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
+      process.env.OPENAI_API_URL,
       jsonPayload,
       {
         headers: {
           "Content-Type": "application/json",
+          'api-key': process.env.OPENAI_API_KEY,
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
         },
       }
@@ -345,11 +423,12 @@ async function getIsTaskComplete(observations, current_screenshot) {
   try {
     // Prepare the data payload for the API
     const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
+      process.env.OPENAI_API_URL,
       jsonPayload,
       {
         headers: {
           "Content-Type": "application/json",
+          'api-key': process.env.OPENAI_API_KEY,
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
         },
       }
@@ -456,11 +535,12 @@ async function getUpdateTask(observations, current_url, current_screenshot) {
   try {
     // Prepare the data payload for the API
     const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
+      process.env.OPENAI_API_URL,
       jsonPayload,
       {
         headers: {
           "Content-Type": "application/json",
+          'api-key': process.env.OPENAI_API_KEY,
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
         },
       }
@@ -541,11 +621,12 @@ async function getNextAction(observations, current_screenshot = placeholderScree
   try {
     // Prepare the data payload for the API
     const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
+      process.env.OPENAI_API_URL,
       jsonPayload,
       {
         headers: {
           "Content-Type": "application/json",
+          'api-key': process.env.OPENAI_API_KEY,
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
         },
       }
@@ -647,11 +728,12 @@ async function getObservation(observations, current_task, current_user_action_an
   try {
     // Prepare the data payload for the API
     const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
+      process.env.OPENAI_API_URL,
       jsonPayload,
       {
         headers: {
           "Content-Type": "application/json",
+          'api-key': process.env.OPENAI_API_KEY,
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
         },
       }
@@ -732,11 +814,12 @@ async function getWeb(previousTask, previousObservation, currentTask, currentUrl
   try {
     // Make the API call using axios
     const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
+      process.env.OPENAI_API_URL,
       jsonPayload,
       {
         headers: {
           "Content-Type": "application/json",
+          'api-key': process.env.OPENAI_API_KEY,
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
         },
       }
@@ -819,11 +902,12 @@ async function getParseAction(task, current_action, current_screenshot = placeho
   try {
     // Make the API call using axios
     const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
+      process.env.OPENAI_API_URL,
       jsonPayload,
       {
         headers: {
           "Content-Type": "application/json",
+          'api-key': process.env.OPENAI_API_KEY,
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
         },
       }
@@ -893,11 +977,12 @@ async function getCustomAction(task, current_action, current_screenshot = placeh
   try {
     // Make the API call using axios
     const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
+      process.env.OPENAI_API_URL,
       jsonPayload,
       {
         headers: {
           "Content-Type": "application/json",
+          'api-key': process.env.OPENAI_API_KEY,
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
         },
       }
@@ -975,11 +1060,12 @@ async function getElement(task, current_action, elementsList = [], currentScreen
   try {
     // Make the API call using axios
     const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
+      process.env.OPENAI_API_URL,
       jsonPayload,
       {
         headers: {
           "Content-Type": "application/json",
+          'api-key': process.env.OPENAI_API_KEY,
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
         },
       }
@@ -1045,11 +1131,12 @@ async function getOptions(current_action, elementsList = []) {
   try {
     // Make the API call using axios
     const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
+      process.env.OPENAI_API_URL,
       jsonPayload,
       {
         headers: {
           "Content-Type": "application/json",
+          'api-key': process.env.OPENAI_API_KEY,
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
         },
       }
@@ -1081,4 +1168,5 @@ module.exports = {
   getOptions,
   getDateTask,
   getUpdatedURL,
+  getInput,
 };
