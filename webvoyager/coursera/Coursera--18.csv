@@ -1,12 +1,12 @@
 task,user_action_and_explanation,observation
 "Identify a Coursera course that teaches JavaScript, which is beginner-friendly and includes a certificate upon completion.",Going to https://www.coursera.org/,Went to https://www.coursera.org/
-"Identify a Coursera course that teaches JavaScript, which is beginner-friendly and includes a certificate upon completion.",click the search icon in the top right corner because it allows you to search for courses related to JavaScript on Coursera.,"The search bar is open and ready for input. You can type ""JavaScript"" to find relevant courses. Once you search, look for beginner-friendly options that offer a certificate upon completion."
-"Identify a Coursera course that teaches JavaScript, which is beginner-friendly and includes a certificate upon completion.","type ""JavaScript"" in the search bar with the placeholder 'What do you want to learn?' to find relevant courses that match the criteria.","The search results show several courses that teach JavaScript. 
+"Identify a Coursera course that teaches JavaScript, which is beginner-friendly and includes a certificate upon completion.",click on the search icon at the top right of the page. This will allow you to search for JavaScript courses directly.,The search bar is now open and ready for input. You can proceed by typing 'JavaScript' to find relevant courses.
+"Identify a Coursera course that teaches JavaScript, which is beginner-friendly and includes a certificate upon completion.",type 'JavaScript beginner certificate' into the search bar with placeholder 'What do you want to learn?'. This will search for beginner-friendly JavaScript courses that offer a certificate upon completion.,The search results display courses that match the criteria. Notable options include the 'IBM Full-Stack JavaScript Developer' and the 'Programming with JavaScript' by Meta. Both are beginner-friendly and offer professional certificates upon completion.
+"Identify a Coursera course that teaches JavaScript, which is beginner-friendly and includes a certificate upon completion.",Summarizing last observations,"Based on the most recent observations, the search results on Coursera for ""JavaScript beginner certificate"" display several courses that meet the criteria. Notable options include:
 
-1. **Introduction to HTML, CSS, & JavaScript (IBM)** - Beginner level, 1-4 weeks duration, likely includes a certificate. 
-2. **Microsoft Front-End Developer** - Beginner level, offers a Professional Certificate, 3-6 months.
+1. **IBM Full-Stack JavaScript Developer** - A professional certificate course taking 3 - 6 months.
+2. **Meta Front-End Developer** - Another professional certificate option, also 3 - 6 months.
+3. **Programming with JavaScript by Meta** - A beginner-friendly course ranging from 1 - 3 months.
+4. **JavaScript Programming Essentials by IBM** - A beginner course lasting 1 - 3 months.
 
-Both courses appear beginner-friendly and include a certificate option. You can explore these options further by clicking on the course titles for more details about the content and certification."
-"Identify a Coursera course that teaches JavaScript, which is beginner-friendly and includes a certificate upon completion.",Summarizing last observations,"The most recent observations reveal two beginner-friendly JavaScript courses on Coursera that include a certificate: ""Introduction to HTML, CSS, & JavaScript"" by IBM and ""Microsoft Front-End Developer"" by Microsoft. The IBM course is a short-term option with a duration of 1-4 weeks, while the Microsoft course offers a Professional Certificate over 3-6 months. These observations suggest that both courses align with the initial task goal of finding a suitable JavaScript course offering certification.
-
-For full context and additional options, please refer to the complete task history."
+These courses are designed for beginners and offer certificates upon completion. For full context and further details, please refer to the complete task history."

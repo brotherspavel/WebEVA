@@ -1,4 +1,13 @@
 web_name,id,ques,web
+"Allrecipes","Allrecipes--0","Provide a recipe for vegetarian lasagna with more than 100 reviews and a rating of at least 4.5 stars suitable for 6 people.","https://www.allrecipes.com/"
+"Allrecipes","Allrecipes--1","Find a recipe for a vegetarian lasagna that has at least a four-star rating and uses zucchini.","https://www.allrecipes.com/"
+"Allrecipes","Allrecipes--2","Find a recipe for a vegetarian lasagna under 600 calories per serving that has a prep time of less than 1 hour.","https://www.allrecipes.com/"
+"Allrecipes","Allrecipes--3","Locate a recipe for vegan chocolate chip cookies with over 60 reviews and a rating of at least 4.5 stars on Allrecipes.","https://www.allrecipes.com/"
+"Allrecipes","Allrecipes--4","Find a recipe for Baked Salmon that takes less than 30 minutes to prepare and has at least a 4 star rating based on user reviews.","https://www.allrecipes.com/"
+"Allrecipes","Allrecipes--5","Search for a popular Pasta Sauce with more than 1000 reviews and a rating above 4 stars. Create a shopping list of ingredients for this recipe.","https://www.allrecipes.com/"
+"Allrecipes","Allrecipes--6","Search for a vegetarian lasagna recipe that has at least a four-star rating and over 500 reviews.","https://www.allrecipes.com/"
+"Allrecipes","Allrecipes--7","Find a popular recipe for a chocolate chip cookie and list the ingredients and preparation steps.","https://www.allrecipes.com/"
+"Allrecipes","Allrecipes--8","Search for a recipe for Beef Wellington on Allrecipes that has at least 200 reviews and an average rating of 4.5 stars or higher. List the main ingredients required for the dish.","https://www.allrecipes.com/"
 "Allrecipes","Allrecipes--9","Find a high-rated recipe for vegetarian lasagna, list the key ingredients required, and include the total preparation and cook time stated on the recipe.","https://www.allrecipes.com/"
 "Allrecipes","Allrecipes--10","Find The Most Popular Recipes of the 1960s, noting the recipe name, preparation time and total time of the second recipe in this collection.","https://www.allrecipes.com/"
 "Allrecipes","Allrecipes--11","Discover a suitable chocolate cupcake recipe on Allrecipes that has a preparation time of under 1 hour and at least 100 user reviews.","https://www.allrecipes.com/"

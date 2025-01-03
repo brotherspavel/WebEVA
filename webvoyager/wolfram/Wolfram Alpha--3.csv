@@ -1,10 +1,4 @@
 task,user_action_and_explanation,observation
 Let g(x) be the integral of x^2 cos(2x). Write the expression of g(x).,Going to https://www.wolframalpha.com/,Went to https://www.wolframalpha.com/
-Let g(x) be the integral of x^2 cos(2x). Write the expression of g(x).,type 'integral of x^2 cos(2x)' into the search bar with placeholder 'Enter what you want to calculate or know about' to find the expression for g(x).,The integral of \(x^2 \cos(2x)\) is displayed as \(\frac{1}{4}((2x^2 - 1)\sin(2x) + 2x\cos(2x)) + \text{constant}\). This provides the expression for \(g(x)\). The user has successfully found the required solution using WolframAlpha.
-Let g(x) be the integral of x^2 cos(2x). Write the expression of g(x).,Summarizing last observations,"This summary reflects only the most recent observations:
-
-The user successfully found the expression for \( g(x) \), the integral of \( x^2 \cos(2x) \). The result displayed is:
-
-\[ g(x) = \frac{1}{4}((2x^2 - 1)\sin(2x) + 2x\cos(2x)) + \text{constant} \]
-
-This was obtained through WolframAlpha, which also provided additional forms and expansions of the integral, as seen in the current screenshots. For a full context, refer to the complete task history."
+Let g(x) be the integral of x^2 cos(2x). Write the expression of g(x).,"type ""integral of x^2 cos(2x) dx"" into the input field with placeholder 'Enter what you want to calculate or know about' to find the expression for g(x).","The expression for the integral \( \int x^2 \cos(2x) \, dx \) is shown as \( \frac{1}{4} \left( (2x^2 - 1) \sin(2x) + 2x \cos(2x) \right) + \text{constant} \)."
+Let g(x) be the integral of x^2 cos(2x). Write the expression of g(x).,Summarizing last observations,"The most recent observations reveal that the expression for the integral \( \int x^2 \cos(2x) \, dx \) is \( \frac{1}{4} \left( (2x^2 - 1) \sin(2x) + 2x \cos(2x) \right) + \text{constant} \). This information reflects the completion of the task. For comprehensive details, refer to the complete task history."
