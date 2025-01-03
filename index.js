@@ -958,7 +958,6 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
           console.log("error during clicking or text", e)
           //localState.stateAction = "changeParams";
           localState.errors += 1;
-          break;
         }
         localState.stateAction = "observe";
         break;
