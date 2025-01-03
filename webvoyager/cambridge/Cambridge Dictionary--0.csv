@@ -1,25 +1,4 @@
-task,user_action,observation
+task,user_action_and_explanation,observation
 "Look up the pronunciation and definition of the word \""sustainability\"" on the Cambridge Dictionary.",Going to https://dictionary.cambridge.org/,Went to https://dictionary.cambridge.org/
-"Look up the pronunciation and definition of the word \""sustainability\"" on the Cambridge Dictionary.","type ""sustainability"" into the search bar with the placeholder 'Search English-Korean' to find the pronunciation and definition.","The user successfully found the pronunciation and definition of ""sustainability"" on the Cambridge Dictionary website. 
-
-- **Pronunciation**: 
-  - UK: /səˌsteɪ.nəˈbɪl.ə.ti/
-  - US: /səˌsteɪ.nəˈbɪl.ə.t̬i/
-
-- **Definitions**:
-  1. The quality of being able to continue over a period of time.
-  2. The quality of causing little or no damage to the environment and therefore able to continue for a long time.
-  3. In business English: The idea that goods and services should be produced in ways that do not use resources that cannot be replaced and that do not damage the environment.
-
-The page also provides examples and related phrases."
-"Look up the pronunciation and definition of the word \""sustainability\"" on the Cambridge Dictionary.",Summarizing last observations,"This summary reflects the most recent observations only:
-
-The user successfully found the pronunciation and definition of ""sustainability"" on the Cambridge Dictionary website. The pronunciation is provided in both UK (/səˌsteɪ.nəˈbɪl.ə.ti/) and US (/səˌsteɪ.nəˈbɪl.ə.t̬i/) versions. Definitions include:
-
-1. ""The quality of being able to continue over a period of time.""
-2. ""The quality of causing little or no damage to the environment and therefore able to continue for a long time.""
-3. In business English: ""The idea that goods and services should be produced in ways that do not use resources that cannot be replaced and that do not damage the environment.""
-
-The page also offers examples and phrases related to sustainability, with further examples illustrating its use in sentences. Additionally, there are sections for collocations and translations of the word into different languages.
-
-For full context and details, please refer to the complete task history."
+"Look up the pronunciation and definition of the word \""sustainability\"" on the Cambridge Dictionary.","type ""sustainability"" into the search bar at the top center of the page to find its pronunciation and definition.",The user successfully found the pronunciation of 'sustainability' in both UK and US English and the definition on the Cambridge Dictionary. The definition includes two main meanings: 1. The quality of being able to continue over a period of time. 2. The quality of causing little or no damage to the environment and therefore able to continue for a long time.
+"Look up the pronunciation and definition of the word \""sustainability\"" on the Cambridge Dictionary.",Summarizing last observations,"The user successfully looked up the pronunciation and definition of the word ""sustainability"" on the Cambridge Dictionary website. The pronunciation is available in both UK and US English. The definition provided covers two primary interpretations: 1. The quality of being able to continue over a period of time and 2. The quality of causing little or no damage to the environment and therefore able to continue for a long time. The screenshots also show example sentences and translations into several languages such as Chinese (Simplified), Spanish, and Portuguese to contextualize the usage of the term. This summary reflects only the most recent observations. For full context and details, please refer to the complete task history."

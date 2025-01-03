@@ -11,16 +11,16 @@ const segmentHeight = 1600;
 const yOffset = 1000;
 
 // Adjust these when needed. Depends on vpn and network speed.
-const firstUrlWait = 4000; // when browsed
-const newUrlWait = 3000;  // when button click
+const firstUrlWait = 10000; // when browsed
+const newUrlWait = 10000;  // when button click
 const sameUrlWait = 500; // scroll
 
 // breaks if at these limits
-const MAX_STEP_OBSERVATIONS = 25;
+const MAX_STEP_OBSERVATIONS = 30;
 const MAX_ERRORS = 8;
 
 // if observations no change, change parameters after these many observatins
-const ENABLE_PARAM_LENGTH = 15;
+const ENABLE_PARAM_LENGTH = 20;
 
 const state = {
   stateAction: null,
@@ -77,7 +77,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
   const context = await browser.newContext();
   const page = await context.newPage();
   await page.setViewportSize({ width: segmentWidth, height: segmentHeight });
-  await page.setDefaultTimeout(60000); // Default timeout set to 60 seconds
+  await page.setDefaultTimeout(90000); // Default timeout set to 90 seconds
 
   const localState = { ...state, task: task };
 
@@ -1006,7 +1006,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/testing.csv')
+fs.createReadStream('./webvoyager/cambridge.csv')
 .pipe(csv())
 .on('data', (row) => {
   data.push(row);
@@ -1023,14 +1023,14 @@ fs.createReadStream('./webvoyager/testing.csv')
       try {
         const { observations, no_text_elements, text_elements } = await browse({ task: row.ques, web: row.web, verbose: true, headless: true });
 
-        no_text_elements_arr = [...no_text_elements_arr, ...no_text_elements];
-        text_elements_arr = [...text_elements_arr, ...text_elements];
+        no_text_elements_arr = [...no_text_elements];
+        text_elements_arr = [...text_elements];
         
         resObs = observations;
       } catch (e) {
         console.error(`Error browsing ${row.id}`, e);
       }
-      const path = './webvoyager/wolfram2';
+      const path = './webvoyager/cambridge';
 
       const filePaths = {
         main: `${path}/${row.id}.csv`,
