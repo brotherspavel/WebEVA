@@ -1,34 +1,5 @@
-web_name,id,ques,web
-Wolfram Alpha,Wolfram Alpha--13,"What is 10,000 US dollars worth now in 1980 and in 1970?",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--14,"Compare the total Calories: whopper vs baconator vs big mac. Assume that each serving of food is 300g.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--15,"Show the blood relationship fraction between you and your father's mother's sister's son.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--16,"Weight lose for a male with current weight 90 kg, 40 year old, 175 cm. If he intakes 1500 calories every day, how long will it take to lose 17 kg.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--17,"Show the average price of movie ticket in Providence, Nashville, Boise in 2023.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--18,"Plot Albert Einstein curve with Parametric equations.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--19,"Standing in the sun from 11:00 am with SPF 5 in Australia. Approximate time to sunburn for each skin type.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--20,"Compute the integral of 3e^(2x) from x=0 to x=5.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--21,"Calculate (1+0.1*i)^8 + (1-0.2*i)^8 where i is a complex number.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--22,"Determine the area of a regular hexagon with a side length of 7 cm.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--23,"Calculate the population growth rate of Canada from 2020 to 2023 using Wolfram Alpha.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--24,"Solve the differential equation y''(t) - 2y'(t) + 10y(t) = 0 and display its general solution.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--25,"Calculate the final position and velocity of a projectile launched at 45 degrees with an initial speed of 30 m/s after 3 seconds.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--26,"Convert 15 kilograms of sulfuric acid to moles and display the percentage composition of H, S, and O by weight.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--27,"Display the thermal conductivity of Copper (Cu) and Aluminum (Al) at 25 degrees Celsius.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--28,"Identify the character in Unicode range 9632 to 9650 that represents a hollow parallelogram.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--29,"Create a plot of cat curve using wolfram alpha.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--30,"Calculate the estimated time to sunburn for different skin types when exposed to the sun at 1:00 pm with SPF 1 in Brazil.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--31,"Using Wolfram Alpha, determine the current temperature and wind speed in Chicago, IL.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--32,"Print all prime numbers between 1000 and 1200 using Wolfram alpha.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--33,"Identify the electrical energy output of a hydroelectric power plant named Itaipu Dam in 2023 using Wolfram Alpha.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--34,"Calculate the mass of Jupiter compared to Earth using Wolfram Alpha. Also, find the length of one day on Jupiter.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--35,"Calculate the determinant of a 6x6 Hilbert matrix.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--36,"Determine the convergence or divergence of the series Σ (n=1 to ∞) of 1/(n^3 + 1).",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--37,"How many days are there between February 12, 2024 and August 9, 2050?",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--38,"Compute the length of a curve defined by y = 2x^3 - 3x^2 + 4x - 5 from x = 0 to x = 3.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--39,"Use Wolfram alpha to write the expression of the ellipse x^2 + 3 y^2 = 4 rotated 33 degrees counterclockwise.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--40,"Approximate amount of fat burned by a 28yo, 172cm tall, 70kg woman running for 30min at a pace of 6min/mile.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--41,"What is the approximate Heart Rate Reserve of a 50 year old man who has a heart rate of 60bpm at rest.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--42,"What is the raw memory of a 100.2\" * 123.5\" true colour picture at 72 ppi?",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--43,"A polyominoes of order 6 means you have 6 identical squares to combine different shapes (2-sided). How many combinations are there? Looking at all the shapes in the result, how many of them have only 2 rows in total?",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--44,"Solve the ODE, g' + cos(g) = 0, if there is a constant in the result, determine the value of the constant by the condition that g(0) = 1.",https://www.wolframalpha.com/
-Wolfram Alpha,Wolfram Alpha--45,"A 175cm tall, 85kg, 40yo man climbs 2500 steps at about 18cm per step and 40 steps per minute. summarise the Metabolic properties.",https://www.wolframalpha.com/
+"web_name","id","ques","web"
+"Wolfram Alpha","Wolfram Alpha--12","Which character in unicode 8900 to 8920 looks like a snowflake","https://www.wolframalpha.com/"
+"Wolfram Alpha","Wolfram Alpha--16","Weight lose for a male with current weight 90 kg, 40 year old, 175 cm. If he intakes 1500 calories every day, how long will it take to lose 17 kg.","https://www.wolframalpha.com/"
+"Wolfram Alpha","Wolfram Alpha--25","Calculate the final position and velocity of a projectile launched at 45 degrees with an initial speed of 30 m/s after 3 seconds.","https://www.wolframalpha.com/"
+"Wolfram Alpha","Wolfram Alpha--43","A polyominoes of order 6 means you have 6 identical squares to combine different shapes (2-sided). How many combinations are there? Looking at all the shapes in the result, how many of them have only 2 rows in total?","https://www.wolframalpha.com/"
