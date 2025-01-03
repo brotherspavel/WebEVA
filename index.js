@@ -11,16 +11,16 @@ const segmentHeight = 1600;
 const yOffset = 1000;
 
 // Adjust these when needed. Depends on vpn and network speed.
-const firstUrlWait = 4000; // when browsed
-const newUrlWait = 3000;  // when button click
+const firstUrlWait = 5000; // when browsed
+const newUrlWait = 4000;  // when button click
 const sameUrlWait = 500; // scroll
 
 // breaks if at these limits
-const MAX_STEP_OBSERVATIONS = 25;
+const MAX_STEP_OBSERVATIONS = 30;
 const MAX_ERRORS = 8;
 
 // if observations no change, change parameters after these many observatins
-const ENABLE_PARAM_LENGTH = 15;
+const ENABLE_PARAM_LENGTH = 20;
 
 const state = {
   stateAction: null,
@@ -181,7 +181,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
             const modals = document.querySelectorAll(modalSelectors.join(','));
             modals.forEach((modal) => {
               const closeButtons = modal.querySelectorAll('[aria-label*="close"], [aria-label*="dismiss"], .close, .btn-close, [data-dismiss="modal"]');
-              
+
               closeButtons.forEach((closeButton) => {
                 try {
                   closeButton.click(); // Simulate a click on each close button
@@ -189,7 +189,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                   console.error('Failed to click close button:', error);
                 }
               });
-              
+
               // Check if modal is dialog or presentation
               const isDialogOrPresentation = modal.getAttribute('role') === 'dialog' || modal.getAttribute('role') === 'presentation' || modal.hasAttribute('aria-hidden');
               if (!isDialogOrPresentation) {
@@ -551,7 +551,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 let isMatch =
                   (innerText && (innerText.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(innerText))) ||
                   (placeholder && (placeholder.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(placeholder))) ||
-                    (value && (value.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(value)));
+                  (value && (value.includes(normalizedStringToMatch) || normalizedStringToMatch.includes(value)));
 
                 return isMatch ? element : null;
               })
@@ -663,7 +663,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
             // Locate all valid inputs and textareas
             const validInputs = page.locator(
               'input[type="text"], input:not([type]), textarea'
-            );            
+            );
             const stringToMatch = (localState.actionJson.inner_text || "").toLowerCase();
 
             // Normalize the string to match
@@ -735,7 +735,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 // Add a unique attribute
                 el.setAttribute('element_id', id);
 
-                  // Add an aria-label attribute if not already present
+                // Add an aria-label attribute if not already present
                 if (!el.hasAttribute('aria-label')) {
                   // Derive aria-label from children's aria-label attributes
                   let textForAriaLabel = Array.from(el.children)
@@ -786,7 +786,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
               }
               if (Number(content.element_id) > 0 && Number(content.element_id) <= elementDetails.length) {
                 specificElement = page.locator(`[element_id="${content.element_id}"]`);
-              } 
+              }
             }).catch((e) => {
               console.error("getElement error", e);
               localState.errors += 1;
@@ -810,7 +810,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                   throw new Error("No response from getInput");
                 }
                 const content = JSON.parse(res.content);
- 
+
                 localState.actionJson.action = "text";
                 localState.actionJson.input_value = content.input_value;
                 if (verbose) {
@@ -941,7 +941,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
       case 'changeParams':
         const currentUrl = page.url();
 
-        await getUpdatedURL(localState.task, currentUrl, localState.user_action_and_explanation).then(async(res) => {
+        await getUpdatedURL(localState.task, currentUrl, localState.user_action_and_explanation).then(async (res) => {
           if (!res?.content) {
             throw new Error("No response from getUpdatedUrl");
           }
@@ -960,7 +960,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 ...localState.observations,
                 { task: localState.task, user_action_and_explanation: `Changing URL parameters. ${reasoning}`, observation: `Went to ${localState.web}` },
               ]
-    
+
               if (verbose) {
                 console.log("reasoning for new url", reasoning);
               }
@@ -1006,66 +1006,66 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/testing.csv')
-.pipe(csv())
-.on('data', (row) => {
-  data.push(row);
-})
-.on('end', async () => {
-  let no_text_elements_arr = [];
-  let text_elements_arr = [];
-  for (const row of data) {
-    if (!row.ques) {
-      continue;
-    }
-    try {
-      let resObs = [];
+fs.createReadStream('./webvoyager/coursera.csv')
+  .pipe(csv())
+  .on('data', (row) => {
+    data.push(row);
+  })
+  .on('end', async () => {
+    let no_text_elements_arr = [];
+    let text_elements_arr = [];
+    for (const row of data) {
+      if (!row.ques) {
+        continue;
+      }
       try {
-        const { observations, no_text_elements, text_elements } = await browse({ task: row.ques, web: row.web, verbose: true, headless: true });
+        let resObs = [];
+        try {
+          const { observations, no_text_elements, text_elements } = await browse({ task: row.ques, web: row.web, verbose: true, headless: true });
 
-        no_text_elements_arr = [...no_text_elements_arr, ...no_text_elements];
-        text_elements_arr = [...text_elements_arr, ...text_elements];
-        
-        resObs = observations;
+          no_text_elements_arr = [...no_text_elements];
+          text_elements_arr = [...text_elements];
+
+          resObs = observations;
+        } catch (e) {
+          console.error(`Error browsing ${row.id}`, e);
+        }
+        const path = './webvoyager/coursera';
+
+        const filePaths = {
+          main: `${path}/${row.id}.csv`,
+          noText: `${path}/${row.id}_no_text_elements.csv`,
+          text: `${path}/${row.id}_text_elements.csv`
+        };
+
+        const streams = {
+          main: fs.createWriteStream(filePaths.main),
+          noText: fs.createWriteStream(filePaths.noText),
+          text: fs.createWriteStream(filePaths.text)
+        };
+
+        const writeDataToStream = (stream, data, description) => {
+          writeToStream(stream, data, { headers: true })
+            .on('finish', () => {
+              console.log(`CSV file written successfully for ${description}: ${row.id}`);
+            })
+            .on('error', (error) => {
+              console.error(`Error writing to CSV file for ${description}: ${row.id}`, error);
+            });
+        };
+
+        // Write data to each stream
+        writeDataToStream(streams.main, resObs, 'main data');
+        writeDataToStream(streams.noText, no_text_elements_arr, 'no text elements');
+        writeDataToStream(streams.text, text_elements_arr, 'text elements');
       } catch (e) {
         console.error(`Error browsing ${row.id}`, e);
       }
-      const path = './webvoyager/wolfram2';
-
-      const filePaths = {
-        main: `${path}/${row.id}.csv`,
-        noText: `${path}/${row.id}_no_text_elements.csv`,
-        text: `${path}/${row.id}_text_elements.csv`
-      };
-      
-      const streams = {
-        main: fs.createWriteStream(filePaths.main),
-        noText: fs.createWriteStream(filePaths.noText),
-        text: fs.createWriteStream(filePaths.text)
-      };
-
-      const writeDataToStream = (stream, data, description) => {
-        writeToStream(stream, data, { headers: true })
-          .on('finish', () => {
-            console.log(`CSV file written successfully for ${description}: ${row.id}`);
-          })
-          .on('error', (error) => {
-            console.error(`Error writing to CSV file for ${description}: ${row.id}`, error);
-          });
-      };
-      
-      // Write data to each stream
-      writeDataToStream(streams.main, resObs, 'main data');
-      writeDataToStream(streams.noText, no_text_elements_arr, 'no text elements');
-      writeDataToStream(streams.text, text_elements_arr, 'text elements');
-    } catch (e) {
-      console.error(`Error browsing ${row.id}`, e);
     }
-  }
-})
-.on('error', (err) => {
-  console.error('Error reading the CSV file:', err);
-});
+  })
+  .on('error', (err) => {
+    console.error('Error reading the CSV file:', err);
+  });
 
 
 /*
