@@ -460,7 +460,12 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
           let elementsSet = null;
 
           if (localState.actionJson.action === "click" && localState.actionJson.no_inner_text_click) {
-            const elements = page.locator('button, a, img[role="button"], input');
+            let elements = [];
+            try { 
+              elements = page.locator('button, a, img[role="button"], input');
+            } catch { 
+              elements = []
+            }
 
             // Filter elements without innerText or placeholder
             const elementsWithoutInnerText = await Promise.all(
@@ -505,15 +510,21 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
             // Normalize the string to match
             const normalizedStringToMatch = stringToMatch.trim() || 'probablynotneededbutjustincase';
             // Create a locator that includes elements matching both specific tags and navigation-related classes
-            const elements = page.locator(`
-              button, 
-              a, 
-              option, 
-              select, 
-              td, 
-              li,
-              input
-            `);
+            let elements = []
+            try { 
+              elements = page.locator(`
+                button, 
+                a, 
+                option, 
+                select, 
+                td, 
+                li,
+                input
+              `);
+            } catch {
+              elements = []
+            }
+
             // Filter elements based on conditions
             const interactableElements = await Promise.all(
               (await elements.all()).map(async (element) => {
@@ -575,11 +586,16 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
             if (!elementsSet.length) {
               // not regular clickable elements, try div, span, and p
-              const elementsDivSpan = page.locator(`
-                div, 
-                span,
-                p
-              `);
+              let elementsDivSpan = []
+              try {
+                elementsDivSpan = page.locator(`
+                  div, 
+                  span,
+                  p
+                `);
+              } catch { 
+                elementsDivSpan = [];
+              }
 
               // Filter elements based on conditions
               const interactableElementsDivSpan = await Promise.all(
@@ -663,9 +679,15 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
               */
           } else if (localState.actionJson.action === "text") {
             // Locate all valid inputs and textareas
-            const validInputs = page.locator(
-              'input[type="text"], input:not([type]), textarea'
-            );
+            let validInputs = [];
+            try {
+              validInputs = page.locator(
+                'input[type="text"], input:not([type]), textarea'
+              );
+            } catch {
+              validInputs = [];
+            }
+
             const stringToMatch = (localState.actionJson.inner_text || "").toLowerCase();
 
             // Normalize the string to match
@@ -934,7 +956,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
           }
         } catch (e) {
           console.log("error during clicking or text", e)
-          localState.stateAction = "changeParams";
+          //localState.stateAction = "changeParams";
           localState.errors += 1;
           break;
         }

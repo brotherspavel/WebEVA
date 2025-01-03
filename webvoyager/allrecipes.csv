@@ -1,4 +1,5 @@
 web_name,id,ques,web
+"Allrecipes","Allrecipes--10","Find The Most Popular Recipes of the 1960s, noting the recipe name, preparation time and total time of the second recipe in this collection.","https://www.allrecipes.com/"
 "Allrecipes","Allrecipes--13","Find a recipe with over 100 reviews for Fried Fish on Allrecipes, list the Full Nutrition Label and tell me the amount of Iron per Serving.","https://www.allrecipes.com/"
 "Allrecipes","Allrecipes--14","Search for a recipe that includes ""chicken breast"" and ""quinoa"" with preparation time under 30 minutes on Allrecipes.","https://www.allrecipes.com/"
 "Allrecipes","Allrecipes--18","Find a recipe for a vegetarian lasagna that has over 300 reviews and an average rating of 4.5 or higher on Allrecipes.","https://www.allrecipes.com/"

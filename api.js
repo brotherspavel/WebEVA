@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const { GET_INPUT, ADD_DATE, OBSERVATION_MESSAGES, UPDATE_TASK, GET_ACTION, PARSE_ACTION, TASK_COMPLETE, GET_URL, GET_ELEMENT, SUMMARIZE_TASK, CUSTOM_ACTION, IDENTIFY_OPTIONS, MODIFY_URL_PARAMS } = require('./messages');
-const { getCurrentDateTime } = require('./utils');
+const { getCurrentDate } = require('./utils');
 const MAX_OBSERVATIONS_GET_NEXT_ACTION = 6
 const MAX_OBSERVATIONS_NEW_OBSERVATION = 7
 const MAX_OBSERVATIONS_UPDATE_TASK = 10
@@ -174,7 +174,7 @@ async function getDateTask(task_goal) {
       {
         type: "text",
         text: `**Task Goal**: ${task_goal}
-        **Current DateTime**: ${getCurrentDateTime()}`,
+        **Current DateTime**: ${getCurrentDate()}`,
       },
     ],
   });
@@ -876,7 +876,7 @@ async function getParseAction(task, current_action, current_screenshot = placeho
           properties: {
             action: {
               type: "string",
-              enum: ["text", "click", "scroll_up", "scroll_down", "go_back", "custom"],
+              enum: ["text", "click", "scroll_up", "scroll_down", "go_back"],
               description: "The type of action to be performed.",
             },
             inner_text: {

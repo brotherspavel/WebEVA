@@ -190,7 +190,7 @@ Based on the information provided, your task is to determine how to complete the
 ### Actions:
 Choose one of the following actions and provide the required details:
 {
-  "action": "One of: text, click, scroll_up, scroll_down, go_back, custom",
+  "action": "One of: text, click, scroll_up, scroll_down, go_back",
   "inner_text": "The innerText or placeholder of the element for text or click actions. Make sure it is visible in the screenshot.",
   "is_clickable_without_visible_text": "true/false. Identifies if its an icon/image type. Indicates whether the clickable element lacks visible inner text. This is true for icons, X buttons, image buttons, and icon buttons.
   "input_value": "The exact text to input into the field for text actions, using essential keywords only. Leave blank for other actions"
@@ -211,9 +211,6 @@ Choose one of the following actions and provide the required details:
 
 4. For **go_back**:
    - This action does not require \`inner_text\` or \`content\`.
-
-5. For **custom** actions:
-   - Use this action for tasks that are not click, text, scroll, or go_back. This is for wait, drag and drop, drag, keyboard commands, or executing JavaScript commands.
 
 Ensure that your action aligns with the task and makes progress toward completing it.
 `;
@@ -358,20 +355,20 @@ You must return a JSON object in the following structure:
 `;
 
 const ADD_DATE = `
-Given a task goal and the current datetime, decide whether date is relevant to the task. If it is, add the current date or datetime to the end of the task goal with "Current date is: " or "Current datetime is: " respectively.
+Given a task goal and the current date, decide whether date is relevant to the task. If it is, add the current date to the end of the task goal with "Current date is: ".
 
-update_task_goal is always true if task goal mentions a date, month, or year or any of the words date, month, and year. DO NOT change the original task goal, only add the current date or datetime at the end if needed.
+update_task_goal is always true if task goal mentions a date, month, or year or any of the words date, month, and year. DO NOT change the original task goal, only add the current date at the end if needed.
 
 ### Input Format:
 1. **Task Goal**: The user's goal or objective, which may or may not rely on a date or time.
-2. **Current DateTime**: The current datetime (including both date and time).
+2. **Current Date**: The current date.
 
 ### Output Format:
 Your response must follow this structure:
 \`\`\`json
 {
-  "update_task_goal": boolean, // Whether the task goal should be updated (true if the datetime or date should be added, false otherwise).
-  "updated_task_goal": string  // The revised task goal with the current datetime or date added, if required.
+  "update_task_goal": boolean, // Whether the task goal should be updated (true if the date should be added, false otherwise).
+  "updated_task_goal": string  // The revised task goal with the current date added, if required.
 }
 \`\`\`
 `;

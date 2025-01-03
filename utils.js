@@ -69,16 +69,14 @@ function containsDateIndicator(str) {
   return false;  // Return false if no match is found
 }
 
-function getCurrentDateTime() {
+function getCurrentDate() {
   const now = new Date();
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, '0');  // months are zero-indexed
   const day = String(now.getDate()).padStart(2, '0');
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  
-  // Format: YYYY-MM-DD HH:MM
-  return `${year}-${month}-${day} ${hours}:${minutes}.`;
+
+  // Format: YYYY-MM-DD
+  return `${year}-${month}-${day}.`;
 }
 
-module.exports = { isClickable, containsDateIndicator, getCurrentDateTime };
+module.exports = { isClickable, containsDateIndicator, getCurrentDate };
