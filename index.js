@@ -11,8 +11,8 @@ const segmentHeight = 1600;
 const yOffset = 1000;
 
 // Adjust these when needed. Depends on vpn and network speed.
-const firstUrlWait = 5000; // when browsed
-const newUrlWait = 4000;  // when button click
+const firstUrlWait = 6000; // when browsed
+const newUrlWait = 5000;  // when button click
 const sameUrlWait = 500; // scroll
 
 // breaks if at these limits
@@ -1049,7 +1049,7 @@ fs.createReadStream('./webvoyager/coursera.csv')
         const path = './webvoyager/coursera';
 
         try {
-          const { observations, no_text_elements, text_elements, screenshot1base64ImageUrl, screenshot2base64ImageUrl } = await browse({ task: row.ques, web: row.web, verbose: true, headless: false });
+          const { observations, no_text_elements, text_elements, screenshot1base64ImageUrl, screenshot2base64ImageUrl } = await browse({ task: row.ques, web: row.web, verbose: false, headless: true });
 
           no_text_elements_arr = [...no_text_elements];
           text_elements_arr = [...text_elements];
