@@ -17,7 +17,7 @@ const sameUrlWait = 500; // scroll
 
 // breaks if at these limits
 const MAX_STEP_OBSERVATIONS = 30;
-const MAX_ERRORS = 8;
+const MAX_ERRORS = 5;
 
 // if observations no change, change parameters after these many observatins
 const ENABLE_PARAM_LENGTH = 20;
@@ -99,9 +99,11 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
     localState.errors += 1;
   });
 
-  while (localState.stateAction !== null && Number(localState.observations?.length) < MAX_STEP_OBSERVATIONS
-    && localState.errors < MAX_ERRORS
-  ) {
+  while (localState.stateAction !== null && Number(localState.observations?.length) < MAX_STEP_OBSERVATIONS) {
+    if (localState.errors >= MAX_ERRORS) {
+      localState.stateAction = "changeParams";
+      localState.errors = 0;
+    }
     switch (localState.stateAction) {
       case 'getWeb':
         //getWeb(previousTask, previousObservation, currentTask, currentUrl)
@@ -461,9 +463,9 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
           if (localState.actionJson.action === "click" && localState.actionJson.no_inner_text_click) {
             let elements = [];
-            try { 
+            try {
               elements = page.locator('button, a, img[role="button"], input');
-            } catch { 
+            } catch {
               elements = []
             }
 
@@ -511,7 +513,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
             const normalizedStringToMatch = stringToMatch.trim() || 'probablynotneededbutjustincase';
             // Create a locator that includes elements matching both specific tags and navigation-related classes
             let elements = []
-            try { 
+            try {
               elements = page.locator(`
                 button, 
                 a, 
@@ -593,7 +595,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                   span,
                   p
                 `);
-              } catch { 
+              } catch {
                 elementsDivSpan = [];
               }
 
@@ -1017,8 +1019,8 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
         console.log("Invalid day");
     }
   }
-//                localState.screenshot1base64ImageUrl = screenshot1base64ImageUrl;
-//localState.screenshot2base64ImageUrl = screenshot2base64ImageUrl;
+  //                localState.screenshot1base64ImageUrl = screenshot1base64ImageUrl;
+  //localState.screenshot2base64ImageUrl = screenshot2base64ImageUrl;
   await browser.close();
   return {
     observations: localState.observations,
@@ -1032,7 +1034,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/coursera.csv')
+fs.createReadStream('./webvoyager/wolfram.csv')
   .pipe(csv())
   .on('data', (row) => {
     data.push(row);
@@ -1046,7 +1048,7 @@ fs.createReadStream('./webvoyager/coursera.csv')
       }
       try {
         let resObs = [];
-        const path = './webvoyager/coursera';
+        const path = './webvoyager/wolfram';
 
         try {
           const { observations, no_text_elements, text_elements, screenshot1base64ImageUrl, screenshot2base64ImageUrl } = await browse({ task: row.ques, web: row.web, verbose: false, headless: true });
@@ -1058,7 +1060,7 @@ fs.createReadStream('./webvoyager/coursera.csv')
             const screenshot1Buffer = Buffer.from(screenshot1base64ImageUrl.split(',')[1], 'base64');
             fs.writeFileSync(`${path}/${row.id}_screen1.png`, screenshot1Buffer);
           }
-        
+
           if (screenshot2base64ImageUrl) {
             const screenshot2Buffer = Buffer.from(screenshot2base64ImageUrl.split(',')[1], 'base64');
             fs.writeFileSync(`${path}/${row.id}_screen2.png`, screenshot2Buffer);

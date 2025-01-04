@@ -1,5 +1,4 @@
 "web_name","id","ques","web"
-"Coursera","Coursera--30","Locate the course 'Modern Art & Ideas' on Coursera offered by The Museum of Modern Art. Find out the percentage (rounded) of 3-star ratings in the reviews and note which star level has the lowest percentage.","https://www.coursera.org/"
 "Coursera","Coursera--31","Search for the course 'Exploring Quantum Physics' on Coursera, offered by the University of Maryland, College Park. Identify the percentage (rounded) of 5-star ratings in the reviews.","https://www.coursera.org/"
 "Coursera","Coursera--32","Search for 'Data Analysis' courses on Coursera. Apply filters to find courses that are 'Beginner Level' and have a duration ranging from 1 to 3 months. Determine the total count of courses that match these specifications.","https://www.coursera.org/"
 "Coursera","Coursera--33","Find a beginner level Coursera course related to \"Internet of Things (IoT)\" with a high rating. Provide the course name, instructor's name, and a brief summary of the skills that will be taught.","https://www.coursera.org/"

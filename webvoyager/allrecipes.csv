@@ -1,12 +1,4 @@
 web_name,id,ques,web
-"Allrecipes","Allrecipes--10","Find The Most Popular Recipes of the 1960s, noting the recipe name, preparation time and total time of the second recipe in this collection.","https://www.allrecipes.com/"
-"Allrecipes","Allrecipes--13","Find a recipe with over 100 reviews for Fried Fish on Allrecipes, list the Full Nutrition Label and tell me the amount of Iron per Serving.","https://www.allrecipes.com/"
-"Allrecipes","Allrecipes--14","Search for a recipe that includes ""chicken breast"" and ""quinoa"" with preparation time under 30 minutes on Allrecipes.","https://www.allrecipes.com/"
-"Allrecipes","Allrecipes--18","Find a recipe for a vegetarian lasagna that has over 300 reviews and an average rating of 4.5 or higher on Allrecipes.","https://www.allrecipes.com/"
-"Allrecipes","Allrecipes--19","Find a vegan lasagna recipe on Allrecipes that requires 10 ingredients or less and has feedback of more than 200 reviews. Provide a brief overview of the ingredient list and the total prep and cook time.","https://www.allrecipes.com/"
-"Allrecipes","Allrecipes--20","Find a recipe for a cauliflower pizza crust that has a preparation time of under 30 minutes and a rating of at least 4 stars on Allrecipes. Include the number of calories per serving.","https://www.allrecipes.com/"
-"Allrecipes","Allrecipes--26","Search for a high-protein vegetarian chili recipe on Allrecipes that has at least 50 reviews and a rating of 4 stars or higher. Provide the ingredient list, cooking time, and a brief description of the cooking steps.","https://www.allrecipes.com/"
-"Allrecipes","Allrecipes--30","Find a recipe for a vegan smoothie bowl on Allrecipes that includes bananas and leaves, has more than 20 reviews, and a rating of at least 4 stars. Provide a list of ingredients, preparation time, and a summary of the recipe steps.","https://www.allrecipes.com/"
 "Allrecipes","Allrecipes--31","Search for a seafood paella recipe on Allrecipes with a minimum of 4.5 stars rating and at least 50 reviews. The recipe should include shrimp and mussels. Provide the ingredients, total time, and an overview of the preparation steps.","https://www.allrecipes.com/"
-"Allrecipes","Allrecipes--39","Locate a recipe for sushi rolls on Allrecipes with a minimum of 20 reviews. Show the Nutrition Facts and the main ingredients. Tell me how to store these rolls.","https://www.allrecipes.com/"
+"Allrecipes","Allrecipes--30","Find a recipe for a vegan smoothie bowl on Allrecipes that includes bananas and leaves, has more than 20 reviews, and a rating of at least 4 stars. Provide a list of ingredients, preparation time, and a summary of the recipe steps.","https://www.allrecipes.com/"
 
