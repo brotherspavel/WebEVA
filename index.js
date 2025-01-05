@@ -11,8 +11,8 @@ const segmentHeight = 1600;
 const yOffset = 1000;
 
 // Adjust these when needed. Depends on vpn and network speed.
-const firstUrlWait = 6000; // when browsed
-const newUrlWait = 5000;  // when button click
+const firstUrlWait = 4000; // when browsed
+const newUrlWait = 4000;  // when button click
 const sameUrlWait = 500; // scroll
 
 // breaks if at these limits
@@ -912,8 +912,8 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                     await specificElement.focus(); // Explicitly focus on the input element
                     await page.waitForTimeout(200); // Wait for 100ms
                     await specificElement.fill(''); // Clear the input field by setting it to an empty string
-                    await page.waitForTimeout(100); // Wait for 100ms
-                    await specificElement.pressSequentially(inputValue, { delay: 100 });
+                    await page.waitForTimeout(300); // Wait for 100ms
+                    await specificElement.pressSequentially(inputValue, { delay: 110 });
 
                     const isASearch = await specificElement.evaluate((element) => {
                       const attributesToCheck = ['placeholder', 'aria-label', 'id'];
@@ -932,9 +932,9 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                       });
 
                       if (isCombobox) {
-                        await page.waitForTimeout(1000);
+                        await page.waitForTimeout(2000);
                         await page.keyboard.press('ArrowDown');
-                        await page.waitForTimeout(100);
+                        await page.waitForTimeout(200);
                         await page.keyboard.press("Enter"); // Simulate pressing Enter
                       }
                     }
@@ -1051,7 +1051,7 @@ fs.createReadStream('./webvoyager/apple.csv')
         const path = './webvoyager/apple';
 
         try {
-          const { observations, no_text_elements, text_elements, screenshot1base64ImageUrl, screenshot2base64ImageUrl } = await browse({ task: row.ques, web: row.web, verbose: false, headless: true });
+          const { observations, no_text_elements, text_elements, screenshot1base64ImageUrl, screenshot2base64ImageUrl } = await browse({ task: row.ques, web: row.web, verbose: false, headless: false });
 
           no_text_elements_arr = [...no_text_elements];
           text_elements_arr = [...text_elements];

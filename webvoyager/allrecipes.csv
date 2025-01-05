@@ -44,5 +44,3 @@ web_name,id,ques,web
 "Allrecipes","Allrecipes--42","Find a recipe for banana bread with more than 200 reviews and a rating of at least 4.0 stars on Allrecipes.","https://www.allrecipes.com/"
 "Allrecipes","Allrecipes--43","Find a recipe for a vegan pumpkin pie on Allrecipes with a minimum four-star rating and a total cook time exceeding 1 hour.","https://www.allrecipes.com/"
 "Allrecipes","Allrecipes--44","List at least 6 holiday recipes sections mentioned in the Occasions section of Allrecipes.","https://www.allrecipes.com/"
-
-
