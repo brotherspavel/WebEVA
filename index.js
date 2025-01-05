@@ -1034,7 +1034,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/github.csv')
+fs.createReadStream('./webvoyager/apple.csv')
   .pipe(csv())
   .on('data', (row) => {
     data.push(row);
@@ -1048,7 +1048,7 @@ fs.createReadStream('./webvoyager/github.csv')
       }
       try {
         let resObs = [];
-        const path = './webvoyager/github';
+        const path = './webvoyager/apple';
 
         try {
           const { observations, no_text_elements, text_elements, screenshot1base64ImageUrl, screenshot2base64ImageUrl } = await browse({ task: row.ques, web: row.web, verbose: false, headless: true });
