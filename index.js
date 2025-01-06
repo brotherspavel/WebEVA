@@ -1031,10 +1031,11 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
   }
 }
 
+
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/apple.csv')
+fs.createReadStream('./webvoyager/espn.csv')
   .pipe(csv())
   .on('data', (row) => {
     data.push(row);
@@ -1048,10 +1049,10 @@ fs.createReadStream('./webvoyager/apple.csv')
       }
       try {
         let resObs = [];
-        const path = './webvoyager/apple';
+        const path = './webvoyager/espn';
 
         try {
-          const { observations, no_text_elements, text_elements, screenshot1base64ImageUrl, screenshot2base64ImageUrl } = await browse({ task: row.ques, web: row.web, verbose: false, headless: false });
+          const { observations, no_text_elements, text_elements, screenshot1base64ImageUrl, screenshot2base64ImageUrl } = await browse({ task: row.ques, web: row.web, verbose: false, headless: true });
 
           no_text_elements_arr = [...no_text_elements];
           text_elements_arr = [...text_elements];
@@ -1106,7 +1107,7 @@ fs.createReadStream('./webvoyager/apple.csv')
   });
 
 
-/*
+  /*
 const task = "Go on wikipedia and find American food, note the first mentioning of a dish, search for a recipe on allrecipes related to that food"
 async function navigate() {
   await browse({ task, web: "", verbose: true, headless: false });
