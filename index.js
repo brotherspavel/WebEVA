@@ -71,8 +71,8 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
     headless, // Set to true if you want headless mode
     args: ["--lang=en-US"], // Force US English locale
     ignoreDefaultArgs: ["--hide-scrollbars"], // Ignore default args
-    channel: "chrome"
   });
+  //    channel: "chrome"
 
   const context = await browser.newContext();
   const page = await context.newPage();
