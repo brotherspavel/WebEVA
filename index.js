@@ -11,8 +11,8 @@ const segmentHeight = 1600;
 const yOffset = 1000;
 
 // Adjust these when needed. Depends on vpn and network speed.
-const firstUrlWait = 4000; // when browsed
-const newUrlWait = 4000;  // when button click
+const firstUrlWait = 5000; // when browsed
+const newUrlWait = 5000;  // when button click
 const sameUrlWait = 500; // scroll
 
 // breaks if at these limits
@@ -192,6 +192,24 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 }
               });
 
+
+              // Find all buttons
+              const buttons = modal.querySelectorAll('button');
+
+              // Filter buttons by text content
+              const acceptButtons = Array.from(buttons).filter(button =>
+                /accept|agree|allow/i.test(button.textContent) ||
+                /accept|agree|allow/i.test(button.getAttribute('aria-label'))
+              );
+              console.log("here we are again")
+              acceptButtons.forEach((acceptButton) => {
+                try {
+                  acceptButton.click(); // Simulate a click on each accept button
+                } catch (error) {
+                  console.error('Failed to click accept button:', error);
+                }
+              });
+
               // Check if modal is dialog or presentation
               const isDialogOrPresentation = modal.getAttribute('role') === 'dialog' || modal.getAttribute('role') === 'presentation' || modal.hasAttribute('aria-hidden');
               if (!isDialogOrPresentation) {
@@ -208,7 +226,6 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
             document.body.classList.remove('modal-open');
           });
         } catch (e) {
-          localState.errors += 1;
           console.error("closing popup error", e);
         }
         await page.waitForTimeout(newUrlWait)
@@ -857,7 +874,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 selectElement1 = specificElement;
               }
               // Retrieve all <option> elements within the parent <select>
-              const optionsOuterHTML = await selectElement.evaluate((select) =>
+              const optionsOuterHTML = await selectElement1.evaluate((select) =>
                 Array.from(select.options).map(option => option.outerHTML)
               );
 
@@ -891,7 +908,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                   // Check for href since hrefs aren't always clickable
                   const href = await specificElement.getAttribute('href');
 
-                  if (href) {
+                  if (href && href.includes('/')) {
                     const absoluteHref = new URL(href, page.url()).href; // Resolves relative URLs based on the current page URL
                     await page.goto(absoluteHref);
                   } else {
@@ -1035,7 +1052,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 // Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/espn.csv')
+fs.createReadStream('./webvoyager/amazon.csv')
   .pipe(csv())
   .on('data', (row) => {
     data.push(row);
@@ -1049,10 +1066,10 @@ fs.createReadStream('./webvoyager/espn.csv')
       }
       try {
         let resObs = [];
-        const path = './webvoyager/espn';
+        const path = './webvoyager/amazon';
 
         try {
-          const { observations, no_text_elements, text_elements, screenshot1base64ImageUrl, screenshot2base64ImageUrl } = await browse({ task: row.ques, web: row.web, verbose: false, headless: true });
+          const { observations, no_text_elements, text_elements, screenshot1base64ImageUrl, screenshot2base64ImageUrl } = await browse({ task: row.ques, web: row.web, verbose: true, headless: false });
 
           no_text_elements_arr = [...no_text_elements];
           text_elements_arr = [...text_elements];
@@ -1107,10 +1124,10 @@ fs.createReadStream('./webvoyager/espn.csv')
   });
 
 
-  /*
+/*
 const task = "Go on wikipedia and find American food, note the first mentioning of a dish, search for a recipe on allrecipes related to that food"
 async function navigate() {
-  await browse({ task, web: "", verbose: true, headless: false });
+await browse({ task, web: "", verbose: true, headless: false });
 }
 navigate();
 */
