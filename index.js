@@ -11,8 +11,8 @@ const segmentHeight = 1600;
 const yOffset = 1000;
 
 // Adjust these when needed. Depends on vpn and network speed.
-const firstUrlWait = 5000; // when browsed
-const newUrlWait = 5000;  // when button click
+const firstUrlWait = 6000; // when browsed
+const newUrlWait = 6000;  // when button click
 const sameUrlWait = 500; // scroll
 
 // breaks if at these limits
