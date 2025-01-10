@@ -28,8 +28,6 @@ You are a robotic assistant observing a user perform tasks on the web. Your role
      - Key details or answers from the \`current_screenshot\`.
      - Any issues/failures and actionable feedback.
      - Reasons for no progress, if applicable.
-     - If the last action is selecting daterange, observe if both the start and end dates are filled in the screenshot.
-
 
 ### Rules:
 - Base the observation only on the provided screenshots and input.
