@@ -458,7 +458,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
         break;
       case "scrollUp":
         // cannot be less than 0
-        const newScrollY = localState.scrollY - yOffset;
+        let newScrollY = localState.scrollY - yOffset;
         if (newScrollY < 0) {
           newScrollY = 0;
         }
@@ -1051,7 +1051,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
   }
 }
 
-
+/*
 // Example call to the function
 const data = [];
 
@@ -1126,11 +1126,11 @@ fs.createReadStream('./webvoyager/amazon.csv')
     console.error('Error reading the CSV file:', err);
   });
 
+*/
 
-/*
-const task = "Go on wikipedia and find American food, note the first mentioning of a dish, search for a recipe on allrecipes related to that food"
+
+const task = "Find Mozart’s last composition on Wikipedia and play it on YouTube."
 async function navigate() {
-await browse({ task, web: "", verbose: true, headless: false });
+await browse({ task, web: "", verbose: false, headless: false });
 }
 navigate();
-*/
