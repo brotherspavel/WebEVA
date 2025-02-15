@@ -36,6 +36,7 @@ const state = {
   currentStep: 0,
   scrollY: 0,
   errors: 0,
+  stuckRerun: 0,
   taskUpdate: true,
 
   // Method to reset the state
@@ -98,15 +99,17 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
     console.error("getDateTask error", e);
     localState.errors += 1;
   });
-
+  // stuckRerun
   while (localState.stateAction !== null && Number(localState.observations?.length) < MAX_STEP_OBSERVATIONS) {
-    if (localState.errors >= MAX_ERRORS) {
+    if (localState.errors >= MAX_ERRORS && localState.stuckRerun < 2) {
       localState.stateAction = "changeParams";
+      localState.stuckRerun++;
       localState.errors = 0;
     }
     switch (localState.stateAction) {
       case 'getWeb':
         //getWeb(previousTask, previousObservation, currentTask, currentUrl)
+        localState.stuckRerun = 0;
         const lastObservation = localState.observations[localState.observations.length - 1] || {
           task: '',
           observation: '',
