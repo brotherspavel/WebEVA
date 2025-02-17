@@ -47,10 +47,16 @@ Follow these steps to set up the project:
 
 ## Running the Project
 
-Once the setup is complete, you can run the script by providing the task description as a command-line argument.
+Once the setup is complete, you can run the script by providing the task description as a command-line argument. If the task is specific to a website, you can also pass the website URL as an optional argument.
 
 ### Example Usage:
 
-    ```bash
-    node index.js "Find the last composition by Mozart and play it on YouTube"
-    ```
+```bash
+node index.js "Find the last composition by Mozart and play it on YouTube"
+```
+
+If the task requires interaction with a specific website, provide the website URL:
+
+```bash
+node index.js "Find the last composition by Mozart" "https://example.com"
+```

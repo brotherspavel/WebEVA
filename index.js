@@ -1126,14 +1126,14 @@ fs.createReadStream('./webvoyager/amazon.csv') // change the following
   .on('error', (err) => {
     console.error('Error reading the CSV file:', err);
   });
-
 */
 
 
-const task = process.argv.slice(2).join(' ') || "Find the last composition by Mozart and play it on YouTube";
+const task = process.argv.slice(2, -1).join(' ') || "Find the last composition by Mozart and play it on YouTube";
+const website = process.argv[process.argv.length - 1] || ""; // Get the last argument as the website URL
 
 async function navigate() {
-  await browse({ task, web: "", verbose: false, headless: false });
+  await browse({ task, web: website, verbose: false, headless: false });
 }
 
 navigate();
