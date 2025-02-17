@@ -55,7 +55,7 @@ Once the setup is complete, you can run the script by providing the task descrip
    node index.js "Find the last composition by Mozart and play it on YouTube"
    ```
 
-       In the example above, the script will perform the task without a specific website. If the task requires interaction with a particular website (like WebVoyager tasks), provide the website URL:
+In the example above, the script will perform the task without a specific website. If the task requires interaction with a particular website (like WebVoyager tasks), provide the website URL:
 
    ```bash
    node index.js "Find the last composition by Mozart" "https://example.com"
