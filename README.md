@@ -7,6 +7,8 @@ add .env
 
 add the following variables:
 
+model="gpt-4o"
+
 OPENAI_API_KEY=
 
 OPENAI_API_URL=
