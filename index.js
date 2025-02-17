@@ -1054,10 +1054,9 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 
 // Use this to run the webvoyager dataset
 /*
-// Example call to the function
 const data = [];
 
-fs.createReadStream('./webvoyager/amazon.csv')
+fs.createReadStream('./webvoyager/amazon.csv') // change the following
   .pipe(csv())
   .on('data', (row) => {
     data.push(row);
@@ -1071,7 +1070,7 @@ fs.createReadStream('./webvoyager/amazon.csv')
       }
       try {
         let resObs = [];
-        const path = './webvoyager/amazon';
+        const path = './webvoyager/amazon'; // change the following
 
         try {
           const { observations, no_text_elements, text_elements, screenshot1base64ImageUrl, screenshot2base64ImageUrl } = await browse({ task: row.ques, web: row.web, verbose: true, headless: false });
@@ -1131,8 +1130,10 @@ fs.createReadStream('./webvoyager/amazon.csv')
 */
 
 
-const task = "Find the last composition by Mozart and play it on youtube"
+const task = process.argv.slice(2).join(' ') || "Find the last composition by Mozart and play it on YouTube";
+
 async function navigate() {
-await browse({ task, web: "", verbose: false, headless: false });
+  await browse({ task, web: "", verbose: false, headless: false });
 }
+
 navigate();
