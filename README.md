@@ -2,7 +2,7 @@
 
 ## Description
 
-WebEVA is a project that allows you to run automated tasks using Playwright and GPT-4 (or any other model specified). The user provides a task query as a command-line argument, and the program processes it to perform automated browsing actions or other related tasks.
+WebEVA is a multimodal web agent that achieves a state-of-the-art 80.3% success rate on the WebVoyager dataset by improving element selection, task refinement, and efficient navigation.
 
 ## Prerequisites
 
@@ -43,15 +43,3 @@ Once the setup is complete, you can run the script by providing the task descrip
 
 - Run the project with the following command to execute a task:
   `node index.js "Find the last composition by Mozart and play it on YouTube"`
-
-### How It Works:
-
-- The script will use **Playwright** to interact with web pages as needed.
-- It will query **GPT-4** (or the specified model) for relevant task handling and actions.
-- The task is performed automatically based on the provided description.
-
-## Notes
-
-- **Security Warning**: Make sure your `.env` file is not committed to version control. Add `.env` to your `.gitignore` file to keep sensitive information secure.
-
-  Example `.gitignore`:
