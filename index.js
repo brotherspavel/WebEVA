@@ -78,7 +78,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
   const context = await browser.newContext();
   const page = await context.newPage();
   await page.setViewportSize({ width: segmentWidth, height: segmentHeight });
-  await page.setDefaultTimeout(90000); // Default timeout set to 90 seconds
+  await page.setDefaultTimeout(120000); // Default timeout set to 90 seconds
 
   const localState = { ...state, task: task };
 
@@ -1129,8 +1129,8 @@ fs.createReadStream('./webvoyager/amazon.csv') // change the following
 */
 
 
-const task = process.argv.slice(2, -1).join(' ') || "Find the last composition by Mozart and play it on YouTube";
-const website = process.argv[process.argv.length - 1] || ""; // Get the last argument as the website URL
+const task = process.argv[2] || "Find the last composition by Mozart on Wikipedia and play it on YouTube";
+const website = process.argv[3] || ""; // The website is optional and is the fourth argument if provided
 
 async function navigate() {
   await browse({ task, web: website, verbose: false, headless: false });
