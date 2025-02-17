@@ -21,10 +21,9 @@ Follow these steps to set up the project:
    cd WebEVA
    ```
 
-````
-
 2. **Install dependencies**:
-Install the required Node.js packages:
- ```bash
+   Install the required Node.js packages:
+
+```bash
 npm install
-````
+```
