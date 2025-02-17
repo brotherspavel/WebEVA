@@ -27,3 +27,9 @@ Follow these steps to set up the project:
 ```bash
 npm install
 ```
+
+Install Playwright and its required browsers:
+
+```bash
+npx playwright install
+```
