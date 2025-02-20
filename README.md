@@ -1,4 +1,19 @@
-# WebEVA
+<div align="center">
+<h1> WebEVA 
+<img src="./assets/meteor.png" width="35px" style="border-radius: 50%;">
+<br>The Next Impact Toward Smarter Web Agents </h1>
+</div>
+
+<div align="center">
+
+![License](https://img.shields.io/badge/License-MIT-teal.svg)
+![Playwright](https://img.shields.io/badge/Playwright-1.49.0-coral.svg)
+
+</div>
+
+<div align="center">
+<img src="./assets/image.png" width="80%">
+</div>
 
 ## Description
 
@@ -47,16 +62,16 @@ Follow these steps to set up the project:
 
 ## Running the Project
 
-Once the setup is complete, you can run the script by providing the task description as a command-line argument. 
+Once the setup is complete, you can run the script by providing the task description as a command-line argument.
 
-   ### Example Usage:
-  
-   ```bash
-   node index.js "Find the last composition by Mozart and play it on YouTube"
-   ```
+### Example Usage:
+
+```bash
+node index.js "Find the last composition by Mozart and play it on YouTube"
+```
 
 If the task requires interaction with a particular website (like WebVoyager tasks), provide the website URL:
 
-   ```bash
-   node index.js "Find the last composition by Mozart" "https://example.com"
-   ```
+```bash
+node index.js "Find the last composition by Mozart" "https://example.com"
+```
