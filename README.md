@@ -17,6 +17,7 @@
 ## Description
 
 WebEVA is a multimodal web agent that achieves a state-of-the-art 80.3% success rate on the WebVoyager dataset by improving element selection, task refinement, and efficient navigation.
+[Prompts](https://github.com/brotherspavel/WebEVA/blob/main/messages.js)
 
 ## Prerequisites
 
