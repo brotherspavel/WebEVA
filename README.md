@@ -5,8 +5,9 @@
 
 <div align="center">
 
-![License](https://img.shields.io/badge/License-MIT-teal.svg)
-![Playwright](https://img.shields.io/badge/Playwright-1.49.0-coral.svg)
+<a href="https://github.com/MinorJerry/WebVoyager"><img src="https://img.shields.io/badge/Dataset-WebVoyager-red.svg"></a>
+<a href="https://github.com/brotherspavel/WebEVA/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-teal.svg"></a>
+<a href="https://playwright.dev/"><img src="https://img.shields.io/badge/Playwright-1.49.0-coral.svg"></a>
 
 </div>
 
