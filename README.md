@@ -1,6 +1,6 @@
 <div align="center">
 <h1> WebEVA 
-<img src="./assets/meteor.png" width="40px" border-radius="50%">
+<img src="./assets/meteor.png" width="40px" borderRadius="50%">
 <br>The Next Impact Toward Smarter Web Agents </h1>
 </div>
 
