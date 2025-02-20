@@ -5,10 +5,10 @@
 
 <div align="center">
 
-<a href="https://github.com/MinorJerry/WebVoyager"><img src="https://img.shields.io/badge/Dataset-WebVoyager-red.svg"></a>
+<a href="https://github.com/MinorJerry/WebVoyager"><img src="https://img.shields.io/badge/Dataset-WebVoyager-silver.svg"></a>
 <a href="https://playwright.dev/"><img src="https://img.shields.io/badge/Playwright-1.49.0-coral.svg"></a>
 <a href="https://github.com/brotherspavel/WebEVA/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-teal.svg"></a>
-<a href="https://github.com/brotherspavel/WebEVA/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-teal.svg"></a
+<a href="https://docs.google.com/spreadsheets/d/1CRMghks70kHsRv6FW9aAcS7u-_a8U6BUncvnJf4WPpQ/edit?gid=497099698#gid=497099698"><img src="https://img.shields.io/badge/WebEVA-Results-blue.svg"></a>
 <a href="https://github.com/brotherspavel/WebEVA/blob/main/messages.js"><img src="https://img.shields.io/badge/WebEVA-Prompts-gold.svg"></a>
 
 </div>
