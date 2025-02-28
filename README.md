@@ -5,8 +5,7 @@
 
 <div align="center">
 
-<a href="https://youtu.be/0YTMzVw1XEY"><img src="https://img.shields.io/badge/WebEVA-Demo-silver.svg"></a>
-<a href="https://github.com/brotherspavel/WebEVA/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-teal.svg"></a>
+<a href="https://youtu.be/0YTMzVw1XEY"><img src="https://img.shields.io/badge/WebEVA-Demo-teal.svg"></a>
 <a href="https://github.com/brotherspavel/WebEVA/tree/main/webvoyager"><img src="https://img.shields.io/badge/WebEVA-ResultAnswers-green.svg"></a>
 <a href="https://docs.google.com/spreadsheets/d/1CRMghks70kHsRv6FW9aAcS7u-_a8U6BUncvnJf4WPpQ/edit?gid=497099698#gid=497099698"><img src="https://img.shields.io/badge/WebEVA-ResultSheets-blue.svg"></a>
 <a href="https://github.com/brotherspavel/WebEVA/blob/main/messages.js"><img src="https://img.shields.io/badge/WebEVA-Prompts-gold.svg"></a>
