@@ -22,6 +22,8 @@
 
 WebEVA is a multimodal web agent that achieves a state-of-the-art 80.3% success rate on the WebVoyager dataset. Currently in review.
 
+<video src="https://youtu.be/0YTMzVw1XEY" width=180/>
+
 ## Prerequisites
 
 Before running the project, make sure you have **Node.js** installed. You can download it from [Node.js official website](https://nodejs.org/).
