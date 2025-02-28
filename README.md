@@ -20,7 +20,7 @@
 
 ## Description
 
-WebEVA is a multimodal web agent that achieves a state-of-the-art 80.3% success rate on the WebVoyager dataset. Currently in review.
+WebEVA is a multimodal web agent that achieved a state-of-the-art 80.3% success rate on the WebVoyager dataset. Currently under review.
 
 ## Prerequisites
 
