@@ -79,7 +79,7 @@ If the task requires interaction with a particular website (like WebVoyager task
 node index.js "Find the last composition by Mozart" "https://example.com"
 ```
 
-## Authors (To be editted)
+## Authors (To be edited)
 
 <div align="center">
 <img src="./assets/authors.png" width="80%">
