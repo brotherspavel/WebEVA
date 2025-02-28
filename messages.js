@@ -1,3 +1,4 @@
+// This prompt is for returning the textual observation of what has occured.
 const OBSERVATION_MESSAGES = `
 You are a robotic assistant observing a user perform tasks on the web. Your role is to analyze past interactions and the user's current actions to generate a new observation.
 
@@ -45,6 +46,7 @@ Your response must follow this structure:
 \`\`\`
 `;
 
+// Afterr the task makes significant progress, the following prompt helps update the task query so it incorporates what has been achieved and thus relects on what still needs to be done.
 const UPDATE_TASK = `
 You are a Robot observing a user browse the web. Your role is to monitor the progression of the user's task and decide if the task goal needs to be updated. An update is required only if navigation to a new base URL is necessary.
 
@@ -93,6 +95,7 @@ Your response must follow this structure:
 \`\`\`
 `;
 
+// Prompt to determine if the task is fully complete based on the user's actions and the observed outcomes.
 const TASK_COMPLETE = `
 You are a Robot observing a user browse the web. Your role is to determine if the task is fully complete.
 
@@ -129,6 +132,7 @@ Your response must follow this structure:
 \`\`\`
 `;
 
+// Prompt to determine the next action based on the user's current task and the observed outcomes.
 const GET_ACTION = `
 Role: You are a Robot tasked with browsing the web to complete a specific task. You are provided with a chronological list of tasks, each represented as [task, user_action_and_explanation, observation]. The final element in this list represents the most recent state of the user's progress. Additionally, you are provided with a \`current_screenshot\` that shows the current webpage after the most recent observation.
 
@@ -177,6 +181,8 @@ Your response should be structured as follows:
   "user_action_and_explanation": "string" // The optimal action to take, including the action type, target element, and rationale.
 }
 `
+
+// Prompt to parse the get_action into webeva's action format/space. 
 const PARSE_ACTION = `
 You are a Robot tasked with browsing the web. You are given:
 - The **task**.
@@ -213,6 +219,7 @@ Choose one of the following actions and provide the required details:
 Ensure that your action aligns with the task and makes progress toward completing it.
 `;
 
+// Prompt to determine  the next url to navigate to
 const GET_URL = `
   You are tasked with determining the **most appropriate URL** to navigate to based on the user's current URL, a previous task, a previous observation, and a current task.
 
@@ -253,6 +260,7 @@ const GET_URL = `
   \`\`\`
           `
 
+// Prompt to determine the most suitable element to interact with given a list of elements
 const GET_ELEMENT = `
 Your task is to identify the **most suitable element** that fulfills the action.
 If the element is not found, return 0.
@@ -278,6 +286,7 @@ You must return a JSON object in the following structure:
 \`\`\`
 `;
           
+// When finishing, summarize what has been done.
 const SUMMARIZE_TASK = `
 You are to summarize a completed web navigation task.
 
@@ -305,6 +314,7 @@ Your response must follow this structure:
 \`\`\`
 `;
 
+// Not used
 const SUMMARIZE_TASK_INCOMPLETE = `
 You are to summarize an incomplete web navigation task.
 
@@ -331,6 +341,7 @@ Your response must be a JSON object structured as follows:
 \`\`\`
 `;
 
+// Not used
 const CUSTOM_ACTION = `
 You are a Robot assigned to browse the web and perform specific tasks. You are provided with the following information:
 - **Task**: The goal you need to accomplish.
@@ -352,6 +363,7 @@ Your response must adhere to the following format:
 \`\`\`
 `;
 
+// Prompt to select from dropdown.
 const IDENTIFY_OPTIONS = `
 Your task is to identify the **most suitable options** that fulfill the given action.
 
@@ -378,6 +390,7 @@ You must return a JSON object in the following structure:
 - You must strictly use the "value" attribute of the options, not their visible text content.
 `;
 
+// Add date to the current task so that WebEVA is aware of the current date.
 const ADD_DATE = `
 Given a task goal and the current date, decide whether date is relevant to the task. If it is, add the current date to the end of the task goal with "Current date is: ".
 
@@ -397,6 +410,7 @@ Your response must follow this structure:
 \`\`\`
 `;
 
+// Suggests a URL based on the current URL and task description.
 const MODIFY_URL_PARAMS = `
 You are a helpful assistant designed to suggest URLs based on a given current URL and a task. Your goal is to analyze the provided URL and the task description, then suggest a new URL that best helps complete the task.
 
@@ -414,6 +428,8 @@ You must respond with a JSON object in the following structure:
    "reasoning": "string" // Explanation of why the suggested URL is relevant to the task.
 }
 `
+
+// Suggests the exact text to input into an input field.
 const GET_INPUT = `
 You are a helpful assistant designed to suggest the text for a user to type into an input field.
 

@@ -77,3 +77,9 @@ If the task requires interaction with a particular website (like WebVoyager task
 ```bash
 node index.js "Find the last composition by Mozart" "https://example.com"
 ```
+
+## Authors (To be editted)
+
+<div align="center">
+<img src="./assets/authors.png" width="80%">
+</div>

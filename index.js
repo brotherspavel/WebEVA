@@ -270,10 +270,10 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
         await getIsTaskComplete(localState.observations, localState.currentImage).then(async (res) => {
           const content = JSON.parse(res.content);
 
-          if (content.task_complete || Number(localState.observations?.length) === (MAX_STEP_OBSERVATIONS - 1)) {
+          if (content.task_complete) {
             const secondRes = await getIsTaskComplete(localState.observations, localState.currentImage);
             const secondContent = JSON.parse(secondRes.content);
-            if (secondContent.task_complete || Number(localState.observations?.length) === (MAX_STEP_OBSERVATIONS - 1)) {
+            if (secondContent.task_complete) {
               localState.stateAction = null;
 
               const screenshotBuffer = await page.screenshot({ fullPage: true });
@@ -322,7 +322,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
                 })
               );
 
-              await getSummarizedTask(localState.observations, screenshot1base64ImageUrl, screenshot2base64ImageUrl, screenshot3base64ImageUrl, Number(localState.observations?.length) === (MAX_STEP_OBSERVATIONS - 1)).then((response) => {
+              await getSummarizedTask(localState.observations, screenshot1base64ImageUrl, screenshot2base64ImageUrl, screenshot3base64ImageUrl).then((response) => {
                 const content = JSON.parse(response.content);
     
                 console.log("getSummarizedTask", content);
@@ -1056,7 +1056,7 @@ async function browse({ task, web = "", verbose = false, headless = false }) {
 /*
 const data = [];
 
-fs.createReadStream('./webvoyager/amazon.csv') // change the following
+fs.createReadStream('./samples/samples.csv') // change the following
   .pipe(csv())
   .on('data', (row) => {
     data.push(row);
@@ -1070,7 +1070,7 @@ fs.createReadStream('./webvoyager/amazon.csv') // change the following
       }
       try {
         let resObs = [];
-        const path = './webvoyager/amazon'; // change the following
+        const path = './samples'; // change the following
 
         try {
           const { observations, no_text_elements, text_elements, screenshot1base64ImageUrl, screenshot2base64ImageUrl } = await browse({ task: row.ques, web: row.web, verbose: true, headless: false });
@@ -1126,9 +1126,10 @@ fs.createReadStream('./webvoyager/amazon.csv') // change the following
   .on('error', (err) => {
     console.error('Error reading the CSV file:', err);
   });
+
+
+
 */
-
-
 const task = process.argv[2] || "Find the last composition by Mozart on Wikipedia and play it on YouTube";
 const website = process.argv[3] || ""; // The website is optional and is the fourth argument if provided
 
