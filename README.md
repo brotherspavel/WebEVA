@@ -70,7 +70,7 @@ Once the setup is complete, you can run the script by providing the task descrip
 ### Example Usage:
 
 ```bash
-node index.js "Check the IMDb scre of the movie \"Inception.\" and then find the name of its producers on wikipedia"
+node index.js "Check the IMDb scre of the movie Inception and then find the names of its producers on wikipedia"
 ```
 
 If the task requires interaction with a particular website (like WebVoyager tasks), provide the website URL:
