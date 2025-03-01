@@ -23,6 +23,7 @@ WebEVA is a multimodal web agent that achieved a state-of-the-art 80.3% success 
 Our code and prompts can be found under index.js and messages.js respectively. Currently under review.  
 <br>
 ![Demo](./assets/eva.gif)
+Check the IMDb scre of the movie Inception. and then find the names of its producers on wikipedia
 
 ## Prerequisites
 
