@@ -11,7 +11,6 @@
 <a href="https://github.com/brotherspavel/WebEVA/blob/main/messages.js"><img src="https://img.shields.io/badge/WebEVA-Prompts-gold.svg"></a>
 <a href="https://github.com/MinorJerry/WebVoyager"><img src="https://img.shields.io/badge/Dataset-WebVoyager-silver.svg"></a>
 
-
 </div>
 
 <div align="center">
@@ -21,6 +20,7 @@
 ## Description
 
 WebEVA is a multimodal web agent that achieved a state-of-the-art 80.3% success rate on the WebVoyager dataset. Our code and prompts can be found under index.js and messages.js respectively. Currently under review.
+![Demo](./assets/eva.gif)
 
 ## Prerequisites
 
