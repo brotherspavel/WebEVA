@@ -19,7 +19,7 @@
 
 ## Description
 
-WebEVA is a multimodal web agent that achieved a state-of-the-art 80.3% success rate on the WebVoyager dataset. We support dynamic navigation and the ability to find elements without using visual cues/set-of-mark prompting.
+WebEVA is a multimodal web agent that achieved a state-of-the-art 80.3% success rate on the WebVoyager dataset. We support dynamic navigation, task refinement, and the ability to find elements without using visual cues/set-of-mark prompting.
 Our code and prompts can be found under index.js and messages.js respectively. Currently under review.  
 <br>
 ![Demo](./assets/eva.gif) <br>
